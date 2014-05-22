@@ -22,7 +22,10 @@ import java.io.IOException;
 import javax.swing.*;
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.event.*;
 
+// Beanshell interpreter for debugging
+import bsh.*;
 
 
 PeasyCam cam;
@@ -31,8 +34,13 @@ boolean run = false;
 
 int clock = 0;
 
+public static PBox app;
+
+
 HashMap<PVector, Cell> grid = new HashMap<PVector, Cell>();
-ArrayList<Cell> cells = new ArrayList<Cell>();
+ArrayList<Cell> realCells = new ArrayList<Cell>();
+ArrayList<Cell> imagCells = new ArrayList<Cell>();
+
 
 PVector cursorPos = new PVector(0, 0, 0);
 
@@ -57,9 +65,8 @@ void initJFrame(JFrame f) {
 RootGUI statusFrame = null;
 
 void updateStatusFrame() {
-  statusFrame.clockLabel.setText("Clock: "+clock+"."+clock%6);
+  statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clock%6);
   statusFrame.phaseLabel.setText("Phase: "+clock%6);
-  
 }
 void setup() {
   size(1000, 800, P3D);
@@ -71,6 +78,12 @@ void setup() {
   statusFrame = new RootGUI(this);
   initJFrame(statusFrame);
 
+  app = this;
+  bsh.Console.main(new String[] {
+    "util.bsh"
+  }
+  );
+
   if (frame != null) {
     frame.setResizable(true);
   }
@@ -81,14 +94,31 @@ void setup() {
   initCells();
 }
 
-void initCells() {
-  cells.add(new Cell(0, 0, 0, 1));
-  cells.add(new Cell(2, 0, 0, -1));
-  cells.add(new Cell(0, 1, 0, 1));
-  cells.add(new Cell(2, 1, 0, -1));
+void addCell(int x, int y, int z, int state) {
+  if ((x+y+z)%2 == 0) {
+    // real
+    realCells.add(new Cell(x, y, z, state));
+  } 
+  else {
+    imagCells.add(new Cell(x, y, z, state));
+  }
+}
 
-  cells.add(new Cell(0, -3, 2, 1));
-  cells.add(new Cell(0, -4, 3, 1));
+// clear all cells
+void clearWorld() {
+  grid.clear(); 
+  realCells.clear();
+  imagCells.clear();
+}
+
+void initCells() {
+  clearWorld();
+  initConfig1();
+}
+
+void initConfig1() {
+  addCell(0, 0, 0, 1);
+  addCell(1, 0, 0, 1);
 }
 
 void drawGrid() {
@@ -119,17 +149,43 @@ void draw() {
   textMode(SHAPE);
   fill(255);
   textSize(10);
-  if (run || singleStep) {
-    text("clock: "+clock, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+  if (run ) {
+    text("clock: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   } 
   else {
-    text("paused: "+clock, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text("paused: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   }
 
   lights();
   drawGrid();
 
   noStroke();
+  drawCells(realCells);
+  drawCells(imagCells);
+
+
+  // Draw axes 
+  pushMatrix();
+  translate(-(gridSize/2) * cellSize, -(gridSize/2) * cellSize, cellSize);
+  stroke(255, 0, 0);
+  line(0, 0, 0, 0, 0, 20);
+  stroke(0, 255, 0);
+  line(0, 0, 0, 20, 0, 0);
+  stroke(0, 0, 255);
+  line(0, 0, 0, 0, 20, 0);
+  noStroke();
+  popMatrix();
+
+  updateStatusFrame();
+  if (run || singleStep ) {
+    computeNextStep();
+    clock++;
+    singleStep = false;
+  }
+}
+
+void drawCells(ArrayList<Cell> cells) {
+
   for (Cell cell : cells) {
     pushMatrix();
     translate(
@@ -148,26 +204,20 @@ void draw() {
     box(cellSize);
     popMatrix();
   }
-
-
-  pushMatrix();
-  translate(0, 0, 20);
-  fill(0, 255, 0);
-  box(5);
-  popMatrix();
-
-  updateStatusFrame();
-  if (run || singleStep ) {
-    computeNextStep();
-    clock++;
-    singleStep = false;
-  }
 }
 
 void computeNextStep() {
   int phase = clock % 6;
   if (phase == 1) {
+
+
     // xy / real => imag
+    /*
+    if current cell is +1 , and neighbor to right is +1, move both cells apart horizontally by swaps
+     
+     if current cell is +1 , and neighbor to above is +1, move both cells apart vertically by swaps
+     
+     */
   }
 }
 
