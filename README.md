@@ -12,3 +12,5 @@ To run this project in Processing, you need to add the "PeasyCam" library to the
 [1] http://busyboxes.org/faq.html
 
 [2] http://processing.org/
+
+![alt text](https://raw.githubusercontent.com/hqm/pbox/master/busybox1.png "screenshot")
