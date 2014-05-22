@@ -1,3 +1,0 @@
-#!/bin/bash
-. setup-env
-java -cp "$CLASSPATH:target/scala-2.10/pbox_2.10-1.1.jar" PBox
