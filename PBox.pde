@@ -8,7 +8,6 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
-import shiffman.box2d.*; 
 
 import java.util.HashMap; 
 import java.util.ArrayList; 
@@ -208,16 +207,18 @@ void drawCells(ArrayList<Cell> cells) {
 
 void computeNextStep() {
   int phase = clock % 6;
+
   if (phase == 1) {
-
-
-    // xy / real => imag
-    /*
+    for (Cell cell: realCells) {
+  
+      // xy / real => imag
+      /*
     if current cell is +1 , and neighbor to right is +1, move both cells apart horizontally by swaps
-     
-     if current cell is +1 , and neighbor to above is +1, move both cells apart vertically by swaps
-     
-     */
+       
+       if current cell is +1 , and neighbor to above is +1, move both cells apart vertically by swaps
+       
+       */
+    }
   }
 }
 
