@@ -4,6 +4,8 @@ ItemListener {
 
   JLabel clockLabel = new JLabel("Clock: 0", JLabel.LEFT);
   JLabel phaseLabel = new JLabel("Phase: 0", JLabel.LEFT);
+  JLabel directionLabel = new JLabel("Direction: forward", JLabel.LEFT);
+
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
@@ -32,6 +34,7 @@ ItemListener {
     loadConfig1.addActionListener(this );
     file.add(loadConfig2);
     loadConfig2.addActionListener(this );
+    clearItem.addActionListener(this);
 
     menuBar.add(file);
     setJMenuBar(menuBar);
@@ -42,6 +45,8 @@ ItemListener {
 
     content.add(clockLabel);
     content.add(phaseLabel);
+    content.add(directionLabel);
+
     content.add(debugLabel);
 
     content.add(help);
@@ -51,11 +56,12 @@ ItemListener {
   void actionPerformed(ActionEvent e) {
     PBox.println("handle action "+e.getActionCommand());
     String cmd = e.getActionCommand();
-    if (cmd.equals("Load Config 1"))  {
+    if (cmd.equals("Load Config 1")) {
       app.loadConfig(1);
-    } else if (cmd.equals("Load Config 2"))  {
+    } else if (cmd.equals("Load Config 2")) {
       app.loadConfig(2);
     } else if (cmd.equals("Clear")) {
+      PBox.println("clear world");
       app.loadConfig(0);
     }
   }
@@ -63,7 +69,11 @@ ItemListener {
   void itemStateChanged(ItemEvent e) {
     PBox.println("item state changed "+e);
   }
-  
-  static final String HELP_STRING = "<html><br><hr>Help<hr>double-click: reset camera position<br>'B': Beanshell console window<br>'D': toggle debug logging</html>";
 
+  static final String HELP_STRING = "<html><br><hr>Help<hr>"
+    +"double-click: reset camera position<br>"
+    +"'B': Beanshell console window<br>"
+    +"'D': toggle debug logging"
+    +"'z': forward/reverse direction"
+    +"</html>";
 }

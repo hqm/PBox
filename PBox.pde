@@ -37,6 +37,7 @@ boolean run = false;
 boolean debug = true;
 
 int clock = 0;
+boolean forward = true;
 
 public static PBox app;
 
@@ -66,13 +67,13 @@ Coord delta = new Coord(0, 0, 0);
 
 
 int[] realColors = {
-  color(255, 0, 0), // state = 1  REAL
-  color(255, 200, 0) // state = -1 REAL
+  color(240, 0, 0), // state = 1  REAL
+  color(240, 200, 0) // state = -1 REAL
 };
 
 int[] imagColors = {
-  color(0, 0, 255), // state = 1  IMG
-  color(0, 255, 20) // state = -1  IMG
+  color(0, 0, 240), // state = 1  IMG
+  color(0, 240, 20) // state = -1  IMG
 };
 
 int gridSize = 20;
@@ -89,6 +90,7 @@ void updateStatusFrame() {
   statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clock%6);
   statusFrame.phaseLabel.setText("Phase: "+clock%6);
   statusFrame.debugLabel.setText("Debug: "+debug);
+  statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
 }
 void setup() {
   size(1000, 800, P3D);
@@ -141,6 +143,7 @@ void clearWorld() {
   grid.clear(); 
   realCells.clear();
   imagCells.clear();
+  clock = 0;
 }
 
 void loadConfig(int n) {
@@ -224,7 +227,11 @@ void draw() {
   updateStatusFrame();
   if (run || singleStep ) {
     computeNextStep();
-    clock++;
+    if (forward) {
+      clock++;
+    } else {
+      clock--;
+    }
     singleStep = false;
   }
 }
@@ -259,9 +266,9 @@ void drawCursor() {
     );
 
   if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // real
-    fill( (cursorVal == 1) ? realColors[0] : realColors[1], 80 );
+    fill( (cursorVal == 1) ? realColors[0] : realColors[1], 84 );
   } else { // imaginary
-    fill( (cursorVal == 1) ? imagColors[0] : imagColors[1], 80);
+    fill( (cursorVal == 1) ? imagColors[0] : imagColors[1], 84);
   }
 
   box(cellSize);
@@ -307,6 +314,10 @@ Coord deltaX = new Coord(1, 0, 0);
 Coord deltaY = new Coord(0, 1, 0);
 Coord deltaZ = new Coord(0, 0, 1);
 
+Coord ndeltaX = new Coord(-1, 0, 0);
+Coord ndeltaY = new Coord(0, -1, 0);
+Coord ndeltaZ = new Coord(0, 0, -1);
+
 void computeNextStep() {
   int phase = clock % 6;
   swaps.clear();
@@ -314,26 +325,53 @@ void computeNextStep() {
   clearSwapState(realCells);
   clearSwapState(imagCells);
 
-  if (phase == 0) {
-
-    for (Cell cell : realCells) {
-      Coord.add(cell.loc, deltaX, p1); // p1 := cell + delta
-      if (debug) println("eval "+cell.loc+", read cell @+ deltaX => p1  "+p1);
-
-      // position of cell to right
-      Cell r = grid.get(p1);
-      if (r != null) {
-        if (debug) println("found cell at p1 "+p1+"="+r);
-        if (r.state == 1 && cell.state == 1) {
-          Coord.add(p1, deltaX, p2); // p2 = rx+1
-          p2.add(deltaX); // rx+2
-          proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
-        }
-      }
-    }
+  switch(phase) {
+  case 0:
+    theRule(realCells, deltaX);
+    theRule(realCells, ndeltaX);
+    break;
+  case 2:
+    theRule(realCells, deltaY);
+    theRule(realCells, ndeltaY);
+    break;
+  case 4:
+    theRule(realCells, deltaZ);
+    theRule(realCells, ndeltaZ);
+    break;
+  case 1:
+    theRule(imagCells, deltaX);
+    theRule(imagCells, ndeltaX);
+    break;
+  case 3:
+    theRule(imagCells, deltaY);
+    theRule(imagCells, ndeltaY);
+    break;
+  case 5:
+    theRule(imagCells, deltaZ);
+    theRule(imagCells, ndeltaZ);
+    break;
   }
 
   doSwaps();
+}
+
+void theRule(ArrayList<Cell> cells, Coord delta) {
+
+  for (Cell cell : cells) {
+    Coord.add(cell.loc, delta, p1); // p1 := cell + delta
+    if (debug) println("eval "+cell.loc+", read cell @+ deltaX => p1  "+p1);
+
+    // position of cell to right
+    Cell r = grid.get(p1);
+    if (r != null) {
+      if (debug) println("found cell at p1 "+p1+"="+r);
+      if (r.state == 1 && cell.state == 1) {
+        Coord.add(p1, delta, p2); // p2 = rx+1
+        p2.add(delta); // rx+2
+        proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
+      }
+    }
+  }
 }
 
 // Loop over all proposed swaps, and only swap two cells when they are the only designated swaps for each other
@@ -427,6 +465,9 @@ public void keyPressed() {
       "util.bsh"
     }
     );
+  } else if (key == 'z') {
+    if (forward) {clock--; } else {clock++;}
+    forward = !forward;
   } else if (key == 'D') {
     debug = !debug;
   } else if (keyCode == UP) {
