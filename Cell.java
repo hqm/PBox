@@ -6,7 +6,7 @@ import processing.opengl.*;
 public class Cell {
 
   public int state = 1;
-  public PVector loc = new PVector(0, 0, 0);
+  public Coord loc = new Coord(0, 0, 0);
 
 
   public Cell(int x, int y, int z, int state) {
@@ -30,6 +30,6 @@ public class Cell {
   public CellMode mode = CellMode.CAN_SWAP;
 
   public String toString() {
-    return "Cell:Box"+loc+" s="+state+" swapState="+mode;
+    return "<Cell:"+loc+" s="+state+" swapState="+mode+">";
   }
 }

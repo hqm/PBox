@@ -41,12 +41,12 @@ int clock = 0;
 public static PBox app;
 
 // Hash table which holds position of all cells
-public HashMap<PVector, Cell> grid = new HashMap<PVector, Cell>();
+public HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
 
 // Keep track of which cell a given cell is supposed to swap with. Used to find and prevent
 // conflicting swaps.
 // Using a cell location as a key, holds the target location that this cell is proposed to swap with
-public HashMap<PVector, ArrayList<PVector>> swaps = new HashMap<PVector, ArrayList<PVector>>();
+public HashMap<Coord, ArrayList<Coord>> swaps = new HashMap<Coord, ArrayList<Coord>>();
 
 // List of the cells in real plane
 public ArrayList<Cell> realCells = new ArrayList<Cell>();
@@ -54,14 +54,14 @@ public ArrayList<Cell> realCells = new ArrayList<Cell>();
 public ArrayList<Cell> imagCells = new ArrayList<Cell>();
 
 
-public PVector cursorPos = new PVector(0, 0, 0);
+public Coord cursorPos = new Coord(0, 0, 0);
 
 // tmp working registers for coordinates
-PVector p1 = new PVector(0, 0, 0);
-PVector p2 = new PVector(0, 0, 0);
-PVector p3 = new PVector(0, 0, 0);
-PVector target = new PVector(0, 0, 0);
-PVector delta = new PVector(0, 0, 0);
+Coord p1 = new Coord(0, 0, 0);
+Coord p2 = new Coord(0, 0, 0);
+Coord p3 = new Coord(0, 0, 0);
+Coord target = new Coord(0, 0, 0);
+Coord delta = new Coord(0, 0, 0);
 
 
 int[] realColors = {
@@ -241,23 +241,24 @@ void drawCells(ArrayList<Cell> cells) {
 // we push the target loc B onto the location A's swaps list.
 // 
 // We also push the location A onto target location B's swaps list.
-void proposeSwap(PVector oa, PVector ob) {
-  PVector a = new PVector().set(oa); //copy the PVector objects
-  PVector b = new PVector().set(ob);
+void proposeSwap(Coord oa, Coord ob) {
+  Coord a = oa.get();
+  Coord b = ob.get();
+  
   if (debug) println("proposeSwap("+a+"<=>"+b);
 
-  ArrayList<PVector> swaps_a = swaps.get(a);
+  ArrayList<Coord> swaps_a = swaps.get(a);
   if (swaps_a == null) {
-    swaps_a = new ArrayList<PVector>();
+    swaps_a = new ArrayList<Coord>();
     swaps.put(a, swaps_a);
   }
   if (!swaps_a.contains(b)) {
     swaps_a.add(b);
   }
 
-  ArrayList<PVector> swaps_b = swaps.get(b);
+  ArrayList<Coord> swaps_b = swaps.get(b);
   if (swaps_b == null) {
-    swaps_b = new ArrayList<PVector>();
+    swaps_b = new ArrayList<Coord>();
     swaps.put(b, swaps_b);
   }
   if (!swaps_b.contains(a)) {
@@ -271,9 +272,9 @@ void clearSwapState(ArrayList<Cell> cells) {
   }
 }
 
-PVector deltaX = new PVector(1, 0, 0);
-PVector deltaY = new PVector(0, 1, 0);
-PVector deltaZ = new PVector(0, 0, 1);
+Coord deltaX = new Coord(1, 0, 0);
+Coord deltaY = new Coord(0, 1, 0);
+Coord deltaZ = new Coord(0, 0, 1);
 
 void computeNextStep() {
   int phase = clock % 6;
@@ -285,7 +286,7 @@ void computeNextStep() {
   if (phase == 0) {
 
     for (Cell cell : realCells) {
-      PVector.add(cell.loc, deltaX, p1); // p1 := cell + delta
+      Coord.add(cell.loc, deltaX, p1); // p1 := cell + delta
       if (debug) println("eval "+cell.loc+", read cell @+ deltaX => p1  "+p1);
 
       // position of cell to right
@@ -293,7 +294,7 @@ void computeNextStep() {
       if (r != null) {
         if (debug) println("found cell at p1 "+p1+"="+r);
         if (r.state == 1 && cell.state == 1) {
-          PVector.add(p1, deltaX, p2); // p2 = rx+1
+          Coord.add(p1, deltaX, p2); // p2 = rx+1
           p2.add(deltaX); // rx+2
           proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
         }
@@ -307,15 +308,15 @@ void computeNextStep() {
 // Loop over all proposed swaps, and only swap two cells when they are the only designated swaps for each other
 void doSwaps() {
   for (Map.Entry entry : swaps.entrySet ()) {
-    PVector locA = (PVector) entry.getKey();  
-    ArrayList<PVector> swapsA = (ArrayList<PVector>) entry.getValue(); //<>//
+    Coord locA = (Coord) entry.getKey();  
+    ArrayList<Coord> swapsA = (ArrayList<Coord>) entry.getValue(); //<>//
     if (debug) println("locA = "+locA+" swapsA="+swapsA);
     if (swapsA.size() > 1) {
       if (debug) println("evalSwap  more than one proposed swap at "+locA+" = "+swapsA);
       continue; // we're designated to swap with more than one target, so do no swap
     }
-    PVector locB = swapsA.get(0);
-    ArrayList<PVector> swapsB = swaps.get(locB);
+    Coord locB = swapsA.get(0);
+    ArrayList<Coord> swapsB = swaps.get(locB);
     if (swapsB.size() > 1) {
       if (debug) println("evalSwap  more than one proposed swap at "+locB+" (from "+locA+") = "+swapsB);
       continue;
@@ -328,9 +329,9 @@ void doSwaps() {
 }
 
 // moves a cell from it's location to dest. This will bash whatever is in dest, so only do this when moving to an empty location
-void moveCell(Cell a, PVector dest) {
+void moveCell(Cell a, Coord dest) {
   if (debug) println("moveCell "+a+" to "+dest);
-  grid.put(a.loc, null); // remove cell from current grid pos
+  grid.remove(a.loc); // remove cell from current grid pos
   a.loc.set(dest); // copy dest location value
   if (debug) println("a.loc = "+a.loc);
   grid.put(dest, a);
@@ -338,10 +339,10 @@ void moveCell(Cell a, PVector dest) {
   if (debug) println(".... moved "+a);
 }
 
-PVector _prevA = new PVector();
-PVector _prevB = new PVector();
+Coord _prevA = new Coord();
+Coord _prevB = new Coord();
 
-void swapCells(PVector locA, PVector locB) {
+void swapCells(Coord locA, Coord locB) {
   Cell a = grid.get(locA);
   Cell b = grid.get(locB);
   if (debug) println("swapCells "+locA+" "+a+ ", "+locB+" "+b);
