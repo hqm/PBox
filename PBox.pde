@@ -1,4 +1,4 @@
-// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 
 import peasy.test.*;
 import peasy.org.apache.commons.math.*;
@@ -55,6 +55,7 @@ public ArrayList<Cell> imagCells = new ArrayList<Cell>();
 
 
 public Coord cursorPos = new Coord(0, 0, 0);
+int cursorVal = 1;
 
 // tmp working registers for coordinates
 Coord p1 = new Coord(0, 0, 0);
@@ -122,6 +123,18 @@ void addCell(int x, int y, int z, int state) {
     imagCells.add(cell);
   }
 }
+
+
+void deleteCell(Cell c) {
+  grid.remove(c.loc);
+  if ((c.loc.x+c.loc.y+c.loc.z)%2 == 0) {
+    // real
+    realCells.remove(c);
+  } else {
+    imagCells.remove(c);
+  }
+}
+
 
 // clear all cells
 void clearWorld() {
@@ -194,6 +207,7 @@ void draw() {
   drawCells(realCells);
   drawCells(imagCells);
 
+  drawCursor();
 
   // Draw axes 
   pushMatrix();
@@ -236,6 +250,23 @@ void drawCells(ArrayList<Cell> cells) {
   }
 }
 
+void drawCursor() {
+  pushMatrix();
+  translate(
+  (cursorPos.x )*cellSize, 
+  (cursorPos.y)*cellSize, 
+  (cursorPos.z)*cellSize
+    );
+
+  if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // real
+    fill( (cursorVal == 1) ? realColors[0] : realColors[1], 80 );
+  } else { // imaginary
+    fill( (cursorVal == 1) ? imagColors[0] : imagColors[1], 80);
+  }
+
+  box(cellSize);
+  popMatrix();
+}
 
 // When proposing to swap cell A and B
 // we push the target loc B onto the location A's swaps list.
@@ -244,7 +275,7 @@ void drawCells(ArrayList<Cell> cells) {
 void proposeSwap(Coord oa, Coord ob) {
   Coord a = oa.get();
   Coord b = ob.get();
-  
+
   if (debug) println("proposeSwap("+a+"<=>"+b);
 
   ArrayList<Coord> swaps_a = swaps.get(a);
@@ -309,7 +340,7 @@ void computeNextStep() {
 void doSwaps() {
   for (Map.Entry entry : swaps.entrySet ()) {
     Coord locA = (Coord) entry.getKey();  
-    ArrayList<Coord> swapsA = (ArrayList<Coord>) entry.getValue(); //<>//
+    ArrayList<Coord> swapsA = (ArrayList<Coord>) entry.getValue();
     if (debug) println("locA = "+locA+" swapsA="+swapsA);
     if (swapsA.size() > 1) {
       if (debug) println("evalSwap  more than one proposed swap at "+locA+" = "+swapsA);
@@ -368,13 +399,27 @@ void swapCells(Coord locA, Coord locB) {
   }
 }
 
-
+// sets cell value at position
+void toggleCellAtCursor() {
+  Cell c = grid.get(cursorPos);
+  if (c == null) {
+    // create new cell with current cursor state
+    addCell(cursorPos.x, cursorPos.y, cursorPos.z, cursorVal);
+  } else {
+    // existing cell, if it is 1, change to -1. If -1, delete it.
+    if (c.state == 1) {
+      c.state = -1;
+    } else if (c.state == -1) {
+      deleteCell(c);
+    }
+  }
+}
 
 public void keyPressed() {
   if (key == ' ') { // SPACE char means single step n clock steps ( one action time )
     run = false;
     singleStep = true;
-  } else if (keyCode == ENTER) {
+  } else if (key == 'r') {
     run = true;
     singleStep = false;
   } else if (key == 'B') {
@@ -384,5 +429,19 @@ public void keyPressed() {
     );
   } else if (key == 'D') {
     debug = !debug;
+  } else if (keyCode == UP) {
+    cursorPos.y -= 1;
+  } else if (keyCode == DOWN) {
+    cursorPos.y += 1;
+  } else if (keyCode == LEFT) {
+    cursorPos.x -= 1;
+  } else if (keyCode == RIGHT) {
+    cursorPos.x += 1;
+  } else if (key == 'u') { 
+    cursorPos.z += 1;
+  } else if (key == 'd') { 
+    cursorPos.z -= 1;
+  } else if (keyCode == ENTER) {
+    toggleCellAtCursor();
   }
 }
