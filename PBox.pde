@@ -35,13 +35,24 @@ int clock = 0;
 
 public static PBox app;
 
-
+// Hash table which holds position of all cells
 HashMap<PVector, Cell> grid = new HashMap<PVector, Cell>();
+
+// List of the cells in real plane
 ArrayList<Cell> realCells = new ArrayList<Cell>();
+// List of cells in imaginary plane
 ArrayList<Cell> imagCells = new ArrayList<Cell>();
 
 
 PVector cursorPos = new PVector(0, 0, 0);
+
+// tmp working registers for coordinates
+PVector p1 = new PVector(0, 0, 0);
+PVector p2 = new PVector(0, 0, 0);
+PVector p3 = new PVector(0, 0, 0);
+PVector p4 = new PVector(0, 0, 0);
+PVector delta = new PVector(0, 0, 0);
+
 
 int[] realColors = {
   color(255, 0, 0), // state = 1  REAL
@@ -205,12 +216,34 @@ void drawCells(ArrayList<Cell> cells) {
   }
 }
 
+// Returns the cell which is in the grid at position c+delta
+Cell findCell(Cell c, PVector delta) {
+  p1.set(c.loc);
+  p1.add(delta);
+  Cell r = grid.get(p1);
+}
+
+void proposeSwap(Cell c, PVector target) {
+  
+}
+
+
 void computeNextStep() {
   int phase = clock % 6;
 
   if (phase == 1) {
     for (Cell cell: realCells) {
-  
+      delta.x = 1; 
+      delta.y = 0; 
+      delta.z = 0;
+      // position of cell to right
+      Cell r = findCell(cell, delta);
+
+
+
+      if (r != null && r.state == 1 && cell.state == 1) {
+        proposeSwap(r, p1); // propose a swap to the right, i.e., repel
+      }
       // xy / real => imag
       /*
     if current cell is +1 , and neighbor to right is +1, move both cells apart horizontally by swaps
