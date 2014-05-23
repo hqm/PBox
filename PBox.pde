@@ -349,7 +349,7 @@ void swapCells(PVector locA, PVector locB) {
     moveCell(b, locA);
   } 
   else {
-    if (debug) println("swapCells did nothing");
+    if (debug) println("... swapCells did nothing");
   }
 }
 
