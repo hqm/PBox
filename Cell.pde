@@ -27,9 +27,9 @@ public class Cell {
   public static final int CONFLICT = 1;
   public static final int SWAPPED   = 2;
 
-  public int swapState = CAN_SWAP;
+  public CellMode mode = CellMode.CAN_SWAP;
 
   public String toString() {
-    return "<Cell "+loc+" s="+state+" swapState="+swapState+">";
+    return "<Cell "+loc+" s="+state+" swapState="+mode+">";
   }
 }

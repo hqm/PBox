@@ -1,4 +1,4 @@
-// 3d cellular automata
+// 3d cellular automata //<>//
 
 import peasy.test.*;
 import peasy.org.apache.commons.math.*;
@@ -78,7 +78,7 @@ int gridSize = 20;
 int cellSize = 10;
 
 void initJFrame(JFrame f) {
-  f.setSize(150, 300);
+  f.setSize(250, 600);
   f.setVisible(true);
 }
 
@@ -99,10 +99,7 @@ void setup() {
   initJFrame(statusFrame);
 
   app = this;
-  bsh.Console.main(new String[] {
-    "util.bsh"
-  }
-  );
+
 
   if (frame != null) {
     frame.setResizable(true);
@@ -165,11 +162,11 @@ void draw() {
 
   rotateX(0);
   rotateY(0);
-  background(200, 200, 200);
+  background(255);
 
   // draw status text
   textMode(SHAPE);
-  fill(255);
+  fill(100, 100, 100);
   textSize(10);
   if (run ) {
     text("clock: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
@@ -239,6 +236,7 @@ void proposeSwap(PVector a, PVector b) {
   ArrayList<PVector> swaps_a = swaps.get(a);
   if (swaps_a == null) {
     swaps_a = new ArrayList<PVector>();
+    swaps.put(a, swaps_a);
   }
   if (!swaps_a.contains(b)) {
     swaps_a.add(b);
@@ -247,6 +245,7 @@ void proposeSwap(PVector a, PVector b) {
   ArrayList<PVector> swaps_b = swaps.get(b);
   if (swaps_b == null) {
     swaps_b = new ArrayList<PVector>();
+    swaps.put(b, swaps_b);
   }
   if (!swaps_b.contains(a)) {
     swaps_b.add(a);
@@ -255,7 +254,7 @@ void proposeSwap(PVector a, PVector b) {
 
 void clearSwaps(ArrayList<Cell> cells) {
   for (Cell cell : cells) {
-    cell.swapState = Cell.CAN_SWAP;
+    cell.mode = CellMode.CAN_SWAP;
   }
   swaps.clear();
 }
@@ -277,7 +276,7 @@ void computeNextStep() {
       PVector.add(cell.loc, deltaX, p1); // p1 := cell + delta
       // position of cell to right
       Cell r = grid.get(p1);
-      if (debug) println("found cell at "+delta+"="+r);
+      if (debug) println("found cell at "+p1+"="+r);
       if (r != null && r.state == 1 && cell.state == 1) {
         PVector.add(p1, deltaX, p2); // p2 = rx+1
         p2.add(deltaX); //
@@ -296,11 +295,13 @@ void doSwaps() {
     PVector locA = (PVector) entry.getKey();  
     ArrayList<PVector> swapsA = (ArrayList<PVector>) entry.getValue();
     if (swapsA.size() > 1) {
+      if (debug) println("evalSwap  more than one proposed swap at "+locA+" = "+swapsA);
       continue; // we're designated to swap with more than one target, so do no swap
     }
     PVector locB = swapsA.get(0);
     ArrayList<PVector> swapsB = swaps.get(locB);
     if (swapsB.size() > 1) {
+      if (debug) println("evalSwap  more than one proposed swap at "+locB+" (from "+locA+") = "+swapsB);
       continue;
     }
     if (swapsB.get(0).equals(locA)) {
@@ -312,10 +313,12 @@ void doSwaps() {
 
 // moves a cell from it's location to dest. This will bash whatever is in dest, so only do this when moving to an empty location
 void moveCell(Cell a, PVector dest) {
+  if (debug) println("moveCell "+a+" to "+dest);
   grid.put(a.loc, null); // remove cell from current grid pos
   a.loc.set(dest); // copy dest location value
   grid.put(dest, a);
-  a.state = Cell.SWAPPED;
+  a.mode = CellMode.SWAPPED;
+  if (debug) println(".... moved "+a);
 }
 
 PVector _prevA = new PVector();
@@ -324,20 +327,29 @@ PVector _prevB = new PVector();
 void swapCells(PVector locA, PVector locB) {
   Cell a = grid.get(locA);
   Cell b = grid.get(locB);
-
-  if (a != null && b != null && a.state == Cell.CAN_SWAP && b.state == Cell.CAN_SWAP) {
+  if (debug) println("swapCells "+locA+" "+a+ ", "+locB+" "+b);
+  if (a != null && b != null && a.mode == CellMode.CAN_SWAP && b.mode == CellMode.CAN_SWAP) {
+    if (debug) println("... swapping non-null cells a="+a+", b="+b);
     _prevA.set(a.loc);
     _prevB.set(b.loc);
     grid.put(b.loc, a);
     grid.put(a.loc, b);
     a.loc.set(b.loc);
     b.loc.set(_prevA);
-    a.state = Cell.SWAPPED;
-    b.state = Cell.SWAPPED;
-  } else if (a != null &&  a.state == Cell.CAN_SWAP) {
+    a.mode = CellMode.SWAPPED;
+    b.mode = CellMode.SWAPPED;
+    if (debug) println("... swapped cells a="+a+", b="+b);
+  } 
+  else if (a != null &&  a.mode == CellMode.CAN_SWAP) {
+    if (debug) println("... swapping a "+a+" with empty loc "+locB);
     moveCell(a, locB);
-  } else if (b != null && b.state == Cell.CAN_SWAP) {
-        moveCell(b, locA);
+  } 
+  else if (b != null && b.mode == CellMode.CAN_SWAP) {
+    if (debug) println("... swapping b"+b+" with empty loc "+locA);
+    moveCell(b, locA);
+  } 
+  else {
+    if (debug) println("swapCells did nothing");
   }
 }
 
@@ -351,5 +363,11 @@ public void keyPressed() {
   else if (keyCode == ENTER) {
     run = true;
     singleStep = false;
+  }
+  else if (key == 'B') {
+    bsh.Console.main(new String[] {
+      "util.bsh"
+    }
+    );
   }
 }

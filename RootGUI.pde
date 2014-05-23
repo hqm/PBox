@@ -5,6 +5,9 @@ ItemListener {
   JLabel clockLabel = new JLabel("Clock: 0", JLabel.LEFT);
   JLabel phaseLabel = new JLabel("Phase: 0", JLabel.LEFT);
 
+  JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
+
+
   JMenuItem saveConfigItem = new JMenuItem("Save Config");
   JMenuItem loadConfig1 = new JMenuItem("Load Config 1");
   JMenuItem loadConfig2 = new JMenuItem("Load Config 2");
@@ -37,14 +40,18 @@ ItemListener {
 
     content.add(clockLabel);
     content.add(phaseLabel);
+    content.add(help);
   }
 
 
   void actionPerformed(ActionEvent e) {
-    app.println("handle action "+e.getActionCommand());
+    PBox.println("handle action "+e.getActionCommand());
   }
 
   void itemStateChanged(ItemEvent e) {
-    app.println("item state changed "+e);
+    PBox.println("item state changed "+e);
   }
+  
+  static final String HELP_STRING = "<html><br><hr>Help<hr>double-click: reset camera position<br>'B': Beanshell console window<br></html>";
+
 }
