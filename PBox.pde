@@ -30,6 +30,7 @@ import bsh.*;
 PeasyCam cam;
 boolean singleStep = false;
 boolean run = false;
+boolean debug = true;
 
 int clock = 0;
 
@@ -50,7 +51,7 @@ PVector cursorPos = new PVector(0, 0, 0);
 PVector p1 = new PVector(0, 0, 0);
 PVector p2 = new PVector(0, 0, 0);
 PVector p3 = new PVector(0, 0, 0);
-PVector p4 = new PVector(0, 0, 0);
+PVector target = new PVector(0, 0, 0);
 PVector delta = new PVector(0, 0, 0);
 
 
@@ -105,9 +106,11 @@ void setup() {
 }
 
 void addCell(int x, int y, int z, int state) {
+  Cell cell = new Cell(x, y, z, state);  
+  grid.put(cell.loc, cell);
   if ((x+y+z)%2 == 0) {
     // real
-    realCells.add(new Cell(x, y, z, state));
+    realCells.add(cell);
   } 
   else {
     imagCells.add(new Cell(x, y, z, state));
@@ -216,33 +219,52 @@ void drawCells(ArrayList<Cell> cells) {
   }
 }
 
-// Returns the cell which is in the grid at position c+delta
-Cell findCell(Cell c, PVector delta) {
-  p1.set(c.loc);
-  p1.add(delta);
-  Cell r = grid.get(p1);
-}
 
 void proposeSwap(Cell c, PVector target) {
-  
+  if (debug) println("proposeSwap("+c.loc+"<=>"+target);
+  Cell other = grid.get(target);
+  PVector otherSwapLoc = c.swapTarget;
+  if (otherSwapLoc == null) { // no cell at other location
+    c.swapTarget= target;
+  } else if (! otherSwapLoc.equals(target)) { // conflicting swap, other cell swapping with someone else
+    c.swapState = Cell.CONFLICT;
+  } else {
+    // other cell is already swapping with us, everything is groovy
+  }     
 }
+
+
+void clearSwaps(ArrayList<Cell> cells) {
+  for (Cell cell : cells) {
+    cell.clearSwaps();
+  }
+}
+
+PVector deltaX = new PVector(1, 0, 0);
+PVector deltaY = new PVector(0, 1, 0);
+PVector deltaZ = new PVector(0, 0, 1);
 
 
 void computeNextStep() {
   int phase = clock % 6;
+  clearSwaps(realCells);
+  clearSwaps(imagCells);
 
-  if (phase == 1) {
+  if (phase == 0) {
     for (Cell cell: realCells) {
-      delta.x = 1; 
-      delta.y = 0; 
-      delta.z = 0;
+      if (debug) println("eval cell "+cell.loc);
+      PVector.add(cell.loc, deltaX, p1); // p1 = cell + delta
       // position of cell to right
-      Cell r = findCell(cell, delta);
+      Cell r = grid.get(p1);
+      if (debug) println("found cell at "+delta+"="+r);
 
 
 
       if (r != null && r.state == 1 && cell.state == 1) {
-        proposeSwap(r, p1); // propose a swap to the right, i.e., repel
+        PVector.add(p1, deltaX, p2); // p2 = rx+1
+        p2.add(deltaX); //
+
+        proposeSwap(r, p2); // propose a swap to the right, i.e., repel
       }
       // xy / real => imag
       /*
