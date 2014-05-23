@@ -30,6 +30,6 @@ public class Cell {
   public CellMode mode = CellMode.CAN_SWAP;
 
   public String toString() {
-    return "<Cell "+loc+" s="+state+" swapState="+mode+">";
+    return "Cell:Box"+loc+" s="+state+" swapState="+mode;
   }
 }

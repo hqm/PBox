@@ -1,4 +1,4 @@
-// 3d cellular automata //<>//
+// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 
 import peasy.test.*;
 import peasy.org.apache.commons.math.*;
@@ -87,6 +87,7 @@ RootGUI statusFrame = null;
 void updateStatusFrame() {
   statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clock%6);
   statusFrame.phaseLabel.setText("Phase: "+clock%6);
+  statusFrame.debugLabel.setText("Debug: "+debug);
 }
 void setup() {
   size(1000, 800, P3D);
@@ -108,7 +109,7 @@ void setup() {
   cam = new PeasyCam(this, 300);
   cam.setMinimumDistance(50);
   cam.setMaximumDistance(500);
-  initCells();
+  loadConfig(2);
 }
 
 void addCell(int x, int y, int z, int state) {
@@ -117,9 +118,8 @@ void addCell(int x, int y, int z, int state) {
   if ((x+y+z)%2 == 0) {
     // real
     realCells.add(cell);
-  } 
-  else {
-    imagCells.add(new Cell(x, y, z, state));
+  } else {
+    imagCells.add(cell);
   }
 }
 
@@ -130,14 +130,27 @@ void clearWorld() {
   imagCells.clear();
 }
 
-void initCells() {
+void loadConfig(int n) {
   clearWorld();
-  initConfig1();
+  switch(n) {
+  case 1:
+    initConfig1();
+    break;
+  case 2:
+    initConfig2();
+    break;
+  }
 }
 
 void initConfig1() {
   addCell(0, 0, 0, 1);
   addCell(1, 0, 0, 1);
+}
+
+void initConfig2() {
+  addCell(0, 0, 0, 1);
+  addCell(1, 0, 0, 1);
+  addCell(4, 0, 0, 1);
 }
 
 void drawGrid() {
@@ -170,8 +183,7 @@ void draw() {
   textSize(10);
   if (run ) {
     text("clock: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
-  } 
-  else {
+  } else {
     text("paused: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   }
 
@@ -215,8 +227,7 @@ void drawCells(ArrayList<Cell> cells) {
 
     if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // real
       fill( (cell.state == 1) ? realColors[0] : realColors[1] );
-    } 
-    else { // imaginary
+    } else { // imaginary
       fill( (cell.state == 1) ? imagColors[0] : imagColors[1] );
     }
 
@@ -230,7 +241,9 @@ void drawCells(ArrayList<Cell> cells) {
 // we push the target loc B onto the location A's swaps list.
 // 
 // We also push the location A onto target location B's swaps list.
-void proposeSwap(PVector a, PVector b) {
+void proposeSwap(PVector oa, PVector ob) {
+  PVector a = new PVector().set(oa); //copy the PVector objects
+  PVector b = new PVector().set(ob);
   if (debug) println("proposeSwap("+a+"<=>"+b);
 
   ArrayList<PVector> swaps_a = swaps.get(a);
@@ -252,36 +265,38 @@ void proposeSwap(PVector a, PVector b) {
   }
 }
 
-void clearSwaps(ArrayList<Cell> cells) {
+void clearSwapState(ArrayList<Cell> cells) {
   for (Cell cell : cells) {
     cell.mode = CellMode.CAN_SWAP;
   }
-  swaps.clear();
 }
 
 PVector deltaX = new PVector(1, 0, 0);
 PVector deltaY = new PVector(0, 1, 0);
 PVector deltaZ = new PVector(0, 0, 1);
 
-
 void computeNextStep() {
   int phase = clock % 6;
-  clearSwaps(realCells);
-  clearSwaps(imagCells);
+  swaps.clear();
+
+  clearSwapState(realCells);
+  clearSwapState(imagCells);
 
   if (phase == 0) {
 
-    for (Cell cell: realCells) {
-      if (debug) println("eval cell "+cell.loc);
+    for (Cell cell : realCells) {
       PVector.add(cell.loc, deltaX, p1); // p1 := cell + delta
+      if (debug) println("eval "+cell.loc+", read cell @+ deltaX => p1  "+p1);
+
       // position of cell to right
       Cell r = grid.get(p1);
-      if (debug) println("found cell at "+p1+"="+r);
-      if (r != null && r.state == 1 && cell.state == 1) {
-        PVector.add(p1, deltaX, p2); // p2 = rx+1
-        p2.add(deltaX); //
-
-        proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
+      if (r != null) {
+        if (debug) println("found cell at p1 "+p1+"="+r);
+        if (r.state == 1 && cell.state == 1) {
+          PVector.add(p1, deltaX, p2); // p2 = rx+1
+          p2.add(deltaX); // rx+2
+          proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
+        }
       }
     }
   }
@@ -291,9 +306,10 @@ void computeNextStep() {
 
 // Loop over all proposed swaps, and only swap two cells when they are the only designated swaps for each other
 void doSwaps() {
-  for (Map.Entry entry : swaps.entrySet()) {
+  for (Map.Entry entry : swaps.entrySet ()) {
     PVector locA = (PVector) entry.getKey();  
-    ArrayList<PVector> swapsA = (ArrayList<PVector>) entry.getValue();
+    ArrayList<PVector> swapsA = (ArrayList<PVector>) entry.getValue(); //<>//
+    if (debug) println("locA = "+locA+" swapsA="+swapsA);
     if (swapsA.size() > 1) {
       if (debug) println("evalSwap  more than one proposed swap at "+locA+" = "+swapsA);
       continue; // we're designated to swap with more than one target, so do no swap
@@ -316,6 +332,7 @@ void moveCell(Cell a, PVector dest) {
   if (debug) println("moveCell "+a+" to "+dest);
   grid.put(a.loc, null); // remove cell from current grid pos
   a.loc.set(dest); // copy dest location value
+  if (debug) println("a.loc = "+a.loc);
   grid.put(dest, a);
   a.mode = CellMode.SWAPPED;
   if (debug) println(".... moved "+a);
@@ -339,16 +356,13 @@ void swapCells(PVector locA, PVector locB) {
     a.mode = CellMode.SWAPPED;
     b.mode = CellMode.SWAPPED;
     if (debug) println("... swapped cells a="+a+", b="+b);
-  } 
-  else if (a != null &&  a.mode == CellMode.CAN_SWAP) {
+  } else if (a != null &&  a.mode == CellMode.CAN_SWAP) {
     if (debug) println("... swapping a "+a+" with empty loc "+locB);
     moveCell(a, locB);
-  } 
-  else if (b != null && b.mode == CellMode.CAN_SWAP) {
+  } else if (b != null && b.mode == CellMode.CAN_SWAP) {
     if (debug) println("... swapping b"+b+" with empty loc "+locA);
     moveCell(b, locA);
-  } 
-  else {
+  } else {
     if (debug) println("... swapCells did nothing");
   }
 }
@@ -359,15 +373,15 @@ public void keyPressed() {
   if (key == ' ') { // SPACE char means single step n clock steps ( one action time )
     run = false;
     singleStep = true;
-  }
-  else if (keyCode == ENTER) {
+  } else if (keyCode == ENTER) {
     run = true;
     singleStep = false;
-  }
-  else if (key == 'B') {
+  } else if (key == 'B') {
     bsh.Console.main(new String[] {
       "util.bsh"
     }
     );
+  } else if (key == 'D') {
+    debug = !debug;
   }
 }
