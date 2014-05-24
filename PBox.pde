@@ -65,6 +65,7 @@ public ArrayList<Cell> oddCells = new ArrayList<Cell>();
 public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
 // store state of all cells, so we can reset back to original config in RAM
 public ArrayList<Cell>  stashCells = new ArrayList<Cell>();
+int stashPhase = 0;
 
 // for drawing center of mass trails
 public PVector[] trail = new PVector[trailSize];
@@ -84,7 +85,7 @@ void resetGrid() {
 
 
 // Keep a copy of the world state so we can easily reset it during experiments
-void stashCells() {
+void stashCells(int phase) {
   stashCells.clear();
   for (Cell cell : evenCells) {
     stashCells.add(cell.copy());
@@ -92,14 +93,18 @@ void stashCells() {
   for (Cell cell : oddCells) {
     stashCells.add(cell.copy());
   }
+  stashPhase = phase;
 }
 
 void restoreFromStash() {
   clearWorld();
+  run = false;
+  singleStep = true;
   for (Cell cell : stashCells) {
     addCell(cell.loc, cell.state);
   }
   resetGrid();
+  clock = stashPhase;
 }
 
 void addCell(Coord c, int state) {
@@ -213,6 +218,8 @@ void clearWorld() {
   evenCells.clear();
   oddCells.clear();
   clock = 0;
+  singleStep = false;
+  run = false;
 }
 
 void loadConfig(int n) {
@@ -225,7 +232,7 @@ void loadConfig(int n) {
     initConfig2();
     break;
   }
-  stashCells();
+  stashCells(0);
 }
 
 void initConfig1() {
@@ -570,6 +577,15 @@ void toggleCellAtCursor() {
     }
   }
 }
+void toggleRun() {
+  if (run) {
+    run = false;
+    singleStep = true;
+  } else {
+    run = true;
+    singleStep = false;
+  }
+}
 
 void toggleTrails() {
   trails = !trails;
@@ -590,13 +606,7 @@ public void keyPressed() {
     run = false;
     singleStep = true;
   } else if (key == 'r') {
-    if (!run) {
-      run = true;
-      singleStep = false;
-    } else {
-      run = false;
-      singleStep = true;
-    }
+    toggleRun();
   } else if (key == 'B') {
     bsh.Console.main(new String[] {
       "util.bsh"
@@ -678,6 +688,9 @@ void placeModule() {
 // get json from current config
 String getConfigCSV() {
   StringBuffer buf = new StringBuffer();
+  // write out the clock phase as first line
+  buf.append(clockPhase()+"\n");
+
   for (Cell cell : grid.values ()) {
     buf.append(cell.getCSV() + "\n");
   }
@@ -708,16 +721,23 @@ void saveConfigToFile() {
 }
 
 void loadConfigFromFile() {
+  clearWorld();
+
   FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
 
   //Attaching Filter to JFileChooser object
   chooser.addChoosableFileFilter(pboxFilter);
   int returnVal = chooser.showOpenDialog(null);
+  int phase = 0;
   if (returnVal == JFileChooser.APPROVE_OPTION) {
     try {
       String path=chooser.getSelectedFile().getAbsolutePath();
       BufferedReader in = new BufferedReader(new FileReader(path));
       String line = null;
+      // get phase
+      line = in.readLine();
+      phase = Integer.parseInt(line.trim());
+
       while (true) {
         line = in.readLine();
         if (line == null) break;
@@ -735,6 +755,8 @@ void loadConfigFromFile() {
       e.printStackTrace();
     }
   }
+  stashCells(phase);
+  clock = phase;
 }
 
 void loadModuleFromFile() {
@@ -748,6 +770,11 @@ void loadModuleFromFile() {
       String path=chooser.getSelectedFile().getAbsolutePath();
       BufferedReader in = new BufferedReader(new FileReader(path));
       String line = null;
+      // get phase
+      line = in.readLine();
+      int phase = Integer.parseInt(line.trim());
+      // we're not using phase in this right now, module just gets plunked down at current phase
+
       while (true) {
         line = in.readLine();
         if (line == null) break;

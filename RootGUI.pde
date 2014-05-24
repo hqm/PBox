@@ -105,17 +105,11 @@ ItemListener {
       PBox.println("clear world");
       app.loadConfig(0);
     } else if (cmd.equals("UPDATE")) {
-      app.stashCells();
+      app.stashCells(app.clockPhase());
     } else if (cmd.equals("RESET")) {
       app.restoreFromStash();
     } else if (cmd.equals("RUN/STOP")) {
-      if (app.run) {
-        app.run = false;
-        app.singleStep = true;
-      } else {
-        app.run = true;
-        app.singleStep = false;
-      }
+      app.toggleRun();
     } else if (cmd.equals("STEP")) {
         app.run = false;
         app.singleStep = true;
