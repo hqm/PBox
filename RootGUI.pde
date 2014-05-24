@@ -16,8 +16,10 @@ ItemListener {
 
   JMenuItem saveConfigItem = new JMenuItem("Save Config");
   JMenuItem clearItem = new JMenuItem("Clear");
-  JMenuItem loadConfig1 = new JMenuItem("Load Config 1");
-  JMenuItem loadConfig2 = new JMenuItem("Load Config 2");
+  JMenuItem loadConfig = new JMenuItem("Load Config");
+  JMenuItem loadModule = new JMenuItem("Load Module");
+
+
   JMenu file = new JMenu("File");
 
   PBox app;
@@ -30,15 +32,17 @@ ItemListener {
 
     JMenuBar menuBar = new JMenuBar();
 
+    file.add(clearItem);
+    clearItem.addActionListener(this);
 
     file.add(saveConfigItem);
-    file.add(clearItem);
-    file.add(loadConfig1);
-    file.add(loadConfig2);
-    loadConfig2.addActionListener(this );
-    clearItem.addActionListener(this);
-    loadConfig1.addActionListener(this );
     saveConfigItem.addActionListener(this );
+
+    file.add(loadConfig);
+    loadConfig.addActionListener(this );
+
+    file.add(loadModule);
+    loadModule.addActionListener(this );
 
     menuBar.add(file);
     setJMenuBar(menuBar);
@@ -62,11 +66,11 @@ ItemListener {
     PBox.println("handle action "+e.getActionCommand());
     String cmd = e.getActionCommand();
     if (cmd.equals("Save Config")) {
-      app.saveConfig();
-    } else if (cmd.equals("Load Config 1")) {
-      app.loadConfig(1);
-    } else if (cmd.equals("Load Config 2")) {
-      app.loadConfig(2);
+      app.saveConfigToFile();
+    } else if (cmd.equals("Load Config")) {
+      app.loadConfigFromFile();
+    } else if (cmd.equals("Load Module")) {
+      app.loadModuleFromFile();
     } else if (cmd.equals("Clear")) {
       PBox.println("clear world");
       app.loadConfig(0);
@@ -84,5 +88,6 @@ ItemListener {
     +"z: forward/reverse direction"
     +"s: toggle fast/slow"
     +"w: wrap mode"
+    +"p: place module"
     +"</html>";
 }

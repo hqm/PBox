@@ -11,19 +11,15 @@ import processing.event.*;
 import processing.opengl.*; 
 //
 
-import java.util.HashMap; 
-import java.util.Map; 
+import java.util.*; 
 import java.util.Map.Entry; 
-import java.util.ArrayList; 
-import java.util.Collection;
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
+import java.io.*; 
+
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import javax.swing.*;
+
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.*;
@@ -36,7 +32,8 @@ PeasyCam cam;
 boolean singleStep = false;
 boolean run = false;
 boolean fast = true;
-boolean debug = true;
+boolean debug = false;
+boolean placingModule = false;
 
 int clock = 0;
 int fastclock = 0;
@@ -57,6 +54,8 @@ public HashMap<Coord, ArrayList<Coord>> swaps = new HashMap<Coord, ArrayList<Coo
 public ArrayList<Cell> realCells = new ArrayList<Cell>();
 // List of cells in imaginary plane
 public ArrayList<Cell> imagCells = new ArrayList<Cell>();
+
+public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
 
 
 public Coord cursorPos = new Coord(0, 0, 0);
@@ -225,6 +224,7 @@ void draw() {
   noStroke();
   drawCells(realCells);
   drawCells(imagCells);
+  drawModuleCells();
 
   drawCursor();
   drawGrid();
@@ -514,24 +514,167 @@ public void keyPressed() {
     cursorPos.z -= 1;
     if (wrap) cursorPos.wrap(gridSize);
   } else if (keyCode == ENTER) {
-    toggleCellAtCursor();
+    if (placingModule) {
+      placingModule = false;
+      moduleCells.clear();
+    } else {
+      toggleCellAtCursor();
+    }
+      
   } else if (key == 's') {
     fast = !fast;
   } else if (key == 'w') {
     wrap = !wrap;
+  } else if (key == 'p') {
+    placingModule = true;
+    placeModule();
   }
 }
 
-// write out current config
-void saveConfig() {
-  Collection<Cell> l= grid.values ();
-  print("[");
-  int n = 0;
-  for (Cell cell : l) {
 
-    print(cell.getJson());
-    if (n  < l.size()-1) println(",");
-    n++;
+void placeModule() {
+  // copy module cells to workspace grid
+  // we are going to overwrite any cells we land on
+
+  for (Cell cell : moduleCells) {
+    Cell target = grid.get(cell.loc);
+    if (target != null) { //collision, nuke the target cell
+      deleteCell(target);
+    }
+    int x = cell.loc.x + cursorPos.x;
+    int y = cell.loc.y + cursorPos.y;
+    int z = cell.loc.z + cursorPos.z;
+    grid.put(cell.loc, cell);
+    if ((x+y+z)%2 == 0) {
+      // real
+      realCells.add(cell);
+    } else {
+      imagCells.add(cell);
+    }
   }
-  println("]");
+  
+}
+// get json from current config
+String getConfigCSV() {
+  StringBuffer buf = new StringBuffer();
+  for (Cell cell : grid.values ()) {
+    buf.append(cell.getCSV() + "\n");
+  }
+  return buf.toString();
+}
+
+
+void saveConfigToFile() {
+  JFileChooser chooser = new JFileChooser();
+  chooser.setFileFilter(chooser.getAcceptAllFileFilter());
+  int returnVal = chooser.showSaveDialog(null);
+  if (returnVal == JFileChooser.APPROVE_OPTION) 
+  {
+    String path=chooser.getSelectedFile().getAbsolutePath();
+    String filename=chooser.getSelectedFile().getName();
+    if (!(filename.indexOf(".")>0) && !path.endsWith(".pbox")) {
+      path = path +".pbox";
+    }
+    try {
+      FileWriter fout = new FileWriter(path);
+      fout.write(getConfigCSV());
+      fout.close();
+    } 
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+
+void loadConfigFromFile() {
+  JFileChooser chooser = new JFileChooser();
+
+  FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
+
+  //Attaching Filter to JFileChooser object
+  chooser.addChoosableFileFilter(pboxFilter);
+  int returnVal = chooser.showOpenDialog(null);
+  if (returnVal == JFileChooser.APPROVE_OPTION) {
+    try {
+      String path=chooser.getSelectedFile().getAbsolutePath();
+      BufferedReader in = new BufferedReader(new FileReader(path));
+      String line = null;
+      while (true) {
+        line = in.readLine();
+        if (line == null) break;
+        String vals[] = line.trim().split(",");
+        int x = Integer.parseInt(vals[0]);
+        int y = Integer.parseInt(vals[1]);
+        int z = Integer.parseInt(vals[2]);
+        int s = Integer.parseInt(vals[3]);
+        addCell(x, y, z, s);
+      }
+
+      in.close();
+    } 
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+
+
+void loadModuleFromFile() {
+  JFileChooser chooser = new JFileChooser();
+
+  FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
+
+  //Attaching Filter to JFileChooser object
+  chooser.addChoosableFileFilter(pboxFilter);
+  int returnVal = chooser.showOpenDialog(null);
+  if (returnVal == JFileChooser.APPROVE_OPTION) {
+    try {
+      String path=chooser.getSelectedFile().getAbsolutePath();
+      BufferedReader in = new BufferedReader(new FileReader(path));
+      String line = null;
+      while (true) {
+        line = in.readLine();
+        if (line == null) break;
+        String vals[] = line.trim().split(",");
+        int x = Integer.parseInt(vals[0]);
+        int y = Integer.parseInt(vals[1]);
+        int z = Integer.parseInt(vals[2]);
+        int s = Integer.parseInt(vals[3]);
+        addModuleCell(x, y, z, s);
+      }
+
+      in.close();
+    } 
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+
+void addModuleCell(int x, int y, int z, int state) {
+  Cell cell = new Cell(x, y, z, state);  
+  moduleCells.add(cell);
+}
+
+
+// Draw the module cells in some other tint to distinguish them
+void drawModuleCells() {
+
+  for (Cell cell : moduleCells) {
+    pushMatrix();
+    translate(
+    (cell.loc.x + cursorPos.x )*cellSize, 
+    (cell.loc.y + cursorPos.y)*cellSize, 
+    (cell.loc.z+ cursorPos.z)*cellSize
+      );
+
+    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // real
+      fill( (cell.state == 1) ? realColors[0] : realColors[1], 100);
+    } else { // imaginary
+      fill( (cell.state == 1) ? imagColors[0] : imagColors[1], 100);
+    }
+
+    box(cellSize);
+    popMatrix();
+  }
 }

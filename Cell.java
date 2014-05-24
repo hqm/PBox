@@ -32,8 +32,8 @@ public class Cell {
   public String toString() {
     return "<Cell:"+loc+" s="+state+" swapState="+mode+">";
   }
-  public String getJson() {
-    return("{\"x\": "+loc.x+", \"y\": "+loc.y+",\"z\": "+loc.z+","+
-      "\"s\": "+ state+"}");
+
+  public String getCSV() {
+    return (loc.x+","+loc.y+","+loc.z+","+state);
   }
 }
