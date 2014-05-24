@@ -93,6 +93,18 @@ ItemListener {
       app.stashCells();
     } else if (cmd.equals("RESET")) {
       app.restoreFromStash();
+    } else if (cmd.equals("RUN/STOP")) {
+      if (app.run) {
+        app.run = false;
+        app.singleStep = true;
+      } else {
+        app.run = true;
+        app.singleStep = false;
+      }
+    } else if (cmd.equals("STEP")) {
+      app.singleStep = true;
+    } else if (cmd.equals("CLEAR")) {
+      app.clearWorld();
     }
   }
 

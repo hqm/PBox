@@ -728,7 +728,11 @@ void drawModuleCells() {
       fill( (cell.state == 1) ? imagColors[0] : imagColors[1], 100);
     }
 
-    box(cellSize);
+    if (useSphere) {
+      sphere(cellSize/2);
+    } else {
+      box(cellSize);
+    }
     popMatrix();
   }
 }
