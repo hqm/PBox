@@ -7,8 +7,6 @@ ItemListener {
   JLabel directionLabel = new JLabel("Direction: forward", JLabel.LEFT);
   JLabel speedLabel = new JLabel("Speed: fast", JLabel.LEFT);
   JLabel wrapLabel = new JLabel("Wrap: true", JLabel.LEFT);
-
-
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
@@ -18,9 +16,15 @@ ItemListener {
   JMenuItem clearItem = new JMenuItem("Clear");
   JMenuItem loadConfig = new JMenuItem("Load Config");
   JMenuItem loadModule = new JMenuItem("Load Module");
-
-
   JMenu file = new JMenu("File");
+
+  JButton updateButton = new JButton("UPDATE");
+  JButton resetButton = new JButton("RESET");
+  JButton clearButton = new JButton("CLEAR");
+  JButton stepButton = new JButton("STEP");
+  JButton runButton = new JButton("RUN/STOP");
+
+
 
   PBox app;
 
@@ -29,6 +33,12 @@ ItemListener {
     println("instantiating RootGUI");
     this.app = app;
 
+
+    updateButton.addActionListener(this);
+    resetButton.addActionListener(this);
+    clearButton.addActionListener(this);
+    stepButton.addActionListener(this);
+    runButton.addActionListener(this);
 
     JMenuBar menuBar = new JMenuBar();
 
@@ -51,6 +61,11 @@ ItemListener {
     Container content = getContentPane();
     content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
 
+    content.add(updateButton);
+    content.add(resetButton);
+    content.add(clearButton);
+    content.add(stepButton);
+    content.add(runButton);
     content.add(clockLabel);
     content.add(phaseLabel);
     content.add(directionLabel);
@@ -74,6 +89,10 @@ ItemListener {
     } else if (cmd.equals("Clear")) {
       PBox.println("clear world");
       app.loadConfig(0);
+    } else if (cmd.equals("UPDATE")) {
+      app.stashCells();
+    } else if (cmd.equals("RESET")) {
+      app.restoreFromStash();
     }
   }
 
@@ -84,11 +103,12 @@ ItemListener {
   static final String HELP_STRING = "<html><br><hr>Help<hr>"
     +"double-click: reset camera position<br>"
     +"B: Beanshell console window<br>"
-    +"D: toggle debug logging"
-    +"z: forward/reverse direction"
-    +"s: toggle fast/slow"
-    +"w: wrap mode"
-    +"p: place module"
-    +"ENTER: toggle cell/end module mode"
+    +"D: toggle debug logging<br>"
+    +"z: forward/reverse direction<br>"
+    +"s: toggle fast/slow<br>"
+    +"w: wrap mode<br>"
+    +"p: place module<br>"
+    +"ENTER: toggle cell/end module mode<br>"
+    +"q: toggle spherical cells<br>"
     +"</html>";
 }

@@ -24,6 +24,8 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.*;
 
+
+
 // Beanshell interpreter for debugging
 import bsh.*;
 
@@ -34,6 +36,7 @@ boolean run = false;
 boolean fast = true;
 boolean debug = false;
 boolean placingModule = false;
+boolean useSphere = true;
 
 int clock = 0;
 int fastclock = 0;
@@ -56,6 +59,47 @@ public ArrayList<Cell> realCells = new ArrayList<Cell>();
 public ArrayList<Cell> imagCells = new ArrayList<Cell>();
 
 public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
+// store state of all cells, so we can reset back to original config in RAM
+public ArrayList<Cell>  stashCells = new ArrayList<Cell>();
+
+
+
+// clear the grid and regenerate it from cells
+void resetGrid() {
+  grid.clear();
+  for (Cell cell : realCells) {
+    grid.put(cell.loc, cell);
+  }
+  for (Cell cell : imagCells) {
+    grid.put(cell.loc, cell);
+  }
+}
+
+
+
+// Keep a copy of the world state so we can easily reset it during experiments
+void stashCells() {
+  stashCells.clear();
+  for (Cell cell : realCells) {
+    stashCells.add(cell.copy());
+  }
+  for (Cell cell : imagCells) {
+    stashCells.add(cell.copy());
+  }
+}
+
+void restoreFromStash() {
+  clearWorld();
+  for (Cell cell : stashCells) {
+    addCell(cell.loc, cell.state);
+  }
+  resetGrid();
+}
+
+void addCell(Coord c, int state) {
+  addCell(c.x, c.y, c.z, state);
+}
+
 
 
 public Coord cursorPos = new Coord(0, 0, 0);
@@ -272,7 +316,11 @@ void drawCells(ArrayList<Cell> cells) {
       fill( (cell.state == 1) ? imagColors[0] : imagColors[1] );
     }
 
-    box(cellSize);
+    if (useSphere) {
+      sphere(cellSize/2);
+    } else {
+      box(cellSize);
+    }
     popMatrix();
   }
 }
@@ -520,7 +568,6 @@ public void keyPressed() {
     } else {
       toggleCellAtCursor();
     }
-      
   } else if (key == 's') {
     fast = !fast;
   } else if (key == 'w') {
@@ -528,6 +575,8 @@ public void keyPressed() {
   } else if (key == 'p') {
     placingModule = true;
     placeModule();
+  } else if (key == 'q') {
+    useSphere = !useSphere;
   }
 }
 
@@ -537,19 +586,19 @@ void placeModule() {
   // we are going to overwrite any cells we land on
 
   for (Cell cell : moduleCells) {
-    
-     Cell ncell = cell.copy();
+
+    Cell ncell = cell.copy();
     ncell.loc.add(cursorPos);
     int x = ncell.loc.x;
     int y = ncell.loc.y ;
     int z = ncell.loc.z ;
-    
+
     Cell target = grid.get(ncell.loc);
     if (target != null) { //collision, nuke the target cell
       deleteCell(target);
     }
-   
-    
+
+
     grid.put(ncell.loc, ncell);
     if ((x+y+z)%2 == 0) {
       // real
@@ -558,7 +607,6 @@ void placeModule() {
       imagCells.add(ncell);
     }
   }
-  
 }
 // get json from current config
 String getConfigCSV() {
