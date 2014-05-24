@@ -641,8 +641,6 @@ void saveConfigToFile() {
 }
 
 void loadConfigFromFile() {
-  JFileChooser chooser = new JFileChooser();
-
   FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
 
   //Attaching Filter to JFileChooser object
@@ -672,9 +670,9 @@ void loadConfigFromFile() {
   }
 }
 
-
-void loadModuleFromFile() {
   JFileChooser chooser = new JFileChooser();
+void loadModuleFromFile() {
+
 
   FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
 
