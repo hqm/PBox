@@ -38,6 +38,7 @@ ItemListener {
     loadConfig2.addActionListener(this );
     clearItem.addActionListener(this);
     loadConfig1.addActionListener(this );
+    saveConfigItem.addActionListener(this );
 
     menuBar.add(file);
     setJMenuBar(menuBar);
@@ -60,7 +61,9 @@ ItemListener {
   void actionPerformed(ActionEvent e) {
     PBox.println("handle action "+e.getActionCommand());
     String cmd = e.getActionCommand();
-    if (cmd.equals("Load Config 1")) {
+    if (cmd.equals("Save Config")) {
+      app.saveConfig();
+    } else if (cmd.equals("Load Config 1")) {
       app.loadConfig(1);
     } else if (cmd.equals("Load Config 2")) {
       app.loadConfig(2);

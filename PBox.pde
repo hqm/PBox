@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map; 
 import java.util.Map.Entry; 
 import java.util.ArrayList; 
+import java.util.Collection;
 import java.io.File; 
 import java.io.BufferedReader; 
 import java.io.PrintWriter; 
@@ -519,4 +520,18 @@ public void keyPressed() {
   } else if (key == 'w') {
     wrap = !wrap;
   }
+}
+
+// write out current config
+void saveConfig() {
+  Collection<Cell> l= grid.values ();
+  print("[");
+  int n = 0;
+  for (Cell cell : l) {
+
+    print(cell.getJson());
+    if (n  < l.size()-1) println(",");
+    n++;
+  }
+  println("]");
 }
