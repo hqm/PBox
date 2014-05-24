@@ -76,7 +76,7 @@ int[] imagColors = {
   color(0, 240, 20) // state = -1  IMG
 };
 
-int gridSize = 20;
+int gridSize = 32;
 int cellSize = 10;
 
 void initJFrame(JFrame f) {
@@ -88,10 +88,17 @@ RootGUI statusFrame = null;
 
 void updateStatusFrame() {
   statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clock%6);
-  statusFrame.phaseLabel.setText("Phase: "+clock%6);
+  statusFrame.phaseLabel.setText("Phase: "+clockPhase());
   statusFrame.debugLabel.setText("Debug: "+debug);
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
 }
+
+int clockPhase() {
+  int phi = clock % 6;
+  if (phi < 0) phi = 6-phi;
+  return phi;
+}
+  
 void setup() {
   size(1000, 800, P3D);
   println("calling setup");
@@ -110,9 +117,9 @@ void setup() {
   }
 
   cam = new PeasyCam(this, 300);
-  cam.setMinimumDistance(50);
-  cam.setMaximumDistance(500);
-  loadConfig(2);
+  cam.setMinimumDistance(100);
+  cam.setMaximumDistance(1000);
+  loadConfig(1);
 }
 
 void addCell(int x, int y, int z, int state) {
@@ -320,6 +327,7 @@ Coord ndeltaZ = new Coord(0, 0, -1);
 
 void computeNextStep() {
   int phase = clock % 6;
+  if (phase < 0) phase = 6 - phase;
   swaps.clear();
 
   clearSwapState(realCells);
@@ -360,16 +368,10 @@ void theRule(ArrayList<Cell> cells, Coord delta) {
   for (Cell cell : cells) {
     Coord.add(cell.loc, delta, p1); // p1 := cell + delta
     if (debug) println("eval "+cell.loc+", read cell @+ deltaX => p1  "+p1);
-
-    // position of cell to right
-    Cell r = grid.get(p1);
-    if (r != null) {
-      if (debug) println("found cell at p1 "+p1+"="+r);
-      if (r.state == 1 && cell.state == 1) {
-        Coord.add(p1, delta, p2); // p2 = rx+1
-        p2.add(delta); // rx+2
-        proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
-      }
+    if (cell.state == 1) {
+      Coord.add(p1, delta, p2); // p2 = rx+1
+      p2.add(delta); // rx+2
+      proposeSwap(p1, p2); // propose a swap to the right, i.e., repel
     }
   }
 }
@@ -466,7 +468,11 @@ public void keyPressed() {
     }
     );
   } else if (key == 'z') {
-    if (forward) {clock--; } else {clock++;}
+    if (forward) {
+      clock--;
+    } else {
+      clock++;
+    }
     forward = !forward;
   } else if (key == 'D') {
     debug = !debug;
