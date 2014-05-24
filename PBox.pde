@@ -105,10 +105,6 @@ void addCell(Coord c, int state) {
 public Coord cursorPos = new Coord(0, 0, 0);
 int cursorVal = 1;
 
-// tmp working registers for coordinates
-Coord p1 = new Coord(0, 0, 0);
-Coord p2 = new Coord(0, 0, 0);
-Coord p3 = new Coord(0, 0, 0);
 Coord target = new Coord(0, 0, 0);
 Coord delta = new Coord(0, 0, 0);
 
