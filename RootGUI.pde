@@ -89,5 +89,6 @@ ItemListener {
     +"s: toggle fast/slow"
     +"w: wrap mode"
     +"p: place module"
+    +"ENTER: toggle cell/end module mode"
     +"</html>";
 }

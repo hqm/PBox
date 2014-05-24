@@ -537,19 +537,25 @@ void placeModule() {
   // we are going to overwrite any cells we land on
 
   for (Cell cell : moduleCells) {
-    Cell target = grid.get(cell.loc);
+    
+     Cell ncell = cell.copy();
+    ncell.loc.add(cursorPos);
+    int x = ncell.loc.x;
+    int y = ncell.loc.y ;
+    int z = ncell.loc.z ;
+    
+    Cell target = grid.get(ncell.loc);
     if (target != null) { //collision, nuke the target cell
       deleteCell(target);
     }
-    int x = cell.loc.x + cursorPos.x;
-    int y = cell.loc.y + cursorPos.y;
-    int z = cell.loc.z + cursorPos.z;
-    grid.put(cell.loc, cell);
+   
+    
+    grid.put(ncell.loc, ncell);
     if ((x+y+z)%2 == 0) {
       // real
-      realCells.add(cell);
+      realCells.add(ncell);
     } else {
-      imagCells.add(cell);
+      imagCells.add(ncell);
     }
   }
   

@@ -22,6 +22,10 @@ public class Cell {
     loc.z = z;
   }
 
+  public Cell copy() {
+    return new Cell(loc.x,loc.y,loc.z,state);
+  }
+
   // track the swaps, to prevent conflicts
   public static final int CAN_SWAP  = 0;
   public static final int CONFLICT = 1;
