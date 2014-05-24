@@ -53,10 +53,10 @@ public HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
 // Using a cell location as a key, holds the target location that this cell is proposed to swap with
 public HashMap<Coord, ArrayList<Coord>> swaps = new HashMap<Coord, ArrayList<Coord>>();
 
-// List of the cells in real plane
-public ArrayList<Cell> realCells = new ArrayList<Cell>();
+// List of the cells in even plane
+public ArrayList<Cell> evenCells = new ArrayList<Cell>();
 // List of cells in imaginary plane
-public ArrayList<Cell> imagCells = new ArrayList<Cell>();
+public ArrayList<Cell> oddCells = new ArrayList<Cell>();
 
 public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
 // store state of all cells, so we can reset back to original config in RAM
@@ -67,10 +67,10 @@ public ArrayList<Cell>  stashCells = new ArrayList<Cell>();
 // clear the grid and regenerate it from cells
 void resetGrid() {
   grid.clear();
-  for (Cell cell : realCells) {
+  for (Cell cell : evenCells) {
     grid.put(cell.loc, cell);
   }
-  for (Cell cell : imagCells) {
+  for (Cell cell : oddCells) {
     grid.put(cell.loc, cell);
   }
 }
@@ -80,10 +80,10 @@ void resetGrid() {
 // Keep a copy of the world state so we can easily reset it during experiments
 void stashCells() {
   stashCells.clear();
-  for (Cell cell : realCells) {
+  for (Cell cell : evenCells) {
     stashCells.add(cell.copy());
   }
-  for (Cell cell : imagCells) {
+  for (Cell cell : oddCells) {
     stashCells.add(cell.copy());
   }
 }
@@ -110,17 +110,17 @@ Coord delta = new Coord(0, 0, 0);
 
 static final int CURSOR_ALPHA = 30;
 
-int[] realColors = {
-  color(255, 0, 0), // state = 1  REAL
-  color(255, 200, 0) // state = -1 REAL
+int[] evenColors = {
+  color(255, 0, 0), // state = 1  EVEN
+  color(255, 200, 0) // state = -1 EVEN
 };
 
-int[] imagColors = {
+int[] oddColors = {
   color(0, 0, 255), // state = 1  IMG
   color(0, 255, 20) // state = -1  IMG
 };
 
-int gridSize = 32;
+int gridSize = 50;
 int cellSize = 10;
 
 void initJFrame(JFrame f) {
@@ -137,6 +137,7 @@ void updateStatusFrame() {
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
   statusFrame.speedLabel.setText("Speed: "+ (fast ? "fast" : "slow"));
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
+  statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
 }
 
 int clockPhase() {
@@ -163,7 +164,7 @@ void setup() {
     frame.setResizable(true);
   }
 
-  cam = new PeasyCam(this, 300);
+  cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(1000);
   loadConfig(1);
@@ -174,10 +175,10 @@ void addCell(int x, int y, int z, int state) {
   Cell cell = new Cell(x, y, z, state);  
   grid.put(cell.loc, cell);
   if ((x+y+z)%2 == 0) {
-    // real
-    realCells.add(cell);
+    // even
+    evenCells.add(cell);
   } else {
-    imagCells.add(cell);
+    oddCells.add(cell);
   }
 }
 
@@ -185,10 +186,10 @@ void addCell(int x, int y, int z, int state) {
 void deleteCell(Cell c) {
   grid.remove(c.loc);
   if ((c.loc.x+c.loc.y+c.loc.z)%2 == 0) {
-    // real
-    realCells.remove(c);
+    // even
+    evenCells.remove(c);
   } else {
-    imagCells.remove(c);
+    oddCells.remove(c);
   }
 }
 
@@ -196,8 +197,8 @@ void deleteCell(Cell c) {
 // clear all cells
 void clearWorld() {
   grid.clear(); 
-  realCells.clear();
-  imagCells.clear();
+  evenCells.clear();
+  oddCells.clear();
   clock = 0;
 }
 
@@ -211,11 +212,13 @@ void loadConfig(int n) {
     initConfig2();
     break;
   }
+  stashCells();
+  
 }
 
 void initConfig1() {
   addCell(0, 0, 0, 1);
-  addCell(1, 0, 0, 1);
+  addCell(2, 1, 0, 1);
 }
 
 void initConfig2() {
@@ -262,13 +265,13 @@ void draw() {
   lights();
 
   noStroke();
-  drawCells(realCells);
-  drawCells(imagCells);
+  drawCells(evenCells);
+  drawCells(oddCells);
   drawModuleCells();
 
   drawCursor();
   drawGrid();
-  
+
   if (debug) {
     drawFromGrid();
   }
@@ -300,6 +303,17 @@ void draw() {
   fastclock++;
 }
 
+void computeNextStep() {
+  clearSwaps();
+  runRule();
+  doSwaps();
+}
+void clearSwaps() {
+  swaps.clear();
+  clearSwapState(evenCells);
+  clearSwapState(oddCells);
+}
+
 void drawCells(ArrayList<Cell> cells) {
 
   for (Cell cell : cells) {
@@ -310,10 +324,10 @@ void drawCells(ArrayList<Cell> cells) {
     (cell.loc.z)*cellSize
       );
 
-    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // real
-      fill( (cell.state == 1) ? realColors[0] : realColors[1] );
+    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // even
+      fill( (cell.state == 1) ? evenColors[0] : evenColors[1] );
     } else { // imaginary
-      fill( (cell.state == 1) ? imagColors[0] : imagColors[1] );
+      fill( (cell.state == 1) ? oddColors[0] : oddColors[1] );
     }
 
     if (useSphere) {
@@ -328,8 +342,8 @@ void drawCells(ArrayList<Cell> cells) {
 // debugging routine to draw the cells based on the grid hashtable contents, to 
 // see if it's consistent
 void drawFromGrid() {
- for (Cell cell : grid.values ()) {
-  
+  for (Cell cell : grid.values ()) {
+
     pushMatrix();
     translate(
     (cell.loc.x )*cellSize, 
@@ -337,10 +351,10 @@ void drawFromGrid() {
     (cell.loc.z)*cellSize
       );
 
-    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // real
-      fill( (cell.state == 1) ? realColors[0] : realColors[1] );
+    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // even
+      fill( (cell.state == 1) ? evenColors[0] : evenColors[1] );
     } else { // imaginary
-      fill( (cell.state == 1) ? imagColors[0] : imagColors[1] );
+      fill( (cell.state == 1) ? oddColors[0] : oddColors[1] );
     }
 
     if (useSphere) {
@@ -364,10 +378,10 @@ void drawCursor() {
   (cursorPos.z)*cellSize
     );
 
-  if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // real
-    fill( (cursorVal == 1) ? realColors[0] : realColors[1], CURSOR_ALPHA );
+  if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // even
+    fill( (cursorVal == 1) ? evenColors[0] : evenColors[1], CURSOR_ALPHA );
   } else { // imaginary
-    fill( (cursorVal == 1) ? imagColors[0] : imagColors[1], CURSOR_ALPHA);
+    fill( (cursorVal == 1) ? oddColors[0] : oddColors[1], CURSOR_ALPHA);
   }
 
   box(cellSize);
@@ -500,8 +514,13 @@ public void keyPressed() {
     run = false;
     singleStep = true;
   } else if (key == 'r') {
-    run = true;
-    singleStep = false;
+    if (!run) {
+      run = true;
+      singleStep = false;
+    } else {
+      run = false;
+      singleStep = true;
+    }
   } else if (key == 'B') {
     bsh.Console.main(new String[] {
       "util.bsh"
@@ -550,6 +569,8 @@ public void keyPressed() {
     placeModule();
   } else if (key == 'q') {
     useSphere = !useSphere;
+  } else if (key == 'h') {
+    cursorPos.set(0, 0, 0);
   }
 }
 
@@ -574,10 +595,10 @@ void placeModule() {
 
     grid.put(ncell.loc, ncell);
     if ((x+y+z)%2 == 0) {
-      // real
-      realCells.add(ncell);
+      // even
+      evenCells.add(ncell);
     } else {
-      imagCells.add(ncell);
+      oddCells.add(ncell);
     }
   }
 }
@@ -590,9 +611,9 @@ String getConfigCSV() {
   return buf.toString();
 }
 
+JFileChooser chooser = new JFileChooser();
 
 void saveConfigToFile() {
-  JFileChooser chooser = new JFileChooser();
   chooser.setFileFilter(chooser.getAcceptAllFileFilter());
   int returnVal = chooser.showSaveDialog(null);
   if (returnVal == JFileChooser.APPROVE_OPTION) 
@@ -643,10 +664,7 @@ void loadConfigFromFile() {
   }
 }
 
-  JFileChooser chooser = new JFileChooser();
 void loadModuleFromFile() {
-
-
   FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
 
   //Attaching Filter to JFileChooser object
@@ -693,10 +711,10 @@ void drawModuleCells() {
     (cell.loc.z+ cursorPos.z)*cellSize
       );
 
-    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // real
-      fill( (cell.state == 1) ? realColors[0] : realColors[1], 100);
+    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // even
+      fill( (cell.state == 1) ? evenColors[0] : evenColors[1], 100);
     } else { // imaginary
-      fill( (cell.state == 1) ? imagColors[0] : imagColors[1], 100);
+      fill( (cell.state == 1) ? oddColors[0] : oddColors[1], 100);
     }
 
     if (useSphere) {

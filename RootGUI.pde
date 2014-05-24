@@ -7,6 +7,7 @@ ItemListener {
   JLabel directionLabel = new JLabel("Direction: forward", JLabel.LEFT);
   JLabel speedLabel = new JLabel("Speed: fast", JLabel.LEFT);
   JLabel wrapLabel = new JLabel("Wrap: true", JLabel.LEFT);
+  JLabel cursorLabel = new JLabel("Cursor: 0,0,0", JLabel.LEFT);
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
@@ -71,6 +72,7 @@ ItemListener {
     content.add(directionLabel);
     content.add(speedLabel);
     content.add(wrapLabel);
+    content.add(cursorLabel);
     content.add(debugLabel);
 
     content.add(help);
@@ -122,5 +124,6 @@ ItemListener {
     +"p: place module<br>"
     +"ENTER: toggle cell/end module mode<br>"
     +"q: toggle spherical cells<br>"
+    +"h: cursor home"
     +"</html>";
 }
