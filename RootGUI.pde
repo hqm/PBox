@@ -111,15 +111,15 @@ ItemListener {
     } else if (cmd.equals("RUN/STOP")) {
       app.toggleRun();
     } else if (cmd.equals("STEP")) {
-        app.run = false;
-        app.singleStep = true;
+      app.run = false;
+      app.singleStep = true;
     } else if (cmd.equals("CLEAR")) {
       app.clearWorld();
     } else if (cmd.equals("TRAILS")) {
       app.toggleTrails();
     } else if (cmd.equals("SLOW/FAST")) {
       app.fast = !app.fast;
-     } else if (cmd.equals("FORWARD/BACK")) {
+    } else if (cmd.equals("FORWARD/BACK")) {
       app.toggleTime();
     }
   }

@@ -42,9 +42,10 @@ int clock = 0;
 int fastclock = 0;
 boolean wrap = true;
 boolean forward = true;
-boolean trails = false;
+// trails = 0:none, 1:every, 2:center-of-mass
+int trails = 0;
 // how many points in trail
-int trailSize = 256;
+int trailSize = 1024;
 int trailPos = 0;
 
 public static PBox app;
@@ -149,7 +150,7 @@ void updateStatusFrame() {
   statusFrame.speedLabel.setText("Speed: "+ (fast ? "fast" : "slow"));
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
   statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
-  statusFrame.trailLabel.setText("Trails: "+ trails);
+  statusFrame.trailLabel.setText("Trails: "+ (trails == 0 ? "none" : (trails == 1 ? "every cell" : "average")));
 }
 
 int clockPhase() {
@@ -294,7 +295,7 @@ void draw() {
   if (debug) {
     drawFromGrid();
   }
-  if (trails) {
+  if (trails > 0) {
     drawTrail();
   }
 
@@ -320,7 +321,7 @@ void draw() {
         clock--;
       }
       singleStep = false;
-      if (trails) {
+      if (trails > 0) {
         // add center of mass coord to trail
         addTrailCrumb();
       }
@@ -329,8 +330,24 @@ void draw() {
   fastclock++;
 }
 
-// Add up the center of mass of all cells as a vector and add it to the trail
+// Adds either the position of all cells, or the center of mass the center of mass of all cells as a vector and add it to the trail
 void addTrailCrumb() {
+  if (trails == 2) {
+    addCOMTrail();
+  } else if (trails == 1) {
+    addEveryCellTrail();
+  }
+}
+
+void addEveryCellTrail() {
+  int n = 0;
+  for (Coord c : grid.keySet ()) {
+    PVector pos = c.pvec();
+    trail[trailPos++ % trail.length] = pos;
+  }
+}
+
+void addCOMTrail() {
   PVector cm = null;
   int n = 0;
   for (Coord c : grid.keySet ()) {
@@ -588,7 +605,9 @@ void toggleRun() {
 }
 
 void toggleTrails() {
-  trails = !trails;
+  trails = (trails+1) % 3;
+  initTrails();
+
   if (debug) println("trails = "+trails);
 }
 
