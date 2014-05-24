@@ -9,6 +9,7 @@ ItemListener {
   JLabel wrapLabel = new JLabel("Wrap: true", JLabel.LEFT);
   JLabel cursorLabel = new JLabel("Cursor: 0,0,0", JLabel.LEFT);
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
+  JLabel trailLabel = new JLabel("Trails: false", JLabel.LEFT);
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
 
@@ -24,6 +25,9 @@ ItemListener {
   JButton clearButton = new JButton("CLEAR");
   JButton stepButton = new JButton("STEP");
   JButton runButton = new JButton("RUN/STOP");
+  JButton speedButton = new JButton("SLOW/FAST");
+  JButton directionButton = new JButton("FORWARD/BACK");
+  JButton trailButton = new JButton("TRAILS");
 
 
 
@@ -40,6 +44,9 @@ ItemListener {
     clearButton.addActionListener(this);
     stepButton.addActionListener(this);
     runButton.addActionListener(this);
+    speedButton.addActionListener(this);
+    directionButton.addActionListener(this);
+    trailButton.addActionListener(this);
 
     JMenuBar menuBar = new JMenuBar();
 
@@ -67,6 +74,11 @@ ItemListener {
     content.add(clearButton);
     content.add(stepButton);
     content.add(runButton);
+    content.add(speedButton);
+    content.add(directionButton);
+    content.add(trailButton);
+
+
     content.add(clockLabel);
     content.add(phaseLabel);
     content.add(directionLabel);
@@ -74,6 +86,7 @@ ItemListener {
     content.add(wrapLabel);
     content.add(cursorLabel);
     content.add(debugLabel);
+    content.add(trailLabel);
 
     content.add(help);
   }
@@ -104,9 +117,16 @@ ItemListener {
         app.singleStep = false;
       }
     } else if (cmd.equals("STEP")) {
-      app.singleStep = true;
+        app.run = false;
+        app.singleStep = true;
     } else if (cmd.equals("CLEAR")) {
       app.clearWorld();
+    } else if (cmd.equals("TRAILS")) {
+      app.toggleTrails();
+    } else if (cmd.equals("SLOW/FAST")) {
+      app.fast = !app.fast;
+     } else if (cmd.equals("FORWARD/BACK")) {
+      app.toggleTime();
     }
   }
 

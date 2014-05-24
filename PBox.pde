@@ -36,12 +36,16 @@ boolean run = false;
 boolean fast = true;
 boolean debug = false;
 boolean placingModule = false;
-boolean useSphere = true;
+boolean useSphere = false;
 
 int clock = 0;
 int fastclock = 0;
 boolean wrap = true;
 boolean forward = true;
+boolean trails = false;
+// how many points in trail
+int trailSize = 256;
+int trailPos = 0;
 
 public static PBox app;
 
@@ -62,6 +66,8 @@ public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
 // store state of all cells, so we can reset back to original config in RAM
 public ArrayList<Cell>  stashCells = new ArrayList<Cell>();
 
+// for drawing center of mass trails
+public PVector[] trail = new PVector[trailSize];
 
 
 // clear the grid and regenerate it from cells
@@ -138,6 +144,7 @@ void updateStatusFrame() {
   statusFrame.speedLabel.setText("Speed: "+ (fast ? "fast" : "slow"));
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
   statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
+  statusFrame.trailLabel.setText("Trails: "+ trails);
 }
 
 int clockPhase() {
@@ -146,10 +153,16 @@ int clockPhase() {
   return phi;
 }
 
+void initTrails() {
+  for (int i = 0; i < trail.length; i++) {
+    trail[i] = null;
+  }
+}
+
 void setup() {
   size(1000, 800, P3D);
   smooth(4);
-
+  initTrails();
   System.setProperty("java.awt.headless", "false");
   System.setProperty("apple.laf.useScreenMenuBar", "true");
   System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
@@ -213,7 +226,6 @@ void loadConfig(int n) {
     break;
   }
   stashCells();
-  
 }
 
 void initConfig1() {
@@ -236,7 +248,7 @@ void drawGrid() {
 
     line(-gridSize*cellSize/2-C, (i-offset)*cellSize+C, C, 
     gridSize*cellSize/2-C, (i-offset)*cellSize+C, C);
-    stroke(125);
+    stroke(140);
   }
 }
 
@@ -250,7 +262,7 @@ void draw() {
 
   rotateX(0);
   rotateY(0);
-  background(255);
+  background(230);
 
   // draw status text
   textMode(SHAPE);
@@ -275,6 +287,9 @@ void draw() {
   if (debug) {
     drawFromGrid();
   }
+  if (trails) {
+    drawTrail();
+  }
 
   // Draw axes 
   pushMatrix();
@@ -298,9 +313,56 @@ void draw() {
         clock--;
       }
       singleStep = false;
+      if (trails) {
+        // add center of mass coord to trail
+        addTrailCrumb();
+      }
     }
   }
   fastclock++;
+}
+
+// Add up the center of mass of all cells as a vector and add it to the trail
+void addTrailCrumb() {
+  PVector cm = null;
+  int n = 0;
+  for (Coord c : grid.keySet ()) {
+    PVector pos = c.pvec();
+    if (cm == null) {
+      cm = pos;
+    } else {
+      cm.add(pos);
+    }
+    n++;
+  }
+  if (cm != null) {
+    cm.div(n);
+    // now we have center of mass point, add to trails
+    trail[trailPos++ % trail.length] = cm;
+  }
+}
+
+
+void drawTrail() {
+  int n = trail.length;
+  noStroke();
+  for (int i = 0; i < n; i++) {
+
+    PVector c = trail[i];
+    if (c != null) {
+      pushMatrix();
+      translate(
+      c.x *cellSize, 
+      c.y*cellSize, 
+      c.z*cellSize
+        );
+
+      fill(0, 255, 0);
+      box(3);
+
+      popMatrix();
+    }
+  }
 }
 
 void computeNextStep() {
@@ -315,7 +377,7 @@ void clearSwaps() {
 }
 
 void drawCells(ArrayList<Cell> cells) {
-
+  noStroke();
   for (Cell cell : cells) {
     pushMatrix();
     translate(
@@ -509,6 +571,20 @@ void toggleCellAtCursor() {
   }
 }
 
+void toggleTrails() {
+  trails = !trails;
+  if (debug) println("trails = "+trails);
+}
+
+void toggleTime() {
+  if (forward) {
+    clock--;
+  } else {
+    clock++;
+  }
+  forward = !forward;
+}
+
 public void keyPressed() {
   if (key == ' ') { // SPACE char means single step n clock steps ( one action time )
     run = false;
@@ -527,12 +603,7 @@ public void keyPressed() {
     }
     );
   } else if (key == 'z') {
-    if (forward) {
-      clock--;
-    } else {
-      clock++;
-    }
-    forward = !forward;
+    toggleTime();
   } else if (key == 'D') {
     debug = !debug;
   } else if (keyCode == UP) {
@@ -571,6 +642,8 @@ public void keyPressed() {
     useSphere = !useSphere;
   } else if (key == 'h') {
     cursorPos.set(0, 0, 0);
+  } else if (key == 't') {
+    toggleTrails();
   }
 }
 

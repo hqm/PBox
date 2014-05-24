@@ -26,7 +26,7 @@
 
 
 import java.io.Serializable;
-
+import processing.core.*;
 /**
  * A class to describe a two or three dimensional vector.
  * <p>
@@ -193,6 +193,9 @@ public class Coord implements Serializable {
     return add(v1, v2, null);
   }
 
+  public PVector pvec() {
+    return new PVector(x,y,z);
+  }
 
   /**
    * Add two vectors into a target vector
