@@ -38,6 +38,7 @@ boolean fast = true;
 boolean debug = true;
 
 int clock = 0;
+int fastclock = 0;
 boolean forward = true;
 
 public static PBox app;
@@ -238,15 +239,18 @@ void draw() {
   popMatrix();
 
   updateStatusFrame();
-  if (run || singleStep ) {
-    computeNextStep();
-    if (forward) {
-      clock++;
-    } else {
-      clock--;
+  if (fast || fastclock%5 == 0) {
+    if (run || singleStep ) {
+      computeNextStep();
+      if (forward) {
+        clock++;
+      } else {
+        clock--;
+      }
+      singleStep = false;
     }
-    singleStep = false;
   }
+  fastclock++;
 }
 
 void drawCells(ArrayList<Cell> cells) {
