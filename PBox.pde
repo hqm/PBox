@@ -39,6 +39,7 @@ boolean debug = true;
 
 int clock = 0;
 int fastclock = 0;
+boolean wrap = true;
 boolean forward = true;
 
 public static PBox app;
@@ -95,6 +96,7 @@ void updateStatusFrame() {
   statusFrame.debugLabel.setText("Debug: "+debug);
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
   statusFrame.speedLabel.setText("Speed: "+ (fast ? "fast" : "slow"));
+  statusFrame.wrapLabel.setText("Wrap: "+ wrap);
 }
 
 int clockPhase() {
@@ -303,6 +305,10 @@ void proposeSwap(Coord oa, Coord ob) {
   Coord a = oa.get();
   Coord b = ob.get();
 
+  if (wrap) {
+    a.wrap(gridSize);
+    b.wrap(gridSize);
+  }
   if (debug) println("proposeSwap("+a+"<=>"+b);
 
   ArrayList<Coord> swaps_a = swaps.get(a);
@@ -490,19 +496,27 @@ public void keyPressed() {
     debug = !debug;
   } else if (keyCode == UP) {
     cursorPos.y -= 1;
+    if (wrap) cursorPos.wrap(gridSize);
   } else if (keyCode == DOWN) {
     cursorPos.y += 1;
+    if (wrap) cursorPos.wrap(gridSize);
   } else if (keyCode == LEFT) {
     cursorPos.x -= 1;
+    if (wrap) cursorPos.wrap(gridSize);
   } else if (keyCode == RIGHT) {
     cursorPos.x += 1;
+    if (wrap) cursorPos.wrap(gridSize);
   } else if (key == 'u') { 
     cursorPos.z += 1;
+    if (wrap) cursorPos.wrap(gridSize);
   } else if (key == 'd') { 
     cursorPos.z -= 1;
+    if (wrap) cursorPos.wrap(gridSize);
   } else if (keyCode == ENTER) {
     toggleCellAtCursor();
   } else if (key == 's') {
     fast = !fast;
+  } else if (key == 'w') {
+    wrap = !wrap;
   }
 }

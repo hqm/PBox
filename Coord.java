@@ -2,27 +2,27 @@
 
 /*
 
-  3-vector of integers
+ 3-vector of integers
  
-  Derived from the Processing project PVector class - http://processing.org
-
-  Copyright (c) 2008 Dan Shiffman
-  Copyright (c) 2008-10 Ben Fry and Casey Reas
-  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General
-  Public License along with this library; if not, write to the
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-  Boston, MA  02111-1307  USA
-*/
+ Derived from the Processing project PVector class - http://processing.org
+ 
+ Copyright (c) 2008 Dan Shiffman
+ Copyright (c) 2008-10 Ben Fry and Casey Reas
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License version 2.1 as published by the Free Software Foundation.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General
+ Public License along with this library; if not, write to the
+ Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ Boston, MA  02111-1307  USA
+ */
 
 
 import java.io.Serializable;
@@ -62,6 +62,14 @@ public class Coord implements Serializable {
   public Coord() {
   }
 
+  public void wrap(int n) {
+    if (x > n/2) x-=n;  
+    if (y > n/2) y-=n;
+    if (z > n/2) z-=n;
+    if (x < -n/2) x+=n;  
+    if (y < -n/2) y+=n;
+    if (z < -n/2) z+=n;
+  }
 
   /**
    * Constructor for a 3D vector.
@@ -141,7 +149,9 @@ public class Coord implements Serializable {
 
   public int[] get(int[] target) {
     if (target == null) {
-      return new int[] { x, y, z };
+      return new int[] { 
+        x, y, z
+      };
     }
     if (target.length >= 2) {
       target[0] = x;
@@ -193,7 +203,7 @@ public class Coord implements Serializable {
    */
   static public Coord add(Coord v1, Coord v2, Coord target) {
     if (target == null) {
-      target = new Coord(v1.x + v2.x,v1.y + v2.y, v1.z + v2.z);
+      target = new Coord(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     } else {
       target.set(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
@@ -406,7 +416,7 @@ public class Coord implements Serializable {
   }
 
   @Override
-  public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
     if (!(obj instanceof Coord))
       return false;
     final Coord p = (Coord) obj;
@@ -414,7 +424,7 @@ public class Coord implements Serializable {
   }
 
   @Override
-  public int hashCode() {
+    public int hashCode() {
     int result = 1;
     result = 31 * result + x;
     result = 31 * result + y*1259;

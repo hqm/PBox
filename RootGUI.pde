@@ -6,6 +6,7 @@ ItemListener {
   JLabel phaseLabel = new JLabel("Phase: 0", JLabel.LEFT);
   JLabel directionLabel = new JLabel("Direction: forward", JLabel.LEFT);
   JLabel speedLabel = new JLabel("Speed: fast", JLabel.LEFT);
+  JLabel wrapLabel = new JLabel("Wrap: true", JLabel.LEFT);
 
 
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
@@ -49,6 +50,7 @@ ItemListener {
     content.add(phaseLabel);
     content.add(directionLabel);
     content.add(speedLabel);
+    content.add(wrapLabel);
     content.add(debugLabel);
 
     content.add(help);
@@ -78,5 +80,6 @@ ItemListener {
     +"D: toggle debug logging"
     +"z: forward/reverse direction"
     +"s: toggle fast/slow"
+    +"w: wrap mode"
     +"</html>";
 }
