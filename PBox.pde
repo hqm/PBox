@@ -381,7 +381,11 @@ void drawTrail() {
       c.z*cellSize
         );
 
-      fill(0, 255, 0);
+      if (trails == 1) {
+        fill(0, 220, 220);
+      } else {
+        fill(0, 255, 0);
+      }
       box(3);
 
       popMatrix();
