@@ -25,6 +25,9 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
+// Set the Rule here
+Rule1 rule = new Rule1();
+
 
 // Beanshell interpreter for debugging
 import bsh.*;
@@ -393,9 +396,10 @@ void drawTrail() {
   }
 }
 
+
 void computeNextStep() {
   clearSwaps();
-  runRule();
+  rule.runRule();
   doSwaps();
 }
 void clearSwaps() {
