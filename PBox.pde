@@ -272,6 +272,10 @@ void draw() {
 
   drawCursor();
   drawGrid();
+  
+  if (debug) {
+    drawFromGrid();
+  }
 
   // Draw axes 
   pushMatrix();
@@ -324,6 +328,35 @@ void drawCells(ArrayList<Cell> cells) {
     popMatrix();
   }
 }
+
+// debugging routine to draw the cells based on the grid hashtable contents, to 
+// see if it's consistent
+void drawFromGrid() {
+ for (Cell cell : grid.values ()) {
+  
+    pushMatrix();
+    translate(
+    (cell.loc.x )*cellSize, 
+    (cell.loc.y)*cellSize, 
+    (cell.loc.z)*cellSize
+      );
+
+    if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // real
+      fill( (cell.state == 1) ? realColors[0] : realColors[1] );
+    } else { // imaginary
+      fill( (cell.state == 1) ? imagColors[0] : imagColors[1] );
+    }
+
+    if (useSphere) {
+      sphere(cellSize/2);
+    } else {
+      box(cellSize);
+    }
+    popMatrix();
+  }
+}
+
+
 
 void drawCursor() {
   hint(DISABLE_DEPTH_TEST);
