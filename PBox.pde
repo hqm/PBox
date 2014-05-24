@@ -34,6 +34,7 @@ import bsh.*;
 PeasyCam cam;
 boolean singleStep = false;
 boolean run = false;
+boolean fast = true;
 boolean debug = true;
 
 int clock = 0;
@@ -65,15 +66,16 @@ Coord p3 = new Coord(0, 0, 0);
 Coord target = new Coord(0, 0, 0);
 Coord delta = new Coord(0, 0, 0);
 
+static final int CURSOR_ALPHA = 30;
 
 int[] realColors = {
-  color(240, 0, 0), // state = 1  REAL
-  color(240, 200, 0) // state = -1 REAL
+  color(255, 0, 0), // state = 1  REAL
+  color(255, 200, 0) // state = -1 REAL
 };
 
 int[] imagColors = {
-  color(0, 0, 240), // state = 1  IMG
-  color(0, 240, 20) // state = -1  IMG
+  color(0, 0, 255), // state = 1  IMG
+  color(0, 255, 20) // state = -1  IMG
 };
 
 int gridSize = 32;
@@ -87,21 +89,23 @@ void initJFrame(JFrame f) {
 RootGUI statusFrame = null;
 
 void updateStatusFrame() {
-  statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clock%6);
+  statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clockPhase());
   statusFrame.phaseLabel.setText("Phase: "+clockPhase());
   statusFrame.debugLabel.setText("Debug: "+debug);
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
+  statusFrame.speedLabel.setText("Speed: "+ (fast ? "fast" : "slow"));
 }
 
 int clockPhase() {
   int phi = clock % 6;
-  if (phi < 0) phi = 6-phi;
+  if (phi < 0) phi = phi+6;
   return phi;
 }
-  
+
 void setup() {
   size(1000, 800, P3D);
-  println("calling setup");
+  smooth(4);
+
   System.setProperty("java.awt.headless", "false");
   System.setProperty("apple.laf.useScreenMenuBar", "true");
   System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
@@ -120,6 +124,7 @@ void setup() {
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(1000);
   loadConfig(1);
+  frameRate(60);
 }
 
 void addCell(int x, int y, int z, int state) {
@@ -185,14 +190,15 @@ void drawGrid() {
 
     line(-gridSize*cellSize/2-C, (i-offset)*cellSize+C, C, 
     gridSize*cellSize/2-C, (i-offset)*cellSize+C, C);
-    stroke(80, 80, 80);
+    stroke(125);
   }
 }
+
+
 
 void draw() {
 
   //        if (singleStep == false && run == false) {
-
 
 
 
@@ -205,19 +211,19 @@ void draw() {
   fill(100, 100, 100);
   textSize(10);
   if (run ) {
-    text("clock: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text("clock: "+clock/6+"#"+clockPhase(), ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   } else {
-    text("paused: "+clock/6+"#"+clock%6, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text("paused: "+clock/6+"#"+clockPhase(), ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   }
 
   lights();
-  drawGrid();
 
   noStroke();
   drawCells(realCells);
   drawCells(imagCells);
 
   drawCursor();
+  drawGrid();
 
   // Draw axes 
   pushMatrix();
@@ -265,6 +271,8 @@ void drawCells(ArrayList<Cell> cells) {
 }
 
 void drawCursor() {
+  hint(DISABLE_DEPTH_TEST);
+
   pushMatrix();
   translate(
   (cursorPos.x )*cellSize, 
@@ -273,13 +281,14 @@ void drawCursor() {
     );
 
   if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // real
-    fill( (cursorVal == 1) ? realColors[0] : realColors[1], 84 );
+    fill( (cursorVal == 1) ? realColors[0] : realColors[1], CURSOR_ALPHA );
   } else { // imaginary
-    fill( (cursorVal == 1) ? imagColors[0] : imagColors[1], 84);
+    fill( (cursorVal == 1) ? imagColors[0] : imagColors[1], CURSOR_ALPHA);
   }
 
   box(cellSize);
   popMatrix();
+  hint(ENABLE_DEPTH_TEST);
 }
 
 // When proposing to swap cell A and B
@@ -326,8 +335,7 @@ Coord ndeltaY = new Coord(0, -1, 0);
 Coord ndeltaZ = new Coord(0, 0, -1);
 
 void computeNextStep() {
-  int phase = clock % 6;
-  if (phase < 0) phase = 6 - phase;
+  int phase = clockPhase();
   swaps.clear();
 
   clearSwapState(realCells);
@@ -490,5 +498,7 @@ public void keyPressed() {
     cursorPos.z -= 1;
   } else if (keyCode == ENTER) {
     toggleCellAtCursor();
+  } else if (key == 's') {
+    fast = !fast;
   }
 }

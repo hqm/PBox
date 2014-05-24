@@ -5,6 +5,8 @@ ItemListener {
   JLabel clockLabel = new JLabel("Clock: 0", JLabel.LEFT);
   JLabel phaseLabel = new JLabel("Phase: 0", JLabel.LEFT);
   JLabel directionLabel = new JLabel("Direction: forward", JLabel.LEFT);
+  JLabel speedLabel = new JLabel("Speed: fast", JLabel.LEFT);
+
 
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
 
@@ -31,10 +33,10 @@ ItemListener {
     file.add(saveConfigItem);
     file.add(clearItem);
     file.add(loadConfig1);
-    loadConfig1.addActionListener(this );
     file.add(loadConfig2);
     loadConfig2.addActionListener(this );
     clearItem.addActionListener(this);
+    loadConfig1.addActionListener(this );
 
     menuBar.add(file);
     setJMenuBar(menuBar);
@@ -46,7 +48,7 @@ ItemListener {
     content.add(clockLabel);
     content.add(phaseLabel);
     content.add(directionLabel);
-
+    content.add(speedLabel);
     content.add(debugLabel);
 
     content.add(help);
@@ -72,8 +74,9 @@ ItemListener {
 
   static final String HELP_STRING = "<html><br><hr>Help<hr>"
     +"double-click: reset camera position<br>"
-    +"'B': Beanshell console window<br>"
-    +"'D': toggle debug logging"
-    +"'z': forward/reverse direction"
+    +"B: Beanshell console window<br>"
+    +"D: toggle debug logging"
+    +"z: forward/reverse direction"
+    +"s: toggle fast/slow"
     +"</html>";
 }
