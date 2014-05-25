@@ -27,7 +27,7 @@ import java.awt.event.*;
 
 int gridSize = 200;
 int cellSize = 4;
-
+int scienceCycles = 100;
 
 
 // Set the Rule here
@@ -47,6 +47,7 @@ boolean placingModule = false;
 boolean useSphere = false;
 boolean writeMovie = false;
 boolean showgrid = true;
+boolean science = false;
 
 int clock = 0;
 int fastclock = 0;
@@ -194,12 +195,17 @@ void setup() {
 
   cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(100);
-  cam.setMaximumDistance(2500);
+  cam.setMaximumDistance(10000);
   loadConfig(2);
   frameRate(10000);
 }
 
 void addCell(int x, int y, int z, int state) {
+  Cell old = grid.get(new Coord(x, y, z));
+  if (old != null) { 
+    deleteCell(old);
+  }
+
   Cell cell = new Cell(x, y, z, state);  
   grid.put(cell.loc, cell);
   if ((x+y+z)%2 == 0) {
@@ -260,6 +266,11 @@ void initConfig2() {
       }
     }
   }
+  addCell(0, 0, 0, 1);
+  addCell(1, 2, 0, 1);
+  addCell(3, 3, 0, 1);
+  addCell(3, 5, 1, 1);
+  addCell(3, 6, 3, 1);
 }
 
 void drawGrid() {
@@ -277,12 +288,23 @@ void drawGrid() {
 
 long startNs = 0;
 long cycleTime = 0;
+void doComputeStep() {
+  computeNextStep();
+  if (forward) {
+    clock++;
+  } else {
+    clock--;
+  }
+}
+void runScienceMode(int n) {
+  for (int i = 0; i < n; i++) {
+    long starttime = System.currentTimeMillis();
+    doComputeStep();
+  }
+  println(clock);
+}
 
-
-void draw() {
-  //        if (singleStep == false && run == false) {
-  startNs = System.nanoTime();
-
+void drawScene() {
   rotateX(0);
   rotateY(0);
   background(230);
@@ -329,16 +351,25 @@ void draw() {
   line(0, 0, 0, 0, 20, 0);
   noStroke();
   popMatrix();
+}
+void draw() {
+  if (science) {
+    drawScene();
+    runScienceMode(scienceCycles);
+    textMode(SHAPE);
+    textSize(50);
+    return;
+  }
+  //        if (singleStep == false && run == false) {
+  startNs = System.nanoTime();
+
+  drawScene();
 
   updateStatusFrame();
   if (fast || fastclock%5 == 0) {
     if (run || singleStep ) {
-      computeNextStep();
-      if (forward) {
-        clock++;
-      } else {
-        clock--;
-      }
+      doComputeStep();
+
       singleStep = false;
       if (trails > 0) {
         // add center of mass coord to trail
@@ -346,7 +377,9 @@ void draw() {
       }
       cycleTime =  System.nanoTime() - startNs  ;
       if (writeMovie) {
-        save(String.format("/tmp/frames/pbframe.%05d.png", clock));
+        String path = String.format("/tmp/frames/pbframe.%05d.png", clock);
+        println("saving image file "+path);
+        save(path);
       }
     }
   }
@@ -705,6 +738,9 @@ public void keyPressed() {
     toggleTrails();
   } else if (key == 'm') {
     writeMovie = !writeMovie;
+  } else if (key == 'S') {
+    println("science = "+science);
+    science = !science;
   }
 }
 
