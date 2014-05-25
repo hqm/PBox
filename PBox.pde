@@ -1,4 +1,4 @@
-// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 
 import peasy.test.*;
 import peasy.org.apache.commons.math.*;
@@ -25,12 +25,13 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-// Set the Rule here
-Rule1 rule = new Rule1();
-Rule2 rule2 = new Rule2();
-Rule3 rule3 = new Rule3();
-Rule4 rule4 = new Rule4();
+int gridSize = 200;
+int cellSize = 4;
 
+
+
+// Set the Rule here
+Rule rule = new Rule1();
 
 
 // Beanshell interpreter for debugging
@@ -44,6 +45,8 @@ boolean fast = true;
 boolean debug = false;
 boolean placingModule = false;
 boolean useSphere = false;
+boolean writeMovie = false;
+boolean showgrid = true;
 
 int clock = 0;
 int fastclock = 0;
@@ -139,8 +142,6 @@ int[] oddColors = {
   color(0, 255, 20) // state = -1  IMG
 };
 
-int gridSize = 50;
-int cellSize = 10;
 
 void initJFrame(JFrame f) {
   f.setSize(250, 600);
@@ -158,6 +159,7 @@ void updateStatusFrame() {
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
   statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
   statusFrame.trailLabel.setText("Trails: "+ (trails == 0 ? "none" : (trails == 1 ? "every cell" : "average")));
+  statusFrame.movieLabel.setText("Write Movie: "+ (writeMovie ? "ON" : "OFF"));
 }
 
 int clockPhase() {
@@ -192,9 +194,9 @@ void setup() {
 
   cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(100);
-  cam.setMaximumDistance(1000);
-  loadConfig(1);
-  frameRate(60);
+  cam.setMaximumDistance(2500);
+  loadConfig(2);
+  frameRate(10000);
 }
 
 void addCell(int x, int y, int z, int state) {
@@ -249,9 +251,15 @@ void initConfig1() {
 }
 
 void initConfig2() {
-  addCell(0, 0, 0, 1);
-  addCell(1, 0, 0, 1);
-  addCell(4, 0, 0, 1);
+  int N = 20;
+  for (int x = -N; x < N; x+=2) {
+    for (int y = -N; y < N; y+=2) {
+      for (int z = -N; z < N; z+=2) {
+        addCell(x, y, z, 1);
+        addCell(x+2, y+1, z, 1);
+      }
+    }
+  }
 }
 
 void drawGrid() {
@@ -267,13 +275,13 @@ void drawGrid() {
   }
 }
 
+long startNs = 0;
+long cycleTime = 0;
 
 
 void draw() {
-
   //        if (singleStep == false && run == false) {
-
-
+  startNs = System.nanoTime();
 
   rotateX(0);
   rotateY(0);
@@ -283,11 +291,15 @@ void draw() {
   textMode(SHAPE);
   fill(100, 100, 100);
   textSize(10);
+
+  String timedir = (forward ? "forward" : "backward");
+
   if (run ) {
-    text("clock: "+clock/6+"#"+clockPhase(), ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text(timedir + " clock: "+clock/6+"#"+clockPhase() + "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   } else {
-    text("paused: "+clock/6+"#"+clockPhase(), ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text(timedir + " paused: "+clock/6+"#"+clockPhase()+ "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   }
+  text("rule: "+ruleName, -((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
 
   lights();
 
@@ -297,7 +309,7 @@ void draw() {
   drawModuleCells();
 
   drawCursor();
-  drawGrid();
+  if (showgrid) drawGrid();
 
   if (debug) {
     drawFromGrid();
@@ -331,6 +343,10 @@ void draw() {
       if (trails > 0) {
         // add center of mass coord to trail
         addTrailCrumb();
+      }
+      cycleTime =  System.nanoTime() - startNs  ;
+      if (writeMovie) {
+        save(String.format("/tmp/frames/pbframe.%05d.png", clock));
       }
     }
   }
@@ -645,6 +661,8 @@ public void keyPressed() {
     );
   } else if (key == 'z') {
     toggleTime();
+  } else if (key == 'g') {
+    showgrid = !showgrid;
   } else if (key == 'D') {
     debug = !debug;
   } else if (keyCode == UP) {
@@ -685,6 +703,8 @@ public void keyPressed() {
     cursorPos.set(0, 0, 0);
   } else if (key == 't') {
     toggleTrails();
+  } else if (key == 'm') {
+    writeMovie = !writeMovie;
   }
 }
 
@@ -857,7 +877,21 @@ void drawModuleCells() {
   }
 }
 
-void setRule(String ruleName) {
+String ruleName = "BusyBox Rule";
+
+void setRule(String r) {
+  ruleName = r;
   println("rule = "+ruleName);
-  
+
+  if (ruleName.equals("BusyBox")) {
+    rule = new Rule1();
+  } else if (ruleName.equals("Rule2")) {
+    rule = new Rule2();
+  } else if (ruleName.equals("Rule3")) {
+    rule = new Rule3();
+  } else if (ruleName.equals("Rule4")) {
+    rule = new Rule4();
+  } else if (ruleName.equals("Rule5")) {
+    rule = new Rule5();
+  }
 }

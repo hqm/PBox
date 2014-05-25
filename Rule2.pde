@@ -1,4 +1,6 @@
 
+// rule for X,Y gliders with + and - state
+
 class Rule2 extends Rule {
   // tmp working registers for coordinates
   Coord p1 = new Coord(0, 0, 0);
@@ -17,27 +19,19 @@ class Rule2 extends Rule {
    
    */
 
-  //knights moves XY plane
+  //horiz/vertical moves XY plane
 
-  Coord dxy1 = new Coord(2, 1, 0);
-  Coord dxy2 = new Coord(1, 2, 0);
+  Coord dx1 = new Coord(1, 0, 0);
+  Coord dx2 = new Coord(3, 0, 0);
 
-  Coord dxy5 = new Coord(2, -1, 0);
-  Coord dxy6 = new Coord(1, -2, 0);
+  // moves XZ plane
 
-  //knights moves XZ plane
-  Coord dxz1 = new Coord(2, 0, 1);
-  Coord dxz2 = new Coord(1, 0, 2);
+  Coord dz1 = new Coord(0, 0, 1);
+  Coord dz2 = new Coord(0, 0, 3);
 
-  Coord dxz5 = new Coord(2, 0, -1);
-  Coord dxz6 = new Coord(1, 0, -2);
-
-  //knights moves YZ plane
-  Coord dyz1 = new Coord(0, 2, 1);
-  Coord dyz2 = new Coord(0, 1, 2);
-
-  Coord dyz5 = new Coord(0, 2, -1);
-  Coord dyz6 = new Coord(0, 1, -2);
+  // moves YZ plane
+  Coord dy1 = new Coord(0, 1, 0);
+  Coord dy2 = new Coord(0, 3, 0);
 
 
   void runRule() {
@@ -52,28 +46,22 @@ class Rule2 extends Rule {
 
     switch(phase) {
     case 0:
-      busybox(cells, dxy1, dxy2);
-      busybox(cells, dxy5, dxy6);
+      busybox(cells, dx1, dx2);
       break;
     case 1:
-      busybox(cells, dyz1, dyz2);
-      busybox(cells, dyz5, dyz6);
+      busybox(cells, dy1, dy2);
       break;
     case 2:
-      busybox(cells, dxz1, dxz2);
-      busybox(cells, dxz5, dxz6);
+      busybox(cells, dz1, dz2);
       break;
     case 3:
-      busybox(cells, dxy1, dxy2);
-      busybox(cells, dxy5, dxy6);
+      busybox(cells, dx1, dx2);
       break;
     case 4:
-      busybox(cells, dyz1, dyz2);
-      busybox(cells, dyz5, dyz6);
+      busybox(cells, dy1, dy2);
       break;
     case 5:
-      busybox(cells, dxz1, dxz2);
-      busybox(cells, dxz5, dxz6);
+      busybox(cells, dz1, dz2);
       break;
     }
   }
@@ -83,12 +71,12 @@ class Rule2 extends Rule {
     for (Cell cell : cells) {
       Coord.add(cell.loc, d1, p1); // p1 := cell + delta1
       Coord.add(cell.loc, d2, p2); // p1 := cell + delta1
-      if (cell.state != 0) {
+      if (cell.state == 1) {
         proposeSwap(p1, p2);
       }
       Coord.sub(cell.loc, d1, p1); // p1 := cell + delta1
       Coord.sub(cell.loc, d2, p2); // p1 := cell + delta1
-      if (cell.state != 0) {
+      if (cell.state == 1) {
         proposeSwap(p1, p2);
       }
     }

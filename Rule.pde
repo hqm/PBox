@@ -1,7 +1,10 @@
 
 
-class Rule { 
+abstract class Rule { 
+  void runRule() { }
 }
+
+// Busy Boxes rule
 class Rule1  extends Rule {
   // tmp working registers for coordinates
   Coord p1 = new Coord(0, 0, 0);

@@ -14,6 +14,8 @@ ItemListener {
   JLabel debugLabel = new JLabel("Debug: true", JLabel.LEFT);
   JLabel trailLabel = new JLabel("Trails: false", JLabel.LEFT);
 
+  JLabel movieLabel = new JLabel("Write Movie: off", JLabel.LEFT);
+
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
 
   String[] ruleNames = { 
@@ -101,6 +103,7 @@ ItemListener {
     content.add(cursorLabel);
     content.add(debugLabel);
     content.add(trailLabel);
+    content.add(movieLabel);
 
     content.add(help);
   }
