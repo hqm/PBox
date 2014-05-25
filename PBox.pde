@@ -27,6 +27,10 @@ import java.awt.event.*;
 
 // Set the Rule here
 Rule1 rule = new Rule1();
+Rule2 rule2 = new Rule2();
+Rule3 rule3 = new Rule3();
+Rule4 rule4 = new Rule4();
+
 
 
 // Beanshell interpreter for debugging
@@ -51,7 +55,7 @@ int trails = 0;
 int trailSize = 1024;
 int trailPos = 0;
 
-public static PBox app;
+//public static PBox app;
 
 // Hash table which holds position of all cells
 public HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
@@ -179,7 +183,7 @@ void setup() {
   statusFrame = new RootGUI(this);
   initJFrame(statusFrame);
 
-  app = this;
+  //app = this;
 
 
   if (frame != null) {
@@ -851,4 +855,9 @@ void drawModuleCells() {
     }
     popMatrix();
   }
+}
+
+void setRule(String ruleName) {
+  println("rule = "+ruleName);
+  
 }

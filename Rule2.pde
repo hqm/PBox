@@ -1,5 +1,5 @@
 
-class Rule2 {
+class Rule2 extends Rule {
   // tmp working registers for coordinates
   Coord p1 = new Coord(0, 0, 0);
   Coord p2 = new Coord(0, 0, 0);

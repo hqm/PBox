@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 class RootGUI extends JFrame implements ActionListener, 
 ItemListener {
@@ -12,6 +15,14 @@ ItemListener {
   JLabel trailLabel = new JLabel("Trails: false", JLabel.LEFT);
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
+
+  String[] ruleNames = { 
+    "BusyBox", "Rule2", "Rule3", "Rule4", "Rule5"
+  };
+
+  //Create the combo box
+  JComboBox ruleList = new JComboBox(ruleNames);
+
 
 
   JMenuItem saveConfigItem = new JMenuItem("Save Config");
@@ -38,6 +49,8 @@ ItemListener {
     println("instantiating RootGUI");
     this.app = app;
 
+    ruleList.addActionListener(this);
+    ruleList.setAlignmentX(Component.LEFT_ALIGNMENT);
 
     updateButton.addActionListener(this);
     resetButton.addActionListener(this);
@@ -69,6 +82,7 @@ ItemListener {
     Container content = getContentPane();
     content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
 
+    content.add(ruleList);
     content.add(updateButton);
     content.add(resetButton);
     content.add(clearButton);
@@ -91,11 +105,18 @@ ItemListener {
     content.add(help);
   }
 
+  void comboHandler(ActionEvent e) {
+    JComboBox cb = (JComboBox)e.getSource();
+    String ruleName = (String)cb.getSelectedItem();
+    app.setRule(ruleName);
+  }
 
   void actionPerformed(ActionEvent e) {
     PBox.println("handle action "+e.getActionCommand());
     String cmd = e.getActionCommand();
-    if (cmd.equals("Save Config")) {
+    if (e.getSource() == ruleList) {
+      comboHandler(e);
+    } else if (cmd.equals("Save Config")) {
       app.saveConfigToFile();
     } else if (cmd.equals("Load Config")) {
       app.loadConfigFromFile();
