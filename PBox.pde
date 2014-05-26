@@ -252,8 +252,24 @@ void loadConfig(int n) {
 }
 
 void initConfig1() {
-  addCell(0, 0, 0, 1);
-  addCell(2, 1, 0, 1);
+
+  addCircular("X", -10, 0, 10, 20);
+}
+
+void addCircular(String orientation, int x, int y, int z, int d) {
+  int k = 0; 
+  int j = 0;
+  for (int i = 0; i < d; i++) {
+    addCell(x-j, y-k, z, 1);  
+    if (i % 2 == 0) {
+      j+=2; 
+      k+=1;
+    } else {
+      j+=1; 
+      k+=2;
+    }
+  }
+  addCell(x+1, y, z-2, 1);
 }
 
 void initConfig2() {
