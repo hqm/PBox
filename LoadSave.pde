@@ -1,4 +1,31 @@
 
+
+  File default_directory  = new File("pbox");
+// create 'pbox' dir if not exists
+void createDefaultDirectory() {
+
+  boolean b = false;
+  if (!default_directory.exists()) {
+    /*
+             * mkdirs() method creates the directory mentioned by this abstract
+     * pathname including any necessary but nonexistent parent
+     * directories.
+     * 
+     * Accordingly it will return TRUE or FALSE if directory created
+     * successfully or not. If this operation fails it may have
+     * succeeded in creating some of the necessary parent directories.
+     */
+    b = default_directory.mkdirs();
+  }
+  if (b)
+    System.out.println(default_directory +"  directory successfully created");
+  else
+    System.out.println("Failed to create "+ default_directory+"  directory");
+}
+
+
+
+
 // get json from current config
 String getConfigCSV() {
   StringBuffer buf = new StringBuffer();
@@ -11,7 +38,9 @@ String getConfigCSV() {
   return buf.toString();
 }
 
-JFileChooser chooser = new JFileChooser();
+
+
+JFileChooser chooser = new JFileChooser(default_directory);
 
 void saveConfigToFile() {
   chooser.setFileFilter(chooser.getAcceptAllFileFilter());

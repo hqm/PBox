@@ -176,6 +176,7 @@ void initTrails() {
 }
 
 void setup() {
+  createDefaultDirectory();
   size(1000, 800, P3D);
   smooth(4);
   initTrails();
