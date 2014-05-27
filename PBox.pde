@@ -77,7 +77,7 @@ public ArrayList<Cell> oddCells = new ArrayList<Cell>();
 public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
 // store state of all cells, so we can reset back to original config in RAM
 public ArrayList<Cell>  stashCells = new ArrayList<Cell>();
-int stashPhase = 0;
+int stashedClock = 0;
 
 // for drawing center of mass trails
 public PVector[] trail = new PVector[trailSize];
@@ -97,7 +97,7 @@ void resetGrid() {
 
 
 // Keep a copy of the world state so we can easily reset it during experiments
-void stashCells(int phase) {
+void stashCells(int c) {
   stashCells.clear();
   for (Cell cell : evenCells) {
     stashCells.add(cell.copy());
@@ -105,7 +105,7 @@ void stashCells(int phase) {
   for (Cell cell : oddCells) {
     stashCells.add(cell.copy());
   }
-  stashPhase = phase;
+  stashedClock = c;
 }
 
 void restoreFromStash() {
@@ -116,7 +116,7 @@ void restoreFromStash() {
     addCell(cell.loc, cell.state);
   }
   resetGrid();
-  clock = stashPhase;
+  clock = stashedClock;
 }
 
 void addCell(Coord c, int state) {
@@ -152,7 +152,7 @@ void initJFrame(JFrame f) {
 RootGUI statusFrame = null;
 
 void updateStatusFrame() {
-  statusFrame.clockLabel.setText("Clock: "+clock/6+"#"+clockPhase());
+  statusFrame.clockLabel.setText("Clock: "+clock+"@"+clockPhase());
   statusFrame.phaseLabel.setText("Phase: "+clockPhase());
   statusFrame.debugLabel.setText("Debug: "+debug);
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
@@ -333,9 +333,9 @@ void drawScene() {
   String timedir = (forward ? "forward" : "backward");
 
   if (run ) {
-    text(timedir + " clock: "+clock/6+"#"+clockPhase() + "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text(timedir + " clock: "+clock+"@"+clockPhase() + "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   } else {
-    text(timedir + " paused: "+clock/6+"#"+clockPhase()+ "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text(timedir + " paused: "+clock/6+"@"+clockPhase()+ "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
   }
   text("rule: "+ruleName, -((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
 
@@ -788,115 +788,6 @@ void placeModule() {
     }
   }
 }
-// get json from current config
-String getConfigCSV() {
-  StringBuffer buf = new StringBuffer();
-  // write out the clock phase as first line
-  buf.append(clockPhase()+"\n");
-
-  for (Cell cell : grid.values ()) {
-    buf.append(cell.getCSV() + "\n");
-  }
-  return buf.toString();
-}
-
-JFileChooser chooser = new JFileChooser();
-
-void saveConfigToFile() {
-  chooser.setFileFilter(chooser.getAcceptAllFileFilter());
-  int returnVal = chooser.showSaveDialog(null);
-  if (returnVal == JFileChooser.APPROVE_OPTION) 
-  {
-    String path=chooser.getSelectedFile().getAbsolutePath();
-    String filename=chooser.getSelectedFile().getName();
-    if (!(filename.indexOf(".")>0) && !path.endsWith(".pbox")) {
-      path = path +".pbox";
-    }
-    try {
-      FileWriter fout = new FileWriter(path);
-      fout.write(getConfigCSV());
-      fout.close();
-    } 
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-}
-
-void loadConfigFromFile() {
-  clearWorld();
-
-  FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
-
-  //Attaching Filter to JFileChooser object
-  chooser.addChoosableFileFilter(pboxFilter);
-  int returnVal = chooser.showOpenDialog(null);
-  int phase = 0;
-  if (returnVal == JFileChooser.APPROVE_OPTION) {
-    try {
-      String path=chooser.getSelectedFile().getAbsolutePath();
-      BufferedReader in = new BufferedReader(new FileReader(path));
-      String line = null;
-      // get phase
-      line = in.readLine();
-      phase = Integer.parseInt(line.trim());
-
-      while (true) {
-        line = in.readLine();
-        if (line == null) break;
-        String vals[] = line.trim().split(",");
-        int x = Integer.parseInt(vals[0]);
-        int y = Integer.parseInt(vals[1]);
-        int z = Integer.parseInt(vals[2]);
-        int s = Integer.parseInt(vals[3]);
-        addCell(x, y, z, s);
-      }
-
-      in.close();
-    } 
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-  stashCells(phase);
-  clock = phase;
-}
-
-void loadModuleFromFile() {
-  FileFilter pboxFilter = new FileNameExtensionFilter("PBox files", "pbox");
-
-  //Attaching Filter to JFileChooser object
-  chooser.addChoosableFileFilter(pboxFilter);
-  int returnVal = chooser.showOpenDialog(null);
-  if (returnVal == JFileChooser.APPROVE_OPTION) {
-    try {
-      String path=chooser.getSelectedFile().getAbsolutePath();
-      BufferedReader in = new BufferedReader(new FileReader(path));
-      String line = null;
-      // get phase
-      line = in.readLine();
-      int phase = Integer.parseInt(line.trim());
-      // we're not using phase in this right now, module just gets plunked down at current phase
-
-      while (true) {
-        line = in.readLine();
-        if (line == null) break;
-        String vals[] = line.trim().split(",");
-        int x = Integer.parseInt(vals[0]);
-        int y = Integer.parseInt(vals[1]);
-        int z = Integer.parseInt(vals[2]);
-        int s = Integer.parseInt(vals[3]);
-        addModuleCell(x, y, z, s);
-      }
-
-      in.close();
-    } 
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-}
-
 void addModuleCell(int x, int y, int z, int state) {
   Cell cell = new Cell(x, y, z, state);  
   moduleCells.add(cell);

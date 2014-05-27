@@ -129,7 +129,8 @@ ItemListener {
       PBox.println("clear world");
       app.loadConfig(0);
     } else if (cmd.equals("UPDATE")) {
-      app.stashCells(app.clockPhase());
+      int tclock = app.forward ? app.clock - 1 : app.clock +1; // correct for the main loop having incremented clock after display
+      app.stashCells(tclock);
     } else if (cmd.equals("RESET")) {
       app.restoreFromStash();
     } else if (cmd.equals("RUN/STOP")) {
