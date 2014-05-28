@@ -111,7 +111,6 @@ void stashCells(int c) {
 void restoreFromStash() {
   clearWorld();
   run = false;
-  singleStep = true;
   for (Cell cell : stashCells) {
     addCell(cell.loc, cell.state);
   }
@@ -197,7 +196,9 @@ void setup() {
   cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(10000);
-  loadConfig(2);
+  rule.initConfig();
+  stashCells(clock);
+
   frameRate(10000);
 }
 
@@ -239,18 +240,6 @@ void clearWorld() {
   run = false;
 }
 
-void loadConfig(int n) {
-  clearWorld();
-  switch(n) {
-  case 1:
-    initConfig1();
-    break;
-  case 2:
-    initConfig2();
-    break;
-  }
-  stashCells(0);
-}
 
 void initConfig1() {
 
@@ -273,22 +262,7 @@ void addCircular(String orientation, int x, int y, int z, int d) {
   addCell(x+1, y, z-2, 1);
 }
 
-void initConfig2() {
-  int N = 20;
-  for (int x = -N; x < N; x+=2) {
-    for (int y = -N; y < N; y+=2) {
-      for (int z = -N; z < N; z+=2) {
-        addCell(x, y, z, 1);
-        addCell(x+2, y+1, z, 1);
-      }
-    }
-  }
-  addCell(0, 0, 0, 1);
-  addCell(1, 2, 0, 1);
-  addCell(3, 3, 0, 1);
-  addCell(3, 5, 1, 1);
-  addCell(3, 6, 3, 1);
-}
+
 
 void drawGrid() {
   int offset = (gridSize / 2);
@@ -558,7 +532,7 @@ void drawCursor() {
 // 
 // We also push the location A onto target location B's swaps list.
 void proposeSwap(Coord oa, Coord ob) {
-  Coord a = oa.get();
+  Coord a = oa.get(); // Coord.get() makes new copy of Coord object
   Coord b = ob.get();
 
   if (wrap) {
@@ -838,4 +812,8 @@ void setRule(String r) {
   } else if (ruleName.equals("Rule5")) {
     rule = new Rule5();
   }
+  clearWorld();
+  rule.initConfig();
+  stashCells(clock);
 }
+

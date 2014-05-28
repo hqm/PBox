@@ -33,8 +33,8 @@ ItemListener {
   JMenuItem loadModule = new JMenuItem("Load Module");
   JMenu file = new JMenu("File");
 
-  JButton updateButton = new JButton("UPDATE");
-  JButton resetButton = new JButton("RESET");
+  JButton updateButton = new JButton("STASH");
+  JButton resetButton = new JButton("RESTORE");
   JButton clearButton = new JButton("CLEAR");
   JButton stepButton = new JButton("STEP");
   JButton runButton = new JButton("RUN/STOP");
@@ -127,11 +127,10 @@ ItemListener {
       app.loadModuleFromFile();
     } else if (cmd.equals("Clear")) {
       PBox.println("clear world");
-      app.loadConfig(0);
-    } else if (cmd.equals("UPDATE")) {
-      int tclock = app.forward ? app.clock - 1 : app.clock +1; // correct for the main loop having incremented clock after display
-      app.stashCells(tclock);
-    } else if (cmd.equals("RESET")) {
+      app.rule.initConfig();
+    } else if (cmd.equals("STASH")) {
+      app.stashCells(app.clock);
+    } else if (cmd.equals("RESTORE")) {
       app.restoreFromStash();
     } else if (cmd.equals("RUN/STOP")) {
       app.toggleRun();

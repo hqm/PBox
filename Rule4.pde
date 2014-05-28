@@ -1,3 +1,17 @@
+// rule for X,Y gliders with + and - state
+/*
+
+ Strangely enough, I am now also interested in models that fill space
+ with gliders that each move only in + or - X direction, or only + or
+ – Y direction or only in + or – Z direction, until they have a
+ collision.  The results of a collision could change the directions of
+ both colliding Gliders, in a way that conserves momentum.
+ 
+ In other words, these gliders would go straight down a coordinate
+ axis, until 2 of them collide, the collision alters directions, but
+ within the rules that momentum is conserved, and each of the
+ resulting trajectories are each still in parallel to one of the
+ Cartesian Coordinate axes.  */
 
 class Rule4 extends Rule {
   // tmp working registers for coordinates
@@ -17,27 +31,45 @@ class Rule4 extends Rule {
    
    */
 
-  //knights moves XY plane
+  class Swap {
+    Coord a;
+    Coord b;
+    public Swap(int x1, int y1, int z1, int x2, int y2, int z2) {
+      a = new Coord(x1, y1, z1);
+      b = new Coord(x2, y2, z2);
+    }
+  }
+  // moves XY plane
 
-  Coord dxy1 = new Coord(2, 1, 0);
-  Coord dxy2 = new Coord(1, 2, 0);
 
-  Coord dxy5 = new Coord(2, -1, 0);
-  Coord dxy6 = new Coord(1, -2, 0);
+  Swap dxy1 = new Swap(
+  1, 0, 0, 
+  0, 1, 0);
 
-  //knights moves XZ plane
-  Coord dxz1 = new Coord(2, 0, 1);
-  Coord dxz2 = new Coord(1, 0, 2);
 
-  Coord dxz5 = new Coord(2, 0, -1);
-  Coord dxz6 = new Coord(1, 0, -2);
+  Swap dxy2 = new Swap(
+  1, 0, 0, 
+  0, -1, 0);
 
-  //knights moves YZ plane
-  Coord dyz1 = new Coord(0, 2, 1);
-  Coord dyz2 = new Coord(0, 1, 2);
+  // moves XZ plane
 
-  Coord dyz5 = new Coord(0, 2, -1);
-  Coord dyz6 = new Coord(0, 1, -2);
+  Swap dxz1 =  new Swap(
+  0, 0, 1, 
+  1, 0, 0);
+
+  Swap dxz2 = new Swap(
+  0, 0, -1, 
+  -1, 0, 0);
+
+  // moves YZ plane
+  Swap dyz1 = new Swap(
+  0, 1, 0, 
+  0, 0, 1);
+
+  Swap dyz2 = new Swap(
+  0, 1, 0, 
+  0, 0, -1);
+
 
 
   void runRule() {
@@ -52,45 +84,63 @@ class Rule4 extends Rule {
 
     switch(phase) {
     case 0:
-      busybox(cells, dxy1, dxy2);
-      busybox(cells, dxy5, dxy6);
+      rule3(cells, dxy1, dxy2);
       break;
     case 1:
-      busybox(cells, dyz1, dyz2);
-      busybox(cells, dyz5, dyz6);
+      rule3(cells, dxz1, dxz2);
       break;
     case 2:
-      busybox(cells, dxz1, dxz2);
-      busybox(cells, dxz5, dxz6);
+      rule3(cells, dyz1, dyz2 );
       break;
     case 3:
-      busybox(cells, dxy1, dxy2);
-      busybox(cells, dxy5, dxy6);
+      rule3(cells, dxy1, dxy2);
       break;
     case 4:
-      busybox(cells, dyz1, dyz2);
-      busybox(cells, dyz5, dyz6);
+      rule3(cells, dxz1, dxz2);
       break;
     case 5:
-      busybox(cells, dxz1, dxz2);
-      busybox(cells, dxz5, dxz6);
+      rule3(cells, dyz1, dyz2 );
       break;
     }
   }
 
-  void busybox(ArrayList<Cell> cells, Coord d1, Coord d2) {
+  void rule3(ArrayList<Cell> cells, Swap s1, Swap s2) {
 
     for (Cell cell : cells) {
-      Coord.add(cell.loc, d1, p1); // p1 := cell + delta1
-      Coord.add(cell.loc, d2, p2); // p1 := cell + delta1
-      if (cell.state != 0) {
+      if (cell.state == 1) {
+        Coord.add(cell.loc, s1.a, p1); // p1 := cell + delta1
+        Coord.add(cell.loc, s1.b, p2); // p1 := cell + delta1
+        proposeSwap(p1, p2);
+
+        Coord.sub(cell.loc, s1.a, p1); // p1 := cell + delta1
+        Coord.sub(cell.loc, s1.b, p2); // p1 := cell + delta1
+        proposeSwap(p1, p2);
+      } else if (cell.state == -1) {
+        Coord.add(cell.loc, s2.a, p1); // p1 := cell + delta1
+        Coord.add(cell.loc, s2.b, p2); // p1 := cell + delta1
+        proposeSwap(p1, p2);
+
+        Coord.sub(cell.loc, s2.a, p1); // p1 := cell + delta1
+        Coord.sub(cell.loc, s2.b, p2); // p1 := cell + delta1
         proposeSwap(p1, p2);
       }
-      Coord.sub(cell.loc, d1, p1); // p1 := cell + delta1
-      Coord.sub(cell.loc, d2, p2); // p1 := cell + delta1
-      if (cell.state != 0) {
-        proposeSwap(p1, p2);
+    }
+  }
+
+
+  // the default starting configuration
+  void initConfig() {
+
+    int N = 20;
+    for (int x = -N; x < N; x+=6) {
+      for (int y = -N; y < N; y+=6) {
+        for (int z = -N; z < N; z+=6) {
+          addCell(x, y, z, 1);
+          addCell(x+1, y+0, z, -1);
+          addCell(x+1, y-1, z, -1);
+        }
       }
     }
   }
 }
+
