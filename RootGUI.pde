@@ -162,6 +162,8 @@ ItemListener {
     +"p: place module<br>"
     +"ENTER: toggle cell/end module mode<br>"
     +"q: toggle spherical cells<br>"
-    +"h: cursor home"
+    +"h: cursor home<br>"
+    +"m: movie-mode: writes each frame as a PNG file<br>"
+    +"S: Science mode, runs 100 clock steps between updating display<br>"
     +"</html>";
 }

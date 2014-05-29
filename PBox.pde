@@ -58,6 +58,8 @@ int trails = 0;
 // how many points in trail
 int trailSize = 1024;
 int trailPos = 0;
+// measurement of how fast we're rendering
+float framesPerSec = 0;
 
 //public static PBox app;
 
@@ -155,7 +157,7 @@ void updateStatusFrame() {
   statusFrame.phaseLabel.setText("Phase: "+clockPhase());
   statusFrame.debugLabel.setText("Debug: "+debug);
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
-  statusFrame.speedLabel.setText("Speed: "+ (fast ? "fast" : "slow"));
+  statusFrame.speedLabel.setText(String.format("Speed: %s [fps: %2f", (fast ? "fast" : "slow") ,framesPerSec));
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
   statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
   statusFrame.trailLabel.setText("Trails: "+ (trails == 0 ? "none" : (trails == 1 ? "every cell" : "average")));
@@ -289,7 +291,6 @@ void doComputeStep() {
 }
 void runScienceMode(int n) {
   for (int i = 0; i < n; i++) {
-    long starttime = System.currentTimeMillis();
     doComputeStep();
   }
   println(clock);
@@ -344,6 +345,8 @@ void drawScene() {
   popMatrix();
 }
 void draw() {
+  long starttime = System.currentTimeMillis();
+
   if (science) {
     drawScene();
     runScienceMode(scienceCycles);
@@ -372,6 +375,7 @@ void draw() {
         println("saving image file "+path);
         save(path);
       }
+      framesPerSec = 1000.0 / (System.currentTimeMillis() - starttime );
     }
   }
   fastclock++;
