@@ -29,6 +29,7 @@ int gridSize = 200;
 int cellSize = 4;
 int scienceCycles = 100;
 
+ArrayList<Rule> rules;
 
 // Set the Rule here
 Rule rule = new Rule1();
@@ -157,7 +158,7 @@ void updateStatusFrame() {
   statusFrame.phaseLabel.setText("Phase: "+clockPhase());
   statusFrame.debugLabel.setText("Debug: "+debug);
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
-  statusFrame.speedLabel.setText(String.format("Speed: %s [fps: %2f", (fast ? "fast" : "slow") ,framesPerSec));
+  statusFrame.speedLabel.setText(String.format("Speed: %s [fps: %2f", (fast ? "fast" : "slow"), framesPerSec));
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
   statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
   statusFrame.trailLabel.setText("Trails: "+ (trails == 0 ? "none" : (trails == 1 ? "every cell" : "average")));
@@ -820,4 +821,8 @@ void setRule(String r) {
   rule.initConfig();
   stashCells(clock);
 }
+
+
+
+
 

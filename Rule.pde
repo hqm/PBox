@@ -1,7 +1,7 @@
 // the base class for defining rules
 abstract class Rule { 
-
-  // the default starting configuration
+  
+   // the default starting configuration
   void initConfig() {
     int N = 20;
     for (int x = -N; x < N; x+=2) {
