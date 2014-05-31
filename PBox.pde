@@ -72,6 +72,9 @@ public HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
 // Using a cell location as a key, holds the target location that this cell is proposed to swap with
 public HashMap<Coord, ArrayList<Coord>> swaps = new HashMap<Coord, ArrayList<Coord>>();
 
+// List of all cells
+public ArrayList<Cell> allCells = new ArrayList<Cell>();
+
 // List of the cells in even plane
 public ArrayList<Cell> evenCells = new ArrayList<Cell>();
 // List of cells in imaginary plane
@@ -89,23 +92,15 @@ public PVector[] trail = new PVector[trailSize];
 // clear the grid and regenerate it from cells
 void resetGrid() {
   grid.clear();
-  for (Cell cell : evenCells) {
-    grid.put(cell.loc, cell);
-  }
-  for (Cell cell : oddCells) {
+  for (Cell cell : allCells) {
     grid.put(cell.loc, cell);
   }
 }
 
-
-
 // Keep a copy of the world state so we can easily reset it during experiments
 void stashCells(int c) {
   stashCells.clear();
-  for (Cell cell : evenCells) {
-    stashCells.add(cell.copy());
-  }
-  for (Cell cell : oddCells) {
+  for (Cell cell : allCells) {
     stashCells.add(cell.copy());
   }
   stashedClock = c;
@@ -147,12 +142,17 @@ int[] oddColors = {
 
 
 void initJFrame(JFrame f) {
-  f.setSize(250, 600);
+  f.setSize(250, 800);
   f.setVisible(true);
 }
 
 RootGUI statusFrame = null;
 
+String cursorStatus() {
+  Cell c = grid.get(cursorPos);
+  String val =  "" + ((c == null) ? "0" : c.state);
+  return "Cursor: "+ cursorPos+"  val="+val+"  default: "+cursorVal;
+}
 void updateStatusFrame() {
   statusFrame.clockLabel.setText("Clock: "+clock+"@"+clockPhase());
   statusFrame.phaseLabel.setText("Phase: "+clockPhase());
@@ -160,9 +160,10 @@ void updateStatusFrame() {
   statusFrame.directionLabel.setText("Direction: "+ (forward ? "forward" : "backward"));
   statusFrame.speedLabel.setText(String.format("Speed: %s [fps: %2f", (fast ? "fast" : "slow"), framesPerSec));
   statusFrame.wrapLabel.setText("Wrap: "+ wrap);
-  statusFrame.cursorLabel.setText("Cursor: "+ cursorPos);
+  statusFrame.cursorLabel.setText(cursorStatus()  );
   statusFrame.trailLabel.setText("Trails: "+ (trails == 0 ? "none" : (trails == 1 ? "every cell" : "average")));
   statusFrame.movieLabel.setText("Write Movie: "+ (writeMovie ? "ON" : "OFF"));
+  statusFrame.ncellsLabel.setText("# cells: "+allCells.size());
 }
 
 int clockPhase() {
@@ -213,6 +214,7 @@ void addCell(int x, int y, int z, int state) {
 
   Cell cell = new Cell(x, y, z, state);  
   grid.put(cell.loc, cell);
+  allCells.add(cell);
   if ((x+y+z)%2 == 0) {
     // even
     evenCells.add(cell);
@@ -224,6 +226,7 @@ void addCell(int x, int y, int z, int state) {
 
 void deleteCell(Cell c) {
   grid.remove(c.loc);
+  allCells.remove(c);
   if ((c.loc.x+c.loc.y+c.loc.z)%2 == 0) {
     // even
     evenCells.remove(c);
@@ -236,6 +239,7 @@ void deleteCell(Cell c) {
 // clear all cells
 void clearWorld() {
   grid.clear(); 
+  allCells.clear();
   evenCells.clear();
   oddCells.clear();
   clock = 0;
@@ -319,8 +323,7 @@ void drawScene() {
   lights();
 
   noStroke();
-  drawCells(evenCells);
-  drawCells(oddCells);
+  drawCells(allCells);
   drawModuleCells();
 
   drawCursor();
@@ -457,8 +460,7 @@ void computeNextStep() {
 }
 void clearSwaps() {
   swaps.clear();
-  clearSwapState(evenCells);
-  clearSwapState(oddCells);
+  clearSwapState(allCells);
 }
 
 void drawCells(ArrayList<Cell> cells) {
@@ -648,10 +650,18 @@ void toggleCellAtCursor() {
     addCell(cursorPos.x, cursorPos.y, cursorPos.z, cursorVal);
   } else {
     // existing cell, if it is 1, change to -1. If -1, delete it.
-    if (c.state == 1) {
-      c.state = -1;
-    } else if (c.state == -1) {
-      deleteCell(c);
+    if (cursorVal == 1) {
+      if (c.state == 1) {
+        c.state = -1;
+      } else if (c.state == -1) {
+        deleteCell(c);
+      }
+    } else {
+      if (c.state == -1) {
+        c.state = 1;
+      } else if (c.state == 1) {
+        deleteCell(c);
+      }
     }
   }
 }
@@ -723,6 +733,12 @@ public void keyPressed() {
     } else {
       toggleCellAtCursor();
     }
+  } else if (key == '\'') { // toggle cursor value
+    if (cursorVal == 1) { 
+      cursorVal = -1;
+    } else {
+      cursorVal = 1;
+    }
   } else if (key == 's') {
     fast = !fast;
   } else if (key == 'w') {
@@ -764,6 +780,7 @@ void placeModule() {
 
 
     grid.put(ncell.loc, ncell);
+    allCells.add(ncell);
     if ((x+y+z)%2 == 0) {
       // even
       evenCells.add(ncell);
@@ -825,6 +842,4 @@ void setRule(String r) {
   rule.initConfig();
   stashCells(clock);
 }
-
-
 

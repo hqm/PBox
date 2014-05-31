@@ -32,7 +32,7 @@ String getConfigCSV() {
   // write out the clock phase as first line
   buf.append(clockPhase()+"\n");
 
-  for (Cell cell : grid.values ()) {
+  for (Cell cell : allCells) {
     buf.append(cell.getCSV() + "\n");
   }
   return buf.toString();

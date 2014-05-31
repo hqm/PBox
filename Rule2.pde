@@ -29,50 +29,45 @@ class Rule2 extends Rule {
   }
 
 
-  Swap dxy1 = new Swap(2, 1, 0, 1, 2, 0);
-  Swap dxy2 = new Swap(2, -1, 0, 1, -2, 0);
+  Swap swaps[] = {
+    new Swap(
+    2, 1, 0, 
+    1, 2, 0), 
 
-  //knights moves XZ plane
-  Swap dxz1 = new Swap(2, 0, 1, 1, 0, 2);
-  Swap dxz2 = new Swap(2, 0, -1, 1, 0, -2);
+    new Swap(
+    2, -1, 0, 
+    1, -2, 0), 
+    //knights moves XZ plane
+    new Swap(
+    2, 0, 1, 
+    1, 0, 2), 
+    new Swap(
+    2, 0, -1, 
+    1, 0, -2), 
 
-  //knights moves YZ plane
-  Swap dyz1 = new Swap(0, 2, 1, 0, 1, 2);
-  Swap dyz2 = new Swap(0, 2, -1, 0, 1, -2);
+    //knights moves YZ plane
+    new Swap(
+    0, 2, 1, 
+    0, 1, 2), 
+    new Swap(
+    0, 2, -1, 
+    0, 1, -2)
+    };
 
-  void runRule() {
-    int phase = clockPhase();
+    void runRule() {
+      int phase = clockPhase();
 
-    ArrayList<Cell> cells;
-    if (phase % 2 == 0) {
-      cells = evenCells;
-    } else {
-      cells = oddCells;
+      ArrayList<Cell> cells;
+      if (phase % 2 == 0) {
+        cells = evenCells;
+      } else {
+        cells = oddCells;
+      }
+
+      rule(cells, swaps[(phase*2)%6], swaps[((phase*2)+1) %6]);
     }
 
-    switch(phase) {
-    case 0:
-      busybox(cells, dxy1, dxy2);
-      break;
-    case 1:
-      busybox(cells, dyz1, dyz2);
-      break;
-    case 2:
-      busybox(cells, dxz1, dxz2);
-      break;
-    case 3:
-      busybox(cells, dxy1, dxy2);
-      break;
-    case 4:
-      busybox(cells, dyz1, dyz2);
-      break;
-    case 5:
-      busybox(cells, dxz1, dxz2);
-      break;
-    }
-  }
-
-  void busybox(ArrayList<Cell> cells, Swap s1, Swap s2) {
+  void rule(ArrayList<Cell> cells, Swap s1, Swap s2) {
 
     for (Cell cell : cells) {
       Coord.add(cell.loc, s1.a, p1); // p1 := cell + delta1

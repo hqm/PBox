@@ -15,6 +15,8 @@ ItemListener {
   JLabel trailLabel = new JLabel("Trails: false", JLabel.LEFT);
 
   JLabel movieLabel = new JLabel("Write Movie: off", JLabel.LEFT);
+  JLabel ncellsLabel = new JLabel("# cells: "+allCells.size(), JLabel.LEFT);
+  
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
 
@@ -104,6 +106,7 @@ ItemListener {
     content.add(debugLabel);
     content.add(trailLabel);
     content.add(movieLabel);
+    content.add(ncellsLabel);
 
     content.add(help);
   }
@@ -165,5 +168,6 @@ ItemListener {
     +"h: cursor home<br>"
     +"m: movie-mode: writes each frame as a PNG file<br>"
     +"S: Science mode, runs 100 clock steps between updating display<br>"
+    +"': toggle default cursor value<br>"
     +"</html>";
 }
