@@ -351,8 +351,12 @@ void draw() {
   if (science) {
     drawScene();
     runScienceMode(scienceCycles);
+    framesPerSec = scienceCycles * 1000.0 / (System.currentTimeMillis() - starttime );
     textMode(SHAPE);
     textSize(50);
+    fill(50);
+    text("SCIENCE MODE", -200, 0, 0);
+    updateStatusFrame();
     return;
   }
   //        if (singleStep == false && run == false) {
@@ -821,8 +825,6 @@ void setRule(String r) {
   rule.initConfig();
   stashCells(clock);
 }
-
-
 
 
 
