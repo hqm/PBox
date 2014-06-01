@@ -64,13 +64,13 @@ public class Coord implements Serializable {
 
   public void wrap(int n) {
     // N=3:  -2 -1 0 1 2 
-    if (x > n - 1) x = x % n - n + 1;
-    if (y > n - 1) y = y % n - n + 1;
-    if (z > n - 1) z = z % n - n + 1;
+    if (x > n ) x = x % n - n ;
+    if (y > n ) y = y % n - n ;
+    if (z > n ) z = z % n - n ;
 
-    if (x < -n + 1) x = x % n  + n -1;
-    if (y < -n + 1) y = y % n  + n -1;
-    if (z < -n + 1) z = z % n  + n -1;
+    if (x < -n + 1) x = x % n  + n;
+    if (y < -n + 1) y = y % n  + n;
+    if (z < -n + 1) z = z % n  + n;
   }
 
   /**

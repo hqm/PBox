@@ -28,31 +28,24 @@ class Rule2 extends Rule {
     }
   }
 
-
-  Swap swaps[] = {
+Swap swaps[] = {
     new Swap(
-    2, 1, 0, 
-    1, 2, 0), 
-
-    new Swap(
-    2, -1, 0, 
-    1, -2, 0), 
+        1, 0, 0, 
+        3, 0, 0), 
+ 
     //knights moves XZ plane
-    new Swap(
-    2, 0, 1, 
-    1, 0, 2), 
-    new Swap(
-    2, 0, -1, 
-    1, 0, -2), 
+
+  new Swap(
+        1, 0, 2, 
+        2, 0, 1), 
+   
 
     //knights moves YZ plane
     new Swap(
-    0, 2, 1, 
-    0, 1, 2), 
-    new Swap(
-    0, 2, -1, 
-    0, 1, -2)
-    };
+        0, 1, 0, 
+        0, 3, 0), 
+  
+};
 
     void runRule() {
       int phase = clockPhase();
@@ -63,35 +56,33 @@ class Rule2 extends Rule {
       } else {
         cells = oddCells;
       }
-
-      rule(cells, swaps[(phase*2)%6], swaps[((phase*2)+1) %6]);
+      rule(cells, swaps[phase%3]);
     }
 
-  void rule(ArrayList<Cell> cells, Swap s1, Swap s2) {
+  void rule(ArrayList<Cell> cells, Swap s1) {
 
     for (Cell cell : cells) {
       Coord.add(cell.loc, s1.a, p1); // p1 := cell + delta1
       Coord.add(cell.loc, s1.b, p2); // p1 := cell + delta1
 
-      Coord.add(cell.loc, s2.a, p3); // p1 := cell + delta1
-      Coord.add(cell.loc, s2.b, p4); // p1 := cell + delta1
-
-      if (cell.state != 0) {
+     
+      if (cell.state == 1) {
         proposeSwap(p1, p2);
-        proposeSwap(p3, p4);
       }
 
       Coord.sub(cell.loc, s1.a, p1); // p1 := cell + delta1
       Coord.sub(cell.loc, s1.b, p2); // p1 := cell + delta1
 
-      Coord.sub(cell.loc, s2.a, p3); // p1 := cell + delta1
-      Coord.sub(cell.loc, s2.b, p4); // p1 := cell + delta1
 
-      if (cell.state != 0) {
+      if (cell.state == 1) {
         proposeSwap(p1, p2);
-        proposeSwap(p3, p4);
-      }
+      } 
     }
+  }
+
+  void initConfig() {
+    addCell(0, 0, 0, 1);
+    addCell(1, 0, 0, 1);
   }
 }
 

@@ -25,14 +25,14 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-int gridSize = 30;
+int gridSize = 16;
 int cellSize = 4;
 int scienceCycles = 100;
 
 ArrayList<Rule> rules;
 
 // Set the Rule here
-Rule rule = new Rule1();
+Rule rule = new Rule2();
 
 
 // Beanshell interpreter for debugging
@@ -247,29 +247,6 @@ void clearWorld() {
   singleStep = false;
   run = false;
 }
-
-
-void initConfig1() {
-
-  addCircular("X", -10, 0, 10, 20);
-}
-
-void addCircular(String orientation, int x, int y, int z, int d) {
-  int k = 0; 
-  int j = 0;
-  for (int i = 0; i < d; i++) {
-    addCell(x-j, y-k, z, 1);  
-    if (i % 2 == 0) {
-      j+=2; 
-      k+=1;
-    } else {
-      j+=1; 
-      k+=2;
-    }
-  }
-  addCell(x+1, y, z-2, 1);
-}
-
 
 
 void drawGrid() {
