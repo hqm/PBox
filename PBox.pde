@@ -25,7 +25,7 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-int gridSize = 200;
+int gridSize = 30;
 int cellSize = 4;
 int scienceCycles = 100;
 
@@ -149,6 +149,7 @@ void initJFrame(JFrame f) {
 RootGUI statusFrame = null;
 
 String cursorStatus() {
+    if (wrap) { cursorPos.wrap(gridSize); }
   Cell c = grid.get(cursorPos);
   String val =  "" + ((c == null) ? "0" : c.state);
   return "Cursor: "+ cursorPos+"  val="+val+"  default: "+cursorVal;
@@ -272,14 +273,14 @@ void addCircular(String orientation, int x, int y, int z, int d) {
 
 
 void drawGrid() {
-  int offset = (gridSize / 2);
+  int offset = (gridSize);
   int C = -cellSize/2;
-  for (int i = 0; i < gridSize+2; i++) {
-    line((i-offset)*cellSize+C, -gridSize*cellSize/2-C, C, 
-    (i-offset)*cellSize+C, gridSize*cellSize/2-C, C);
+  for (int i = 0; i < 2*gridSize+2; i++) {
+    line((i-offset)*cellSize+C, -gridSize*cellSize-C   ,    C, 
+         (i-offset)*cellSize+C,  gridSize*cellSize-C      ,    C);
 
-    line(-gridSize*cellSize/2-C, (i-offset)*cellSize+C, C, 
-    gridSize*cellSize/2-C, (i-offset)*cellSize+C, C);
+    line(-gridSize*cellSize-C, (i-offset)*cellSize+C, C, 
+          gridSize*cellSize-C, (i-offset)*cellSize+C, C);
     stroke(140);
   }
 }
@@ -314,11 +315,11 @@ void drawScene() {
   String timedir = (forward ? "forward" : "backward");
 
   if (run ) {
-    text(timedir + " clock: "+clock+"@"+clockPhase() + "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text(timedir + " clock: "+clock+"@"+clockPhase() + "  "+cycleTime/1000, ((gridSize)-8)*cellSize, -(gridSize)*cellSize, -10);
   } else {
-    text(timedir + " paused: "+clock/6+"@"+clockPhase()+ "  "+cycleTime/1000, ((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+    text(timedir + " paused: "+clock/6+"@"+clockPhase()+ "  "+cycleTime/1000, ((gridSize)-8)*cellSize, -(gridSize)*cellSize, -10);
   }
-  text("rule: "+ruleName, -((gridSize/2)-8)*cellSize, -(gridSize/2)*cellSize, -10);
+  text("rule: "+ruleName, -((gridSize)-8)*cellSize, -(gridSize)*cellSize, -10);
 
   lights();
 
@@ -338,7 +339,7 @@ void drawScene() {
 
   // Draw axes 
   pushMatrix();
-  translate(-(gridSize/2) * cellSize, -(gridSize/2) * cellSize, cellSize);
+  translate(-(gridSize) * cellSize, -(gridSize) * cellSize, cellSize);
   stroke(255, 0, 0);
   line(0, 0, 0, 0, 0, 20);
   stroke(0, 255, 0);

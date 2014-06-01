@@ -6,7 +6,7 @@
  
  Derived from the Processing project PVector class - http://processing.org
  
- Copyright (c) 2008 Dan Shiffman
+ Copyright (c) 2008, 2014 Dan Shiffman
  Copyright (c) 2008-10 Ben Fry and Casey Reas
  
  This library is free software; you can redistribute it and/or
@@ -63,12 +63,14 @@ public class Coord implements Serializable {
   }
 
   public void wrap(int n) {
-    if (x > n/2) x-=n;  
-    if (y > n/2) y-=n;
-    if (z > n/2) z-=n;
-    if (x < -n/2) x+=n;  
-    if (y < -n/2) y+=n;
-    if (z < -n/2) z+=n;
+    // N=3:  -2 -1 0 1 2 
+    if (x > n - 1) x = x % n - n + 1;
+    if (y > n - 1) y = y % n - n + 1;
+    if (z > n - 1) z = z % n - n + 1;
+
+    if (x < -n + 1) x = x % n  + n -1;
+    if (y < -n + 1) y = y % n  + n -1;
+    if (z < -n + 1) z = z % n  + n -1;
   }
 
   /**
