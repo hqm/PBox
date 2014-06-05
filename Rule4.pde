@@ -84,27 +84,27 @@ class Rule4 extends Rule {
 
     switch(phase) {
     case 0:
-      rule3(cells, dxy1, dxy2);
+      rule4(cells, dxy1, dxy2);
       break;
     case 1:
-      rule3(cells, dxz1, dxz2);
+      rule4(cells, dxz1, dxz2);
       break;
     case 2:
-      rule3(cells, dyz1, dyz2 );
+      rule4(cells, dyz1, dyz2 );
       break;
     case 3:
-      rule3(cells, dxy1, dxy2);
+      rule4(cells, dxy1, dxy2);
       break;
     case 4:
-      rule3(cells, dxz1, dxz2);
+      rule4(cells, dxz1, dxz2);
       break;
     case 5:
-      rule3(cells, dyz1, dyz2 );
+      rule4(cells, dyz1, dyz2 );
       break;
     }
   }
 
-  void rule3(ArrayList<Cell> cells, Swap s1, Swap s2) {
+  void rule4(ArrayList<Cell> cells, Swap s1, Swap s2) {
 
     for (Cell cell : cells) {
       if (cell.state == 1) {
@@ -131,13 +131,11 @@ class Rule4 extends Rule {
   // the default starting configuration
   void initConfig() {
 
-    int N = 20;
-    for (int x = -N; x < N; x+=6) {
-      for (int y = -N; y < N; y+=6) {
-        for (int z = -N; z < N; z+=6) {
-          addCell(x, y, z, 1);
-          addCell(x+1, y+0, z, -1);
-          addCell(x+1, y-1, z, -1);
+    int N = 5;
+    for (int x = -N; x < N; x+=1) {
+      for (int y = -N; y < N; y+=2) {
+        for (int z = -N; z < N; z+=2) {
+          addCell(x, y, z, round(random(-1,1)));
         }
       }
     }

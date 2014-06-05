@@ -25,7 +25,7 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-int gridSize = 16;
+int gridSize = 64;
 int cellSize = 4;
 int scienceCycles = 100;
 
@@ -57,7 +57,7 @@ boolean forward = true;
 // trails = 0:none, 1:every, 2:center-of-mass
 int trails = 0;
 // how many points in trail
-int trailSize = 1024;
+int trailSize = 2500;
 int trailPos = 0;
 // measurement of how fast we're rendering
 float framesPerSec = 0;
@@ -149,7 +149,9 @@ void initJFrame(JFrame f) {
 RootGUI statusFrame = null;
 
 String cursorStatus() {
-    if (wrap) { cursorPos.wrap(gridSize); }
+  if (wrap) { 
+    cursorPos.wrap(gridSize);
+  }
   Cell c = grid.get(cursorPos);
   String val =  "" + ((c == null) ? "0" : c.state);
   return "Cursor: "+ cursorPos+"  val="+val+"  default: "+cursorVal;
@@ -253,11 +255,11 @@ void drawGrid() {
   int offset = (gridSize);
   int C = -cellSize/2;
   for (int i = 0; i < 2*gridSize+2; i++) {
-    line((i-offset)*cellSize+C, -gridSize*cellSize-C   ,    C, 
-         (i-offset)*cellSize+C,  gridSize*cellSize-C      ,    C);
+    line((i-offset)*cellSize+C, -gridSize*cellSize-C, C, 
+    (i-offset)*cellSize+C, gridSize*cellSize-C, C);
 
     line(-gridSize*cellSize-C, (i-offset)*cellSize+C, C, 
-          gridSize*cellSize-C, (i-offset)*cellSize+C, C);
+    gridSize*cellSize-C, (i-offset)*cellSize+C, C);
     stroke(140);
   }
 }
@@ -336,7 +338,17 @@ void draw() {
     textMode(SHAPE);
     textSize(50);
     fill(50);
-    text("SCIENCE MODE", -200, 0, 0);
+    pushMatrix();
+
+    float[] rotations = cam.getRotations(); // x, y, and z rotations required to face camera in model space
+    float[] position = cam.getPosition(); // x, y, and z coordinates of camera in model space
+    rotateX(rotations[0]);
+    rotateY(rotations[1]);
+    rotateZ(rotations[2]);
+    //translate(position[0], position[1], position[2]);
+
+    text("SCIENCE MODE", -200, 0, 100);
+    popMatrix();
     updateStatusFrame();
     return;
   }
