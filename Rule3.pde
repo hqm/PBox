@@ -31,7 +31,7 @@ class Rule3 extends Rule {
 
   Swap dxy1 = new Swap(
   1, 0, 0, 
-  3, 0, 0);
+  1, 0, 0);
 
 
   Swap dxy2 = new Swap(
@@ -44,7 +44,7 @@ class Rule3 extends Rule {
 
   Swap dxz1 =  new Swap(
   0, 0, 1, 
-  0, 0, 3);
+  1, 0, 2);
 
   Swap dxz2 = new Swap(
   0, 1, 0, 
@@ -55,7 +55,7 @@ class Rule3 extends Rule {
   // moves YZ plane
   Swap dyz1 = new Swap(
   0, 1, 0, 
-  0, 3, 0);
+  0, 2, 1);
 
   Swap dyz2 = new Swap(
   0, 0, 1, 
@@ -126,26 +126,16 @@ class Rule3 extends Rule {
     }
   }
 
-
   // the default starting configuration
   void initConfig() {
-    int n = 2000;
+    int n = 14;
+    int x=0;
+    int y=0;
+    int z=0;
     while (n-- > 0) {
-      int x = round(random(-32, 32));
-      int y = round(random(-32, 32));
-      int z = round(random(-32, 32));
-      int s = (random(0, 1) < 0.5 ) ? 1 : -1;
 
-      int dx = 0, dy=0, dz=0;
-      int r = round(random(0, 3));
-      if (r < 1)        dx = (random(0, 1) < 0.5 ) ? 1 : -1;
-      else if (r >= 1 && r < 2)        dy = (random(0, 1) < 0.5 ) ? 1 : -1;
-      else
-        dz = (random(0, 1) < 0.5 ) ? 1 : -1;
-
-      addCell(x, y, z, s);
-
-      addCell(x+dx, y+dy, z+dz, s);
+      addCell(x, y, z, 1);
+      y++;
     }
   }
 }
