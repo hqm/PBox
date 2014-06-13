@@ -75,22 +75,22 @@ class Rule1 extends Rule {
   void busybox(ArrayList<Cell> cells, Swap s1, Swap s2) {
 
     for (Cell cell : cells) {
-      Coord.add(cell.loc, s1.a, p1); // p1 := cell + delta1
-      Coord.add(cell.loc, s1.b, p2); // p1 := cell + delta1
+      addCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
+      addCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
 
-      Coord.add(cell.loc, s2.a, p3); // p1 := cell + delta1
-      Coord.add(cell.loc, s2.b, p4); // p1 := cell + delta1
+      addCoords(cell.loc, s2.a, p3); // p1 := cell + delta1
+      addCoords(cell.loc, s2.b, p4); // p1 := cell + delta1
 
       if (cell.state != 0) {
         proposeSwap(p1, p2);
         proposeSwap(p3, p4);
       }
 
-      Coord.sub(cell.loc, s1.a, p1); // p1 := cell + delta1
-      Coord.sub(cell.loc, s1.b, p2); // p1 := cell + delta1
+      subCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
+      subCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
 
-      Coord.sub(cell.loc, s2.a, p3); // p1 := cell + delta1
-      Coord.sub(cell.loc, s2.b, p4); // p1 := cell + delta1
+      subCoords(cell.loc, s2.a, p3); // p1 := cell + delta1
+      subCoords(cell.loc, s2.b, p4); // p1 := cell + delta1
 
       if (cell.state != 0) {
         proposeSwap(p1, p2);
@@ -103,6 +103,7 @@ class Rule1 extends Rule {
   void initConfig() {
 
     addCircular("X", 10,10, 10, 20);
+    println("WTF");
   }
 
   void addCircular(String orientation, int x, int y, int z, int d) {

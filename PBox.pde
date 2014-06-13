@@ -203,7 +203,7 @@ void setup() {
   cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(10000);
-  rule.initConfig();
+  setRule("BusyBox");
   stashCells(clock);
 
   frameRate(10000);
@@ -526,6 +526,21 @@ void drawCursor() {
   box(cellSize);
   popMatrix();
   hint(ENABLE_DEPTH_TEST);
+}
+
+
+void addCoords(Coord a, Coord b, Coord result) {
+
+  Coord.add(a, b, result);
+  if (wrap) {
+    result.wrap(gridSize);
+  }
+}
+void subCoords(Coord a, Coord b, Coord result) {
+  Coord.sub(a, b, result);
+  if (wrap) {
+    result.wrap(gridSize);
+  }
 }
 
 // When proposing to swap cell A and B

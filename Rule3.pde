@@ -76,51 +76,54 @@ class Rule3 extends Rule {
 
     switch(phase) {
     case 0:
-      rule3(cells, dxy1, dxy2, testxy);
+      rule3(cells, dxy1, dxy2);
       break;
     case 1:
-      rule3(cells, dxz1, dxz2, testxz);
+      rule3(cells, dxz1, dxz2);
       break;
     case 2:
-      rule3(cells, dyz1, dyz2, testyz);
+      rule3(cells, dyz1, dyz2);
       break;
     case 3:
-      rule3(cells, dxy1, dxy2, testxy);
+      rule3(cells, dxy1, dxy2);
       break;
     case 4:
-      rule3(cells, dxz1, dxz2, testxz);
+      rule3(cells, dxz1, dxz2);
       break;
     case 5:
-      rule3(cells, dyz1, dyz2, testyz);
+      rule3(cells, dyz1, dyz2);
       break;
     }
   }
 
-  Coord ptest = new Coord(0, 0, 0);
+  Coord ptest1 = new Coord(0, 0, 0);
+  Coord ptest2 = new Coord(0, 0, 0);
 
-  void rule3(ArrayList<Cell> cells, Swap s1, Swap s2, Coord ctest) {
+  void rule3(ArrayList<Cell> cells, Swap s1, Swap s2) {
 
     for (Cell cell : cells) {
-      Coord.add(cell.loc, ctest, ptest);
-      Cell cell2 = grid.get(ptest);
+      addCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
+      addCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
+      Cell cell1 = grid.get(p1);
+      Cell cell2 = grid.get(p2);
 
-      if (cell2 == null || cell.state != cell2.state ) {
-        Coord.add(cell.loc, s1.a, p1); // p1 := cell + delta1
-        Coord.add(cell.loc, s1.b, p2); // p1 := cell + delta1
+      if ((cell2 != null && cell.state != cell2.state ) || (cell1 != null && cell.state != cell1.state )) {
+        addCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
+        addCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
         proposeSwap(p1, p2);
 
 
-        Coord.sub(cell.loc, s1.a, p1); // p1 := cell + delta1
-        Coord.sub(cell.loc, s1.b, p2); // p1 := cell + delta1
+        subCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
+        subCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
         proposeSwap(p1, p2);
       } else {
 
-        Coord.add(cell.loc, s2.a, p1); // p1 := cell + delta1
-        Coord.add(cell.loc, s2.b, p2); // p1 := cell + delta1
+        addCoords(cell.loc, s2.a, p1); // p1 := cell + delta1
+        addCoords(cell.loc, s2.b, p2); // p1 := cell + delta1
         proposeSwap(p1, p2);
 
-        Coord.sub(cell.loc, s2.a, p1); // p1 := cell + delta1
-        Coord.sub(cell.loc, s2.b, p2); // p1 := cell + delta1
+        subCoords(cell.loc, s2.a, p1); // p1 := cell + delta1
+        subCoords(cell.loc, s2.b, p2); // p1 := cell + delta1
         proposeSwap(p1, p2);
       }
     }
