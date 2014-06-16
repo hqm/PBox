@@ -13,7 +13,7 @@ To run this project in Processing, you need to add the "PeasyCam" library to the
 
 [2] http://processing.org/
 
-![alt text](https://raw.githubusercontent.com/hqm/PBox/master/busybox1.png "screenshot")
+![alt text](https://raw.githubusercontent.com/hqm/PBox/master/pbox.png "screenshot")
 
 
 How To Implement A New Rule
