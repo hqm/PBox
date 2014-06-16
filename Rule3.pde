@@ -27,119 +27,61 @@ class Rule3 extends Rule {
       b = new Coord(x2, y2, z2);
     }
   }
-  // moves XY plane
-
-  Swap dxy1 = new Swap(
-  1, 0, 0, 
-  1, 0, 0);
-
-
-  Swap dxy2 = new Swap(
-  1, 0, 0, 
-  0, 1, 0);
-
-  Coord testxy = new Coord(4, 0, 0);
-
-  // moves XZ plane
-
-  Swap dxz1 =  new Swap(
-  0, 0, 1, 
-  1, 0, 2);
-
-  Swap dxz2 = new Swap(
-  0, 1, 0, 
-  0, 0, 1);
-
-  Coord testxz = new Coord(0, 0, 4);
-
-  // moves YZ plane
-  Swap dyz1 = new Swap(
-  0, 1, 0, 
-  0, 2, 1);
-
-  Swap dyz2 = new Swap(
-  0, 0, 1, 
-  1, 0, 0);
-
-  Coord testyz = new Coord(0, 4, 0);
 
 
   void runRule() {
     int phase = clockPhase();
 
-    ArrayList<Cell> cells;
-    if (phase % 2 == 0) {
-      cells = evenCells;
-    } else {
-      cells = oddCells;
-    }
-
     switch(phase) {
     case 0:
-      rule3(cells, dxy1, dxy2);
+      rule3(evenCells, phase);
       break;
     case 1:
-      rule3(cells, dxz1, dxz2);
+      rule3(oddCells, phase);
       break;
     case 2:
-      rule3(cells, dyz1, dyz2);
+      rule3(evenCells, phase);
       break;
     case 3:
-      rule3(cells, dxy1, dxy2);
+      rule3(oddCells, phase);
       break;
     case 4:
-      rule3(cells, dxz1, dxz2);
+      rule3(evenCells, phase);
       break;
     case 5:
-      rule3(cells, dyz1, dyz2);
+      rule3(oddCells, phase);
       break;
     }
   }
 
-  Coord ptest1 = new Coord(0, 0, 0);
-  Coord ptest2 = new Coord(0, 0, 0);
-
-  void rule3(ArrayList<Cell> cells, Swap s1, Swap s2) {
+  void rule3(ArrayList<Cell> cells, int phase) {
 
     for (Cell cell : cells) {
-      addCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
-      addCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
-      Cell cell1 = grid.get(p1);
-      Cell cell2 = grid.get(p2);
-
-      if ((cell2 != null && cell.state != cell2.state ) || (cell1 != null && cell.state != cell1.state )) {
-        addCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
-        addCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
+      switch(phase) {
+      case 0:
+      case 1:
+        p1.set(cell.loc);
+        p2.set(cell.loc);
+        p1.x -= 1;
+        p2.x -= 3;
         proposeSwap(p1, p2);
 
 
-        subCoords(cell.loc, s1.a, p1); // p1 := cell + delta1
-        subCoords(cell.loc, s1.b, p2); // p1 := cell + delta1
+        p1.set(cell.loc);
+        p2.set(cell.loc);
+        p1.x += 1;
+        p2.x += 3;
         proposeSwap(p1, p2);
-      } else {
-
-        addCoords(cell.loc, s2.a, p1); // p1 := cell + delta1
-        addCoords(cell.loc, s2.b, p2); // p1 := cell + delta1
-        proposeSwap(p1, p2);
-
-        subCoords(cell.loc, s2.a, p1); // p1 := cell + delta1
-        subCoords(cell.loc, s2.b, p2); // p1 := cell + delta1
-        proposeSwap(p1, p2);
+        break;
       }
     }
   }
 
-  // the default starting configuration
-  void initConfig() {
-    int n = 14;
-    int x=0;
-    int y=0;
-    int z=0;
-    while (n-- > 0) {
 
-      addCell(x, y, z, 1);
-      y++;
-    }
+
+  void initConfig() {
+    addCell(0, 0, 0, 1);
+    addCell(1, 0, 0, 1);
   }
 }
 

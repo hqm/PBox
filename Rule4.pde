@@ -135,7 +135,7 @@ class Rule4 extends Rule {
     for (int x = -N; x < N; x+=1) {
       for (int y = -N; y < N; y+=2) {
         for (int z = -N; z < N; z+=2) {
-          addCell(x, y, z, round(random(-1,1)));
+          addCell(x, y, z, round(random(-1, 1)));
         }
       }
     }

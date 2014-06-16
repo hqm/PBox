@@ -69,7 +69,9 @@ public HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
 
 // Keep track of which cell a given cell is supposed to swap with. Used to find and prevent
 // conflicting swaps.
-// Using a cell location as a key, holds the target location that this cell is proposed to swap with
+// Using a cell location as a key, holds a list of target locations that this cell is proposed to swap with.
+// To skip conflicts, we can make sure a pair of cells only is designated to swap with one another;  
+// If a swap is valid, cell A should list only cell B as a swap target, and cell B should list just cell A.
 public HashMap<Coord, ArrayList<Coord>> swaps = new HashMap<Coord, ArrayList<Coord>>();
 
 // List of all cells
@@ -80,14 +82,14 @@ public ArrayList<Cell> evenCells = new ArrayList<Cell>();
 // List of cells in imaginary plane
 public ArrayList<Cell> oddCells = new ArrayList<Cell>();
 
+//For placing a predfined module (list of cells) 
 public ArrayList<Cell>  moduleCells = new ArrayList<Cell>();
 // store state of all cells, so we can reset back to original config in RAM
 public ArrayList<Cell>  stashCells = new ArrayList<Cell>();
 int stashedClock = 0;
 
-// for drawing center of mass trails
+// for drawing center of mass trails, uses floating point values, hence PVector instead of Coord
 public PVector[] trail = new PVector[trailSize];
-
 
 // clear the grid and regenerate it from cells
 void resetGrid() {

@@ -94,3 +94,4 @@ class Rule5 extends Rule {
     }
   }
 }
+

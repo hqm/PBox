@@ -16,7 +16,7 @@ ItemListener {
 
   JLabel movieLabel = new JLabel("Write Movie: off", JLabel.LEFT);
   JLabel ncellsLabel = new JLabel("# cells: "+allCells.size(), JLabel.LEFT);
-  
+
 
   JLabel help = new JLabel(HELP_STRING, JLabel.LEFT);
 
@@ -29,11 +29,19 @@ ItemListener {
 
 
 
+
   JMenuItem saveConfigItem = new JMenuItem("Save Config");
   JMenuItem clearItem = new JMenuItem("Clear");
   JMenuItem loadConfig = new JMenuItem("Load Config");
   JMenuItem loadModule = new JMenuItem("Load Module");
   JMenu file = new JMenu("File");
+
+  JMenu gridMenu = new JMenu("Grid");
+  JMenuItem grid16 = new JMenuItem("16");
+  JMenuItem grid32 = new JMenuItem("32");
+  JMenuItem grid64 = new JMenuItem("64");
+  JMenuItem grid128 = new JMenuItem("128");
+
 
   JButton updateButton = new JButton("STASH");
   JButton resetButton = new JButton("RESTORE");
@@ -55,6 +63,17 @@ ItemListener {
 
     ruleList.addActionListener(this);
     ruleList.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    gridMenu.add(grid16);
+    grid16.addActionListener(this);
+    gridMenu.add(grid32);
+    grid32.addActionListener(this);
+    gridMenu.add(grid64);
+    grid64.addActionListener(this);
+    gridMenu.add(grid128);
+    grid128.addActionListener(this);
+
+
 
     updateButton.addActionListener(this);
     resetButton.addActionListener(this);
@@ -80,6 +99,7 @@ ItemListener {
     loadModule.addActionListener(this );
 
     menuBar.add(file);
+    menuBar.add(gridMenu);
     setJMenuBar(menuBar);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -148,6 +168,14 @@ ItemListener {
       app.fast = !app.fast;
     } else if (cmd.equals("FORWARD/BACK")) {
       app.toggleTime();
+    } else if (cmd.equals("16")) {
+      app.gridSize = 16;
+    } else if (cmd.equals("32")) {
+      app.gridSize = 32;
+    } else if (cmd.equals("64")) {
+      app.gridSize = 64;
+    } else if (cmd.equals("128")) {
+      app.gridSize = 128;
     }
   }
 
@@ -171,3 +199,4 @@ ItemListener {
     +"': toggle default cursor value<br>"
     +"</html>";
 }
+
