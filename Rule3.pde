@@ -54,28 +54,49 @@ class Rule3 extends Rule {
     }
   }
 
+  Coord loc2 = new Coord();
+  Coord loc3 = new Coord();
+
   void rule3(ArrayList<Cell> cells, int phase) {
 
     for (Cell cell : cells) {
       switch(phase) {
       case 0:
       case 1:
-        p1.set(cell.loc);
-        p2.set(cell.loc);
-        p1.x -= 1;
-        p2.x -= 3;
-        proposeSwap(p1, p2);
+        if (cell.state == 1) {
 
 
-        p1.set(cell.loc);
-        p2.set(cell.loc);
-        p1.x += 1;
-        p2.x += 3;
-        proposeSwap(p1, p2);
-        break;
+          loc3.set(cell.loc);
+          loc3.x += 3; 
+          Cell c3 = getCell(loc3);
+
+
+          if  (c3 == null || c3.state == 1) {
+            p3.set(cell.loc);
+            p4.set(cell.loc);
+            p3.x += 1;
+            p4.x += 3;
+            proposeSwap(p3, p4);
+          }
+
+
+          loc2.set(cell.loc);
+          loc2.x -= 3; 
+          Cell c2 = getCell(loc2);
+
+          if  (true || c2 == null || c2.state == 1) {
+            p1.set(cell.loc);
+            p2.set(cell.loc);
+            p1.x -= 1;
+            p2.x -= 3;
+            proposeSwap(p1, p2);
+          }
+        }
       }
     }
   }
+
+
 
 
 

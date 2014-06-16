@@ -25,9 +25,10 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-int gridSize = 64;
+int gridSize = 32;
 int cellSize = 4;
 int scienceCycles = 100;
+int START_DIST = 300;
 
 ArrayList<Rule> rules;
 
@@ -57,7 +58,7 @@ boolean forward = true;
 // trails = 0:none, 1:every, 2:center-of-mass
 int trails = 0;
 // how many points in trail
-int trailSize = 2500;
+int trailSize = 5000;
 int trailPos = 0;
 // measurement of how fast we're rendering
 float framesPerSec = 0;
@@ -202,7 +203,7 @@ void setup() {
     frame.setResizable(true);
   }
 
-  cam = new PeasyCam(this, 500);
+  cam = new PeasyCam(this, START_DIST);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(10000);
   setRule("BusyBox");
@@ -531,6 +532,17 @@ void drawCursor() {
 }
 
 
+Coord _loc = new Coord();
+
+// get a cell from the grid location a, optionally wrapping a before reading from grid
+Cell getCell(Coord a) {
+  _loc.set(a); // copy of a
+  if (wrap) {
+    _loc.wrap(gridSize);
+  }
+  return grid.get(_loc);
+  
+}
 void addCoords(Coord a, Coord b, Coord result) {
 
   Coord.add(a, b, result);

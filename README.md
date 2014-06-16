@@ -13,4 +13,15 @@ To run this project in Processing, you need to add the "PeasyCam" library to the
 
 [2] http://processing.org/
 
-![alt text](https://raw.githubusercontent.com/hqm/pbox/master/busybox1.png "screenshot")
+![alt text](https://raw.githubusercontent.com/hqm/PBox/master/busybox1.png "screenshot")
+
+
+How To Implement A New Rule
+===
+
+
+See the Google Doc 
+https://docs.google.com/document/d/1vf10l80H6OTJVNZK0XvpxnGTRwgBHSyU9TEVgzC9ng8/edit?usp=sharing
+
+	
+
