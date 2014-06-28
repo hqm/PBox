@@ -17,6 +17,13 @@ class Rule3 extends Rule {
    Phase 4: apply rule to even field in YZ plane 
    Phase 5: apply rule to odd field in XZ plane
    
+   
+   + -   N
+   . . . . . . . . 
+ - +         N
+     +1  +3  +5
+
+   
    */
 
   class Swap {
@@ -54,8 +61,12 @@ class Rule3 extends Rule {
     }
   }
 
-  Coord loc2 = new Coord();
+  Coord loc1 = new Coord();
+  Coord locn1 = new Coord();
   Coord loc3 = new Coord();
+  Coord locn3 = new Coord();
+  Coord loc5 = new Coord();
+  Coord locn5 = new Coord();
 
   void rule3(ArrayList<Cell> cells, int phase) {
 
@@ -65,32 +76,44 @@ class Rule3 extends Rule {
       case 1:
         if (cell.state == 1) {
 
-
+          loc1.set(cell.loc);
+          loc1.x += 1; 
+          Cell c1 = getCell(loc1);
+   
           loc3.set(cell.loc);
           loc3.x += 3; 
           Cell c3 = getCell(loc3);
+   
+          loc5.set(cell.loc);
+          loc5.x += 5; 
+          Cell c5 = getCell(loc5);
+   
 
+          locn1.set(cell.loc);
+          locn1.x -= 1; 
+          Cell cn1 = getCell(locn1);
+   
+          locn3.set(cell.loc);
+          locn3.x -= 3; 
+          Cell cn3 = getCell(locn3);
+   
+          locn5.set(cell.loc);
+          locn5.x -= 5; 
+          Cell cn5 = getCell(locn5);
+     println(c1,c3,c5);
+          if  (c5 == null) {
+              proposeSwap(loc1, loc3);
+          } 
+         
+          if (  (c3 != null) && (c3.state == -1) || (c5 != null && c5.state == -1)) {
+              proposeSwap(loc1, locn1); //change direction
+              proposeSwap(loc3, loc5);  // bring rightmost cell one step right
 
-          if  (c3 == null || c3.state == 1) {
-            p3.set(cell.loc);
-            p4.set(cell.loc);
-            p3.x += 1;
-            p4.x += 3;
-            proposeSwap(p3, p4);
           }
 
+         
 
-          loc2.set(cell.loc);
-          loc2.x -= 3; 
-          Cell c2 = getCell(loc2);
-
-          if  (true || c2 == null || c2.state == 1) {
-            p1.set(cell.loc);
-            p2.set(cell.loc);
-            p1.x -= 1;
-            p2.x -= 3;
-            proposeSwap(p1, p2);
-          }
+          
         }
       }
     }
@@ -103,6 +126,11 @@ class Rule3 extends Rule {
   void initConfig() {
     addCell(0, 0, 0, 1);
     addCell(1, 0, 0, 1);
+    
+     addCell(7, 0, 0, -1);
+
+
+     addCell(-8, 0, 0, -1);
   }
 }
 
