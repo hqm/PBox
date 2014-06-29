@@ -102,7 +102,7 @@ class Rule1 extends Rule {
 
   void initConfig() {
 
-    addCircular("X", 10,10, 10, 20);
+    addCircular("X", 10,10, 10, 10);
     println("WTF");
   }
 

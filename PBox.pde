@@ -570,9 +570,7 @@ void proposeSwap(Coord oa, Coord ob) {
     b.wrap(gridSize);
   }
   if (debug) println("proposeSwap("+a+"<=>"+b);
-  if (  ((a.x + a.y +a.z) % 2) != ((b.x +b.y + b.z) % 2)) {
-      println("warning: proposed swap between an even and odd cell", a, b);
-  }
+  
 
   ArrayList<Coord> swaps_a = swaps.get(a);
   if (swaps_a == null) {
