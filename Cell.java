@@ -33,6 +33,11 @@ public class Cell {
 
   public CellMode mode = CellMode.CAN_SWAP;
 
+
+  public boolean isEven() {
+      return ((loc.x + loc.y + loc.z) % 2) == 0;
+  }
+
   public String toString() {
     return "<Cell:"+loc+" s="+state+" swapState="+mode+">";
   }

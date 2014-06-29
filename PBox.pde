@@ -25,9 +25,9 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-int gridSize = 32;
-int cellSize = 4;
-int scienceCycles = 100;
+public int gridSize = 32;
+public int cellSize = 4;
+public int scienceCycles = 100;
 int START_DIST = 300;
 
 ArrayList<Rule> rules;
@@ -41,10 +41,10 @@ import bsh.*;
 
 
 PeasyCam cam;
-boolean singleStep = false;
-boolean run = false;
+public boolean singleStep = false;
+public boolean run = false;
 boolean fast = true;
-boolean debug = false;
+public boolean debug = false;
 boolean placingModule = false;
 boolean useSphere = false;
 boolean writeMovie = false;
@@ -63,7 +63,7 @@ int trailPos = 0;
 // measurement of how fast we're rendering
 float framesPerSec = 0;
 
-//public static PBox app;
+public static PBox app;
 
 // Hash table which holds position of all cells
 public HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
@@ -196,7 +196,7 @@ void setup() {
   statusFrame = new RootGUI(this);
   initJFrame(statusFrame);
 
-  //app = this;
+  app = this;
 
 
   if (frame != null) {
@@ -218,10 +218,10 @@ void addCell(int x, int y, int z, int state) {
     deleteCell(old);
   }
 
-  Cell cell = new Cell(x, y, z, state);  
+  Cell cell = new Cell(x, y, z, state);
   grid.put(cell.loc, cell);
   allCells.add(cell);
-  if ((x+y+z)%2 == 0) {
+  if (cell.isEven()) {
     // even
     evenCells.add(cell);
   } else {
@@ -233,7 +233,7 @@ void addCell(int x, int y, int z, int state) {
 void deleteCell(Cell c) {
   grid.remove(c.loc);
   allCells.remove(c);
-  if ((c.loc.x+c.loc.y+c.loc.z)%2 == 0) {
+  if (c.isEven()) {
     // even
     evenCells.remove(c);
   } else {
@@ -541,8 +541,17 @@ Cell getCell(Coord a) {
     _loc.wrap(gridSize);
   }
   return grid.get(_loc);
-  
 }
+
+
+Cell getCell(int x, int y, int z) {
+  _loc.set(x, y, z); // copy of a
+  if (wrap) {
+    _loc.wrap(gridSize);
+  }
+  return grid.get(_loc);
+}
+
 void addCoords(Coord a, Coord b, Coord result) {
 
   Coord.add(a, b, result);
@@ -562,33 +571,34 @@ void subCoords(Coord a, Coord b, Coord result) {
 // 
 // We also push the location A onto target location B's swaps list.
 void proposeSwap(Coord oa, Coord ob) {
-  Coord a = oa.get(); // Coord.get() makes new copy of Coord object
-  Coord b = ob.get();
+    Coord a = oa.get(); // Coord.get() makes new copy of Coord object
+    Coord b = ob.get();
 
-  if (wrap) {
-    a.wrap(gridSize);
-    b.wrap(gridSize);
-  }
-  if (debug) println("proposeSwap("+a+"<=>"+b);
-  
+    if (wrap) {
+        a.wrap(gridSize);
+        b.wrap(gridSize);
+    }
+    if (debug) println("proposeSwap("+a+"<=>"+b);
 
-  ArrayList<Coord> swaps_a = swaps.get(a);
-  if (swaps_a == null) {
-    swaps_a = new ArrayList<Coord>();
-    swaps.put(a, swaps_a);
-  }
-  if (!swaps_a.contains(b)) {
-    swaps_a.add(b);
-  }
+    ArrayList<Coord> swaps_a = swaps.get(a);
+    if (swaps_a == null) {
+        swaps_a = new ArrayList<Coord>();
+        swaps.put(a, swaps_a);
+    }
+    if (!swaps_a.contains(b)) {
+        swaps_a.add(b);
+    }
 
-  ArrayList<Coord> swaps_b = swaps.get(b);
-  if (swaps_b == null) {
-    swaps_b = new ArrayList<Coord>();
-    swaps.put(b, swaps_b);
-  }
-  if (!swaps_b.contains(a)) {
-    swaps_b.add(a);
-  }
+    ArrayList<Coord> swaps_b = swaps.get(b);
+    if (swaps_b == null) {
+        swaps_b = new ArrayList<Coord>();
+        swaps.put(b, swaps_b);
+    }
+    if (!swaps_b.contains(a)) {
+        swaps_b.add(a);
+    }
+
+
 }
 
 void clearSwapState(ArrayList<Cell> cells) {
@@ -624,13 +634,13 @@ void doSwaps() {
 
 // moves a cell from it's location to dest. This will bash whatever is in dest, so only do this when moving to an empty location
 void moveCell(Cell a, Coord dest) {
-  if (debug) println("moveCell "+a+" to "+dest);
+  if (debug) print("moveCell "+a+" to "+dest);
   grid.remove(a.loc); // remove cell from current grid pos
-  a.loc.set(dest); // copy dest location value
-  if (debug) println("a.loc = "+a.loc);
+  a.loc.set(dest); // set it's location to the target location
+  if (debug) println("a.loc => "+a.loc);
   grid.put(dest, a);
   a.mode = CellMode.SWAPPED;
-  if (debug) println(".... moved "+a);
+  if (debug) println(".... moved to "+a);
 }
 
 Coord _prevA = new Coord();
@@ -642,12 +652,10 @@ void swapCells(Coord locA, Coord locB) {
   if (debug) println("swapCells "+locA+" "+a+ ", "+locB+" "+b);
   if (a != null && b != null && a.mode == CellMode.CAN_SWAP && b.mode == CellMode.CAN_SWAP) {
     if (debug) println("... swapping non-null cells a="+a+", b="+b);
-    _prevA.set(a.loc);
-    _prevB.set(b.loc);
-    grid.put(b.loc, a);
-    grid.put(a.loc, b);
-    a.loc.set(b.loc);
-    b.loc.set(_prevA);
+    // just swap the state values of the two cells
+    int tmp = a.state;
+    a.state = b.state;
+    b.state = tmp;
     a.mode = CellMode.SWAPPED;
     b.mode = CellMode.SWAPPED;
     if (debug) println("... swapped cells a="+a+", b="+b);
@@ -704,10 +712,12 @@ void toggleTrails() {
 
 void toggleTime() {
   if (forward) {
+      // if we were going forward in time, back up to re-execute the last clock step
     clock--;
   } else {
     clock++;
   }
+
   forward = !forward;
 }
 

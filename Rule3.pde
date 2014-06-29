@@ -1,6 +1,3 @@
-
-// rule for X,Y gliders with + and - state
-
 class Rule3 extends Rule {
   // tmp working registers for coordinates
   Coord p1 = new Coord(0, 0, 0);
@@ -44,19 +41,19 @@ class Rule3 extends Rule {
       rule3(evenCells, phase);
       break;
     case 1:
-      rule3(oddCells, phase);
+      //rule3(oddCells, phase);
       break;
     case 2:
-      rule3(evenCells, phase);
+      //  rule3(evenCells, phase);
       break;
     case 3:
       rule3(oddCells, phase);
       break;
     case 4:
-      rule3(evenCells, phase);
+      //  rule3(evenCells, phase);
       break;
     case 5:
-      rule3(oddCells, phase);
+      //  rule3(oddCells, phase);
       break;
     }
   }
@@ -73,43 +70,46 @@ class Rule3 extends Rule {
     for (Cell cell : cells) {
       switch(phase) {
       case 0:
-      case 1:
-        if (cell.state == 1) {
+      case 3:
 
-          loc1.set(cell.loc);
-          loc1.x += 1; 
-          Cell c1 = getCell(loc1);
+        loc1.set(cell.loc);
+        loc1.x += 1; 
+        //Cell c1 = getCell(loc1);
 
-          loc3.set(cell.loc);
-          loc3.x += 3; 
-          Cell c3 = getCell(loc3);
+        loc3.set(cell.loc);
+        loc3.x += 3; 
+        //Cell c3 = getCell(loc3);
 
-          loc5.set(cell.loc);
-          loc5.x += 5; 
-          Cell c5 = getCell(loc5);
+        proposeSwap(loc1, loc3);
+
+        //loc5.set(cell.loc);
+        //loc5.x += 5; 
+        //Cell c5 = getCell(loc5);
 
 
-          locn1.set(cell.loc);
-          locn1.x -= 1; 
-          Cell cn1 = getCell(locn1);
+        locn1.set(cell.loc);
+        locn1.x -= 1; 
+        //Cell cn1 = getCell(locn1);
 
-          locn3.set(cell.loc);
-          locn3.x -= 3; 
-          Cell cn3 = getCell(locn3);
+        locn3.set(cell.loc);
+        locn3.x -= 3; 
+        //Cell cn3 = getCell(locn3);
 
-          locn5.set(cell.loc);
-          locn5.x -= 5; 
-          Cell cn5 = getCell(locn5);
-          println(c1, c3, c5);
-          if  (c5 == null) {
-            proposeSwap(loc1, loc3);
-          } 
+        proposeSwap(locn1, locn3);
 
-          if (  (c3 != null) && (c3.state == -1) || (c5 != null && c5.state == -1)) {
-            proposeSwap(loc1, locn1); //change direction
-            proposeSwap(loc3, loc5);  // bring rightmost cell one step right
-          }
-        }
+        /*locn5.set(cell.loc);
+         locn5.x -= 5; 
+         //Cell cn5 = getCell(locn5);
+         println(c1, c3, c5);
+         if  (c5 == null) {
+         proposeSwap(loc1, loc3);
+         } 
+         
+         if (  (c3 != null) && (c3.state == -1) || (c5 != null && c5.state == -1)) {
+         proposeSwap(loc1, locn1); //change direction
+         proposeSwap(loc3, loc5);  // bring rightmost cell one step right
+         }
+         */
       }
     }
   }
@@ -118,14 +118,15 @@ class Rule3 extends Rule {
 
 
 
+
   void initConfig() {
     addCell(0, 0, 0, 1);
-    addCell(1, 0, 0, 1);
+    addCell(-1, 0, 0, 1);
 
-    addCell(7, 0, 0, -1);
+    addCell(-3, 0, 0, -1);
 
 
-    addCell(-8, 0, 0, -1);
+
   }
 }
 
