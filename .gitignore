@@ -1,0 +1,6 @@
+# Any directory called local isn't something we want to commit.
+# This one isn't in use yet by our vendors but YMMV.  I'm open of course
+# to changing the name.  -PBC
+*~
+eclipseOutput
+\#*#
