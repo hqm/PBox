@@ -69,10 +69,20 @@ class Rule3 extends Rule {
 
   void rule3(ArrayList<Cell> cells, int phase) {
 
-    println("======================================" + clockPhase());
+    //  println("======================================" + clockPhase());
 
+    Cell c1 ;
+    Cell c3 ;
+    Cell cn1;
+
+    Cell cn2;
+    Cell cn3;
+    Cell c2 ;
 
     for (Cell cell : cells) {
+
+
+
       switch(phase) {
       case 0:
       case 3:
@@ -90,62 +100,109 @@ class Rule3 extends Rule {
         locn2.set(cell.loc);
         locn2.x -= 2;
 
+        c1 = getCell(loc1);
+        c3 = getCell(loc3);
+        cn1 = getCell(locn1);
+        cn2 = getCell(locn2);
+        cn3 = getCell(locn3);
+        c2 = getCell(loc2);
+
+        if (
+        c1 != null && c1.state >= 1 
+          && c3 != null && c3.state >= 1
+          ) {
+          proposeSwap(loc3, loc5);
+          // println("C");
+        } else if (
+        cn1 != null && cn1.state >= 1  
+          && cn3 != null  && cn3.state <= -1
+          ) {
+          proposeSwap(locn3, locn5);
+          //  print("D");
+        } else if (cell.state >= 0 ) {
+          proposeSwap(loc1, loc3);
+          // println("A");
+          if (
+          cn2 == null 
+            && !(cn1 != null && cn1.state <= -1) 
+            && !(c1 != null && c1.state >= 1)
+            ) {
+            //println("B");
+            proposeSwap(locn1, locn3);
+          }
+        }
+
         break;
       case 1:
       case 4:
-        continue;
+        loc1.set(cell.loc);
+        loc1.y += 1; 
+        loc3.set(cell.loc);
+        loc3.y += 3; 
+        locn1.set(cell.loc);
+        locn1.y -= 1; 
+        locn3.set(cell.loc);
+        locn3.y -= 3;
+        loc5.set(cell.loc);
+        loc5.y += 5; 
+
+        locn2.set(cell.loc);
+        locn2.y -= 2;
+
+        c1 = getCell(loc1);
+        c3 = getCell(loc3);
+        cn1 = getCell(locn1);
+        cn2 = getCell(locn2);
+        cn3 = getCell(locn3);
+        c2 = getCell(loc2);
+
+        // if we have a pattern of 2.1, move it upward
+        if (false) {
+        }
+
+
+
+        break;
 
       case 2:
       case 5:
-        continue;
-      }
-      Cell c1 = getCell(loc1);
-      Cell c3 = getCell(loc3);
-      Cell cn1 = getCell(locn1);
-      Cell cn2 = getCell(locn2);
-      Cell cn3 = getCell(locn3);
-      Cell c2 = getCell(loc2);
-
-
-
-      /*
-A        +-.. =>  +..-
-       
-       B        +..- => ..+-
-       
-       xoxoxoxo
-       C        +-.+..  =>  -+...+
-       
-       D       -+..   =>   -..+
-       E       -..+   =>   -+..
-       
-       */
-
-      if (c1 != null && c1.state == 1 && cell.state == 1 && c3 != null && c3.state == 1) {
-        // proposeSwap(loc1, locn1); // SWAP CELLS phase shift
-        proposeSwap(loc3, loc5);
-        println("C");
-      } else if (cn1 != null && cn1.state == 1 && cell.state == 1 && cn3 != null && cn3.state == -1) {
-        proposeSwap(locn3, locn5);
-        print("D");
-      } else if (cell.state != -1 ) {
-        proposeSwap(loc1, loc3);
-        println("A");
-        if (cn2 == null && !(cn1 != null && cn1.state == -1) && !(c1 != null && c1.state == 1)) {
-          println("B");
-          proposeSwap(locn1, locn3);
-        }
+        break;
       }
     }
   }
 
+  /*
+A        +-.. =>  +..-
+   
+   B        +..- => ..+-
+   
+   xoxoxoxo
+   C        +-.+..  =>  -+...+
+   
+   D       -+..   =>   -..+
+   E       -..+   =>   -+..
+   
+   proposeSwap(loc1, locn1); // SWAP CELLS phase shift
+   
+   */
+
+
 
   void initConfig() {
-    addCell(0, 0, 0, 1);
-    addCell(1, 0, 0, 1);
 
-    addCell(7, 0, 0, 1);
-    addCell(-9, 0 , 0 , -1);
+    for (int y = -10; y <0 ; y+=1) {
+      
+      addCell(y%2, y, 0, 1);
+      addCell(y%2+1, y, 0, 1);
+      addCell(y%2+7, y, 0, 1);
+      addCell(y%2-7, y, 0, -1);
+
+
+      addCell(y%2, y+20, 0, 2);
+      addCell(y%2+1, y+20, 0, 2);
+      addCell(y%2+7, y+20, 0, 2);
+      addCell(y%2-7, y+20, 0, -2);
+    }
   }
 }
 

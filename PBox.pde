@@ -133,14 +133,23 @@ Coord delta = new Coord(0, 0, 0);
 
 static final int CURSOR_ALPHA = 30;
 
+static final int NSTATES = 2;
+
 int[] evenColors = {
-  color(255, 0, 0), // state = 1  EVEN
-  color(255, 200, 0) // state = -1 EVEN
+    color(200, 20, 40), // state = -2 EVEN
+    color(255, 200, 0), // state = -1 EVEN
+    color(255, 255, 255), // state = 0 EVEN
+    color(255, 0,   0), // state = 1  EVEN
+    color(255, 0,   128) // state = 2  EVEN
+
 };
 
 int[] oddColors = {
-  color(0, 0, 255), // state = 1  IMG
-  color(0, 255, 20) // state = -1  IMG
+    color(0, 200, 130), // state = -2  IMG
+    color(0, 255, 20), // state = -1  IMG
+    color(255, 255, 255), // state = 0  IMG
+    color(0, 0,   255), // state = 1  IMG
+    color(75, 110,   190) // state = 2  IMG
 };
 
 
@@ -467,9 +476,9 @@ void drawCells(ArrayList<Cell> cells) {
       );
 
     if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // even
-      fill( (cell.state == 1) ? evenColors[0] : evenColors[1] );
+      fill( evenColors[cell.state+NSTATES]);
     } else { // imaginary
-      fill( (cell.state == 1) ? oddColors[0] : oddColors[1] );
+      fill( oddColors[cell.state+NSTATES]);
     }
 
     if (useSphere) {
@@ -494,9 +503,9 @@ void drawFromGrid() {
       );
 
     if ((cell.loc.x+cell.loc.y+cell.loc.z)%2 == 0) { // even
-      fill( (cell.state == 1) ? evenColors[0] : evenColors[1] );
+      fill( evenColors[cell.state+NSTATES]);
     } else { // imaginary
-      fill( (cell.state == 1) ? oddColors[0] : oddColors[1] );
+      fill( oddColors[cell.state+NSTATES]);
     }
 
     if (useSphere) {
@@ -515,15 +524,15 @@ void drawCursor() {
 
   pushMatrix();
   translate(
-  (cursorPos.x )*cellSize, 
-  (cursorPos.y)*cellSize, 
-  (cursorPos.z)*cellSize
-    );
+      (cursorPos.x )*cellSize, 
+      (cursorPos.y)*cellSize, 
+      (cursorPos.z)*cellSize
+            );
 
   if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // even
-    fill( (cursorVal == 1) ? evenColors[0] : evenColors[1], CURSOR_ALPHA );
+    fill( evenColors[cursorVal+NSTATES], CURSOR_ALPHA );
   } else { // imaginary
-    fill( (cursorVal == 1) ? oddColors[0] : oddColors[1], CURSOR_ALPHA);
+    fill( oddColors[cursorVal+NSTATES], CURSOR_ALPHA);
   }
 
   box(cellSize);
