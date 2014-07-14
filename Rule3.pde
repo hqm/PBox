@@ -69,7 +69,7 @@ class Rule3 extends Rule {
 
   void rule3(ArrayList<Cell> cells, int phase) {
 
-    //  println("======================================" + clockPhase());
+     println("======================================" + clockPhase());
 
     Cell c1 ;
     Cell c3 ;
@@ -99,6 +99,8 @@ class Rule3 extends Rule {
 
         locn2.set(cell.loc);
         locn2.x -= 2;
+        loc2.set(cell.loc);
+        loc2.x += 2;
 
         c1 = getCell(loc1);
         c3 = getCell(loc3);
@@ -107,27 +109,25 @@ class Rule3 extends Rule {
         cn3 = getCell(locn3);
         c2 = getCell(loc2);
 
-        if (
-        c1 != null && c1.state >= 1 
+        if (c1 != null && c1.state >= 1 
           && c3 != null && c3.state >= 1
           ) {
           proposeSwap(loc3, loc5);
-          // println("C");
-        } else if (
-        cn1 != null && cn1.state >= 1  
+          println("C "+cell);
+        } else if (cn1 != null && cn1.state >= 1  
           && cn3 != null  && cn3.state <= -1
           ) {
           proposeSwap(locn3, locn5);
           //  print("D");
         } else if (cell.state >= 0 ) {
           proposeSwap(loc1, loc3);
-          // println("A");
+          println("A "+cell);
           if (
           cn2 == null 
             && !(cn1 != null && cn1.state <= -1) 
             && !(c1 != null && c1.state >= 1)
             ) {
-            //println("B");
+            println("..B "+cell);
             proposeSwap(locn1, locn3);
           }
         }
@@ -135,6 +135,7 @@ class Rule3 extends Rule {
         break;
       case 1:
       case 4:
+      /*
         loc1.set(cell.loc);
         loc1.y += 1; 
         loc3.set(cell.loc);
@@ -146,6 +147,9 @@ class Rule3 extends Rule {
         loc5.set(cell.loc);
         loc5.y += 5; 
 
+        loc2.set(cell.loc);
+        loc2.y += 1;
+        loc2.x += 1;
         locn2.set(cell.loc);
         locn2.y -= 2;
 
@@ -156,11 +160,12 @@ class Rule3 extends Rule {
         cn3 = getCell(locn3);
         c2 = getCell(loc2);
 
-        // if we have a pattern of 2.1, move it upward
-        if (false) {
+        // if we have a pattern of 2.1,  swap with row below, and move both down by one grid cell in y direction
+        if (cell.state > 1 || cell.state < -1) {
+          proposeSwap(loc2, cell.loc);
         }
 
-
+*/
 
         break;
 
@@ -190,18 +195,23 @@ A        +-.. =>  +..-
 
   void initConfig() {
 
-    for (int y = -10; y <0 ; y+=1) {
-      
+  //  addCell(0, 0, 0, 2);
+  //  addCell(1, 0, 0, 2);
+  //  addCell(7, 0, 0, 2);
+  //  addCell(-7, 0, 0, -2);
+
+    for (int y = 2; y <3 ; y+=2) {
+
       addCell(y%2, y, 0, 1);
       addCell(y%2+1, y, 0, 1);
       addCell(y%2+7, y, 0, 1);
       addCell(y%2-7, y, 0, -1);
 
 
-      addCell(y%2, y+20, 0, 2);
-      addCell(y%2+1, y+20, 0, 2);
-      addCell(y%2+7, y+20, 0, 2);
-      addCell(y%2-7, y+20, 0, -2);
+   //   addCell(y%2, y+22, 0, 2);
+    //  addCell(y%2+1, y+22, 0, 2);
+  //    addCell(y%2+7, y+22, 0, 2);
+   //   addCell(y%2-7, y+22, 0, -2);
     }
   }
 }

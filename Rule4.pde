@@ -1,18 +1,3 @@
-// rule for X,Y gliders with + and - state
-/*
-
- Strangely enough, I am now also interested in models that fill space
- with gliders that each move only in + or - X direction, or only + or
- – Y direction or only in + or – Z direction, until they have a
- collision.  The results of a collision could change the directions of
- both colliding Gliders, in a way that conserves momentum.
- 
- In other words, these gliders would go straight down a coordinate
- axis, until 2 of them collide, the collision alters directions, but
- within the rules that momentum is conserved, and each of the
- resulting trajectories are each still in parallel to one of the
- Cartesian Coordinate axes.  */
-
 class Rule4 extends Rule {
   // tmp working registers for coordinates
   Coord p1 = new Coord(0, 0, 0);
@@ -29,6 +14,13 @@ class Rule4 extends Rule {
    Phase 4: apply rule to even field in YZ plane 
    Phase 5: apply rule to odd field in XZ plane
    
+   
+   + -   N
+   . . . . . . . . 
+   - +         N
+   +1  +3  +5
+   
+   
    */
 
   class Swap {
@@ -39,104 +31,154 @@ class Rule4 extends Rule {
       b = new Coord(x2, y2, z2);
     }
   }
-  // moves XY plane
-
-
-  Swap dxy1 = new Swap(
-  1, 0, 0, 
-  0, 1, 0);
-
-
-  Swap dxy2 = new Swap(
-  1, 0, 0, 
-  0, -1, 0);
-
-  // moves XZ plane
-
-  Swap dxz1 =  new Swap(
-  0, 0, 1, 
-  1, 0, 0);
-
-  Swap dxz2 = new Swap(
-  0, 0, -1, 
-  -1, 0, 0);
-
-  // moves YZ plane
-  Swap dyz1 = new Swap(
-  0, 1, 0, 
-  0, 0, 1);
-
-  Swap dyz2 = new Swap(
-  0, 1, 0, 
-  0, 0, -1);
-
 
 
   void runRule() {
     int phase = clockPhase();
 
-    ArrayList<Cell> cells;
-    if (phase % 2 == 0) {
-      cells = evenCells;
-    } else {
-      cells = oddCells;
-    }
-
     switch(phase) {
     case 0:
-      rule4(cells, dxy1, dxy2);
+      rule3(evenCells, phase);
       break;
     case 1:
-      rule4(cells, dxz1, dxz2);
+      rule3(oddCells, phase);
       break;
     case 2:
-      rule4(cells, dyz1, dyz2 );
+      rule3(evenCells, phase);
       break;
     case 3:
-      rule4(cells, dxy1, dxy2);
+      rule3(oddCells, phase);
       break;
     case 4:
-      rule4(cells, dxz1, dxz2);
+      rule3(evenCells, phase);
       break;
     case 5:
-      rule4(cells, dyz1, dyz2 );
+      rule3(oddCells, phase);
       break;
     }
   }
 
-  void rule4(ArrayList<Cell> cells, Swap s1, Swap s2) {
+  Coord loc1 = new Coord();
+  Coord locn1 = new Coord();
+  Coord loc3 = new Coord();
+  Coord locn3 = new Coord();
+  Coord loc5 = new Coord();
+  Coord locn5 = new Coord();
+  Coord loc2 = new Coord();
+  Coord locn2 = new Coord();
+
+  void rule3(ArrayList<Cell> cells, int phase) {
+
+    //  println("======================================" + clockPhase());
+
+    Cell c1 ;
+    Cell c3 ;
+    Cell cn1;
+
+    Cell cn2;
+    Cell cn3;
+    Cell c2 ;
 
     for (Cell cell : cells) {
-      if (cell.state == 1) {
-        Coord.add(cell.loc, s1.a, p1); // p1 := cell + delta1
-        Coord.add(cell.loc, s1.b, p2); // p1 := cell + delta1
-        proposeSwap(p1, p2);
+      // X motion
 
-        Coord.sub(cell.loc, s1.a, p1); // p1 := cell + delta1
-        Coord.sub(cell.loc, s1.b, p2); // p1 := cell + delta1
-        proposeSwap(p1, p2);
-      } else if (cell.state == -1) {
-        Coord.add(cell.loc, s2.a, p1); // p1 := cell + delta1
-        Coord.add(cell.loc, s2.b, p2); // p1 := cell + delta1
-        proposeSwap(p1, p2);
 
-        Coord.sub(cell.loc, s2.a, p1); // p1 := cell + delta1
-        Coord.sub(cell.loc, s2.b, p2); // p1 := cell + delta1
-        proposeSwap(p1, p2);
+      switch(phase) {
+      case 0:
+      case 3:
+        loc1.set(cell.loc);
+        loc1.x += 1; 
+        loc3.set(cell.loc);
+        loc3.x += 3; 
+        locn1.set(cell.loc);
+        locn1.x -= 1; 
+        locn3.set(cell.loc);
+        locn3.x -= 3;
+        loc5.set(cell.loc);
+        loc5.x += 5; 
+
+        locn2.set(cell.loc);
+        locn2.x -= 2;
+        loc2.set(cell.loc);
+        loc2.x += 2;
+
+        c1 = getCell(loc1);
+        c3 = getCell(loc3);
+        cn1 = getCell(locn1);
+        cn2 = getCell(locn2);
+        cn3 = getCell(locn3);
+        c2 = getCell(loc2);
+
+        if (cell.state == -1  ) {
+          proposeSwap(loc1, loc3);
+        }
+        
+        if (cn3 != null && cn3.state == -1) {
+          proposeSwap(locn3, locn1);
+        }
+
+        break;
+      case 1:
+      case 4:
+        loc1.set(cell.loc);
+        loc1.y += 1; 
+        loc3.set(cell.loc);
+        loc3.y += 3; 
+        locn1.set(cell.loc);
+        locn1.y -= 1; 
+        locn3.set(cell.loc);
+        locn3.y -= 3;
+        loc5.set(cell.loc);
+        loc5.y += 5; 
+
+        loc2.set(cell.loc);
+        loc2.y += 1;
+        loc2.x += 1;
+        locn2.set(cell.loc);
+        locn2.y -= 2;
+
+        c1 = getCell(loc1);
+        c3 = getCell(loc3);
+        cn1 = getCell(locn1);
+        cn2 = getCell(locn2);
+        cn3 = getCell(locn3);
+        c2 = getCell(loc2);
+
+
+
+
+        break;
+
+      case 2:
+      case 5:
+        break;
       }
     }
   }
 
+  /*
+A        +-.. =>  +..-
+   
+   B        +..- => ..+-
+   
+   xoxoxoxo
+   C        +-.+..  =>  -+...+
+   
+   D       -+..   =>   -..+
+   E       -..+   =>   -+..
+   
+   proposeSwap(loc1, locn1); // SWAP CELLS phase shift
+   . . . R . . B . . R
+   */
 
-  // the default starting configuration
+
+
   void initConfig() {
 
-    int N = 5;
-    for (int x = -N; x < N; x+=1) {
-      for (int y = -N; y < N; y+=2) {
-        for (int z = -N; z < N; z+=2) {
-          addCell(x, y, z, round(random(-1, 1)));
-        }
+    for (int y = 0; y <10 ; y+=3) {
+      addCell(-1, y, 0, -1);
+      for (int x = 0; x < 12; x+=3) {
+        addCell(x, y, 0, 1);
       }
     }
   }
