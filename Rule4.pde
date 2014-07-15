@@ -168,9 +168,12 @@ class Rule4 extends Rule {
           // . . . . . . . . . . b . . J b . B . b . . . b
           println("RIGHT CENTRAL @"+cell);
           proposeSwap(locn1, loc5);
-        } else if ( ) { // left side turnaround. Move jumper to other side
+        } else if (cn1 != null && cn1.state == -1 
+       &&  c1 == null  && c2 == null) { // left side turnaround. Move jumper to other side
           // . . . . J b . . . b . . . b
           // . . . . . b J . . b . . . b
+          println("LEFTSIDE TURNAROUND @"+cell);
+          proposeSwap(locn1, loc1);
           
         }
 
