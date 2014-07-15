@@ -74,17 +74,18 @@ class Rule4 extends Rule {
   void rule3(ArrayList<Cell> cells, int phase) {
 
     //  println("======================================" + clockPhase());
-
     Cell c1 ;
+    Cell c2 ;
     Cell c3 ;
-    Cell cn1;
+    Cell c4 ;
+    Cell c5;
 
+    Cell cn1;
     Cell cn2;
     Cell cn3;
-    Cell c2 ;
-    Cell cn7;
+    Cell cn4;
     Cell cn5;
-    Cell c5;
+    Cell cn7;
 
     for (Cell cell : cells) {
       // X motion
@@ -133,11 +134,13 @@ class Rule4 extends Rule {
         c1 = getCell(loc1);
         c2 = getCell(loc2);
         c3 = getCell(loc3);
+        c4 = getCell(loc4);
         c5 = getCell(loc5);
 
         cn1 = getCell(locn1);
         cn2 = getCell(locn2);
         cn3 = getCell(locn3);
+        cn4 = getCell(locn4);
         cn5 = getCell(locn5);
         cn7 = getCell(locn7);
 
@@ -148,17 +151,29 @@ class Rule4 extends Rule {
         // . . . . . . . J . . b . B . b . . . b . . . b
         // Let edge case: jumper to right of blue cell causes blue cell to jump to +7 to go into interstitial position
         if (cell.state == -1 && (cn1 != null) && (c3 != null)) {
-          println("LEFT EDGE A");
+          println("LEFT EDGE A @ "+cell);
           proposeSwap(locn1, loc5);
+        } else if (cell.state == 1 
+          && (cn1 != null) &&  (cn1.state == -1)
+          && (cn2 == null) && (cn4 != null) && (c2 == null))
+        { //   jumper moves back to left in return shuttle phase
+          println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
+          proposeSwap(locn1, locn5);
+        } else if (cn5 != null && cn5.state == -1
+          && (c2 != null || cn2 != null)) { // pull jumper cell to the right
+          proposeSwap(locn5, locn1);
+          println("PULL JUMPER RIGHT @"+cell);
         } else if (cell.state == -1 && cn3 != null && cn1 != null ) { // right central case, jump cell over 
           // . . . . . . . . . . b . B J b . . . b . . . b
-          // . . . . . . . . . . b . B J b . . . b . . . b
+          // . . . . . . . . . . b . . J b . B . b . . . b
+          println("RIGHT CENTRAL @"+cell);
           proposeSwap(locn1, loc5);
-        } else if (cn5 != null && cn5.state == -1) { // pull jumper cell to the right
-          proposeSwap(locn5, locn1);
-        } else if (cell.state == -1 && (cn1 != null && c3 == null)) { //  right edge case: jump back to left
-          proposeSwap(locn1, locn5);
+        } else if ( ) { // left side turnaround. Move jumper to other side
+          // . . . . J b . . . b . . . b
+          // . . . . . b J . . b . . . b
+          
         }
+
         break;
       case 1:
       case 4:
@@ -220,7 +235,7 @@ A        +-.. =>  +..-
     for (int y = -2; y < -1 ; y+=3) {
       addCell(-10, -2, 0, -1); //jump token starts on left
 
-      for (int x = -11; x < 18; x+=4) {
+      for (int x = -11; x < 14; x+=4) {
         addCell(x, y, 0, 1);
       }
     }
