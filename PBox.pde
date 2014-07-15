@@ -225,7 +225,7 @@ void setup() {
   cam = new PeasyCam(this, START_DIST);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(10000);
-  setRule("Rule3");
+  setRule("Rule4");
   stashCells(clock);
 
   frameRate(10000);

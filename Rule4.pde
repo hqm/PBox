@@ -62,10 +62,14 @@ class Rule4 extends Rule {
   Coord locn1 = new Coord();
   Coord loc3 = new Coord();
   Coord locn3 = new Coord();
+  Coord loc4 = new Coord();
+  Coord locn4 = new Coord();
   Coord loc5 = new Coord();
   Coord locn5 = new Coord();
   Coord loc2 = new Coord();
   Coord locn2 = new Coord();
+  Coord loc7 = new Coord();
+  Coord locn7 = new Coord();
 
   void rule3(ArrayList<Cell> cells, int phase) {
 
@@ -78,6 +82,9 @@ class Rule4 extends Rule {
     Cell cn2;
     Cell cn3;
     Cell c2 ;
+    Cell cn7;
+    Cell cn5;
+    Cell c5;
 
     for (Cell cell : cells) {
       // X motion
@@ -86,37 +93,72 @@ class Rule4 extends Rule {
       switch(phase) {
       case 0:
       case 3:
-        loc1.set(cell.loc);
-        loc1.x += 1; 
-        loc3.set(cell.loc);
-        loc3.x += 3; 
-        locn1.set(cell.loc);
-        locn1.x -= 1; 
-        locn3.set(cell.loc);
-        locn3.x -= 3;
-        loc5.set(cell.loc);
-        loc5.x += 5; 
 
-        locn2.set(cell.loc);
-        locn2.x -= 2;
-        loc2.set(cell.loc);
+        loc1.set(cell.loc); 
+        loc1.x += 1; 
+
+        loc2.set(cell.loc); 
         loc2.x += 2;
 
+        loc3.set(cell.loc); 
+        loc3.x += 3; 
+
+        loc4.set(cell.loc); 
+        loc4.x += 4; 
+
+        loc5.set(cell.loc); 
+        loc5.x += 5; 
+
+        loc7.set(cell.loc); 
+        loc7.x += 7;
+
+        locn1.set(cell.loc); 
+        locn1.x -= 1; 
+
+        locn2.set(cell.loc); 
+        locn2.x -= 2;
+
+        locn3.set(cell.loc); 
+        locn3.x -= 3;
+
+        locn4.set(cell.loc); 
+        locn4.x -= 4; 
+
+        locn5.set(cell.loc); 
+        locn5.x -= 5; 
+
+        locn7.set(cell.loc); 
+        locn7.x -= 7;
+
         c1 = getCell(loc1);
+        c2 = getCell(loc2);
         c3 = getCell(loc3);
+        c5 = getCell(loc5);
+
         cn1 = getCell(locn1);
         cn2 = getCell(locn2);
         cn3 = getCell(locn3);
-        c2 = getCell(loc2);
+        cn5 = getCell(locn5);
+        cn7 = getCell(locn7);
 
-        if (cell.state == -1  ) {
-          proposeSwap(loc1, loc3);
-        }
-        
-        if (cn3 != null && cn3.state == -1) {
-          proposeSwap(locn3, locn1);
-        }
 
+
+
+        // . . . . . . b J . . b . . . b . . . b . . . b
+        // . . . . . . . J . . b . B . b . . . b . . . b
+        // Let edge case: jumper to right of blue cell causes blue cell to jump to +7 to go into interstitial position
+        if (cell.state == -1 && (cn1 != null) && (c3 != null)) {
+          println("LEFT EDGE A");
+          proposeSwap(locn1, loc5);
+        } else if (cell.state == -1 && cn3 != null && cn1 != null ) { // right central case, jump cell over 
+          // . . . . . . . . . . b . B J b . . . b . . . b
+          // . . . . . . . . . . b . B J b . . . b . . . b
+          proposeSwap(locn1, loc5);
+        } else if (cn5 != null && cn5.state == -1) { // pull jumper cell to the right
+          proposeSwap(locn5, locn1);
+        } else if (cell.state == -1 && (cn1 != null && c3 == null)) { //  right edge case: jump back to left
+          proposeSwap(locn1, locn5);
+        }
         break;
       case 1:
       case 4:
@@ -175,9 +217,10 @@ A        +-.. =>  +..-
 
   void initConfig() {
 
-    for (int y = 0; y <10 ; y+=3) {
-      addCell(-1, y, 0, -1);
-      for (int x = 0; x < 12; x+=3) {
+    for (int y = -2; y < -1 ; y+=3) {
+      addCell(-10, -2, 0, -1); //jump token starts on left
+
+      for (int x = -11; x < 18; x+=4) {
         addCell(x, y, 0, 1);
       }
     }
