@@ -232,13 +232,24 @@ A        +-.. =>  +..-
    */
 
 
+ void initConfig() {
+    int STARTX = -11;
+    int STARTY = -2;
+    int NX = 8;
+    int NY = 6;
 
-  void initConfig() {
 
-    for (int y = -2; y < -1 ; y+=3) {
-      addCell(-10, -2, 0, -1); //jump token starts on left
+    // special line of vertical jump tokens, use special high order bit to signify we are all jump tokens
+    addCell(STARTX-2, STARTY-1, 0, -2); //jump token starts on left
+    for (int x = STARTX, m = NX; m > 0; m--, x+=4) {
+      addCell(x-1, STARTY-1, 0, 2);
+    }
+    
+    
+    for (int y = STARTY, n = NY;  n > 0; n--,  y+=4) {
+      addCell(STARTX-1, y, 0, -1); //jump token starts on left
 
-      for (int x = -11; x < 14; x+=4) {
+      for (int x = STARTX, m = NX; m > 0; m--, x+=4) {
         addCell(x, y, 0, 1);
       }
     }
