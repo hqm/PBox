@@ -314,8 +314,8 @@ class Rule4 extends Rule {
     //int STARTX = -11
     int STARTX = -11;
     int STARTY = -2;
-    int NX = 8;
-    int NY = 4;
+    int NX = 6;
+    int NY = 9;
 
 
     // special line of vertical jump tokens, use special high order bit to signify we are all jump tokens
