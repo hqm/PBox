@@ -117,69 +117,80 @@ class Rule4 extends Rule {
       boolean oddX = !evenX;
       boolean evenZ = cell.loc.z % 2 == 0;
       boolean oddZ = !evenZ;
+      
+      boolean evenYZ = (cell.loc.z + cell.loc.y) % 2 == 0;
+      boolean oddYZ = !evenYZ;
+      
+      boolean evenXZ = (cell.loc.z + cell.loc.x) % 2 == 0;
+      boolean oddXZ = !evenXZ;
+      
+      boolean evenXY = (cell.loc.x + cell.loc.y) % 2 == 0;
+      boolean oddXY = !evenXY;
+      
+      
+      boolean even = cell.isEven();
+      boolean odd = !even;
       switch(phase) {
       case 0:
       case 1:
       case 2:
       case 3:
 
-        if (phase == 0 && evenY) continue;
-        if (phase == 1 && !evenY) continue;
-        if (phase == 2 && !evenY) continue;
-        if (phase == 3 && evenY) continue;
+        if ((phase == 0 && oddYZ) || 
+          (phase == 1 && evenYZ) ||
+          (phase == 2 && evenYZ) ||
+          (phase == 3 && oddYZ) ) {
 
 
-        loc1.set(cell.loc); 
-        loc1.x += 1; 
+          loc1.set(cell.loc); 
+          loc1.x += 1; 
 
-        loc2.set(cell.loc); 
-        loc2.x += 2;
+          loc2.set(cell.loc); 
+          loc2.x += 2;
 
-        loc3.set(cell.loc); 
-        loc3.x += 3; 
+          loc3.set(cell.loc); 
+          loc3.x += 3; 
 
-        loc4.set(cell.loc); 
-        loc4.x += 4; 
+          loc4.set(cell.loc); 
+          loc4.x += 4; 
 
-        loc5.set(cell.loc); 
-        loc5.x += 5; 
+          loc5.set(cell.loc); 
+          loc5.x += 5; 
 
-        loc7.set(cell.loc); 
-        loc7.x += 7;
+          loc7.set(cell.loc); 
+          loc7.x += 7;
 
-        locn1.set(cell.loc); 
-        locn1.x -= 1; 
+          locn1.set(cell.loc); 
+          locn1.x -= 1; 
 
-        locn2.set(cell.loc); 
-        locn2.x -= 2;
+          locn2.set(cell.loc); 
+          locn2.x -= 2;
 
-        locn3.set(cell.loc); 
-        locn3.x -= 3;
+          locn3.set(cell.loc); 
+          locn3.x -= 3;
 
-        locn4.set(cell.loc); 
-        locn4.x -= 4; 
+          locn4.set(cell.loc); 
+          locn4.x -= 4; 
 
-        locn5.set(cell.loc); 
-        locn5.x -= 5; 
+          locn5.set(cell.loc); 
+          locn5.x -= 5; 
 
-        locn7.set(cell.loc); 
-        locn7.x -= 7;
+          locn7.set(cell.loc); 
+          locn7.x -= 7;
 
-        c1 = getCell(loc1);
-        c2 = getCell(loc2);
-        c3 = getCell(loc3);
-        c4 = getCell(loc4);
-        c5 = getCell(loc5);
+          c1 = getCell(loc1);
+          c2 = getCell(loc2);
+          c3 = getCell(loc3);
+          c4 = getCell(loc4);
+          c5 = getCell(loc5);
 
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        cn4 = getCell(locn4);
-        cn5 = getCell(locn5);
-        cn7 = getCell(locn7);
-
-
-
+          cn1 = getCell(locn1);
+          cn2 = getCell(locn2);
+          cn3 = getCell(locn3);
+          cn4 = getCell(locn4);
+          cn5 = getCell(locn5);
+          cn7 = getCell(locn7);
+        }
 
         break;
       case 4:
@@ -188,62 +199,62 @@ class Rule4 extends Rule {
       case 7:
 
 
-        if (phase == 4 && !evenX) continue;
-        if (phase == 5 && evenX) continue;
-        if (phase == 6 && evenX) continue;
-        if (phase == 7 && !evenX) continue;
+        if ((phase == 4 && oddXZ)
+          ||(phase == 5 && evenXZ) 
+          || (phase == 6 && evenXZ) 
+          || (phase == 7 && oddXZ)) {
 
 
 
-        loc1.set(cell.loc); 
-        loc1.y += 1; 
+          loc1.set(cell.loc); 
+          loc1.y += 1; 
 
-        loc2.set(cell.loc); 
-        loc2.y += 2;
+          loc2.set(cell.loc); 
+          loc2.y += 2;
 
-        loc3.set(cell.loc); 
-        loc3.y += 3; 
+          loc3.set(cell.loc); 
+          loc3.y += 3; 
 
-        loc4.set(cell.loc); 
-        loc4.y += 4; 
+          loc4.set(cell.loc); 
+          loc4.y += 4; 
 
-        loc5.set(cell.loc); 
-        loc5.y += 5; 
+          loc5.set(cell.loc); 
+          loc5.y += 5; 
 
-        loc7.set(cell.loc); 
-        loc7.y += 7;
+          loc7.set(cell.loc); 
+          loc7.y += 7;
 
-        locn1.set(cell.loc); 
-        locn1.y -= 1; 
+          locn1.set(cell.loc); 
+          locn1.y -= 1; 
 
-        locn2.set(cell.loc); 
-        locn2.y -= 2;
+          locn2.set(cell.loc); 
+          locn2.y -= 2;
 
-        locn3.set(cell.loc); 
-        locn3.y -= 3;
+          locn3.set(cell.loc); 
+          locn3.y -= 3;
 
-        locn4.set(cell.loc); 
-        locn4.y -= 4; 
+          locn4.set(cell.loc); 
+          locn4.y -= 4; 
 
-        locn5.set(cell.loc); 
-        locn5.y -= 5; 
+          locn5.set(cell.loc); 
+          locn5.y -= 5; 
 
-        locn7.set(cell.loc); 
-        locn7.y -= 7;
+          locn7.set(cell.loc); 
+          locn7.y -= 7;
 
-        c1 = getCell(loc1);
-        c2 = getCell(loc2);
-        c3 = getCell(loc3);
-        c4 = getCell(loc4);
-        c5 = getCell(loc5);
+          c1 = getCell(loc1);
+          c2 = getCell(loc2);
+          c3 = getCell(loc3);
+          c4 = getCell(loc4);
+          c5 = getCell(loc5);
 
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        cn4 = getCell(locn4);
-        cn5 = getCell(locn5);
-        cn7 = getCell(locn7);
-
+          cn1 = getCell(locn1);
+          cn2 = getCell(locn2);
+          cn3 = getCell(locn3);
+          cn4 = getCell(locn4);
+          cn5 = getCell(locn5);
+          cn7 = getCell(locn7);
+        }
         break;
 
       case 8:
@@ -251,62 +262,64 @@ class Rule4 extends Rule {
       case 10:
       case 11:
 
+        //if (true) continue;
 
-        if (phase == 4 && !evenZ) continue;
-        if (phase == 5 && evenZ) continue;
-        if (phase == 6 && evenZ) continue;
-        if (phase == 7 && !evenZ) continue;
+        if ((phase == 8 && evenXY)
+          ||(phase == 9 && oddXY)
+          ||(phase == 10 && oddXY) 
+          ||(phase == 11 && evenXY)) {
 
 
 
-        loc1.set(cell.loc); 
-        loc1.z += 1; 
+          loc1.set(cell.loc); 
+          loc1.z += 1; 
 
-        loc2.set(cell.loc); 
-        loc2.z += 2;
+          loc2.set(cell.loc); 
+          loc2.z += 2;
 
-        loc3.set(cell.loc); 
-        loc3.z += 3; 
+          loc3.set(cell.loc); 
+          loc3.z += 3; 
 
-        loc4.set(cell.loc); 
-        loc4.z += 4; 
+          loc4.set(cell.loc); 
+          loc4.z += 4; 
 
-        loc5.set(cell.loc); 
-        loc5.z += 5; 
+          loc5.set(cell.loc); 
+          loc5.z += 5; 
 
-        loc7.set(cell.loc); 
-        loc7.z += 7;
+          loc7.set(cell.loc); 
+          loc7.z += 7;
 
-        locn1.set(cell.loc); 
-        locn1.z -= 1; 
+          locn1.set(cell.loc); 
+          locn1.z -= 1; 
 
-        locn2.set(cell.loc); 
-        locn2.z -= 2;
+          locn2.set(cell.loc); 
+          locn2.z -= 2;
 
-        locn3.set(cell.loc); 
-        locn3.z -= 3;
+          locn3.set(cell.loc); 
+          locn3.z -= 3;
 
-        locn4.set(cell.loc); 
-        locn4.z -= 4; 
+          locn4.set(cell.loc); 
+          locn4.z -= 4; 
 
-        locn5.set(cell.loc); 
-        locn5.z -= 5; 
+          locn5.set(cell.loc); 
+          locn5.z -= 5; 
 
-        locn7.set(cell.loc); 
-        locn7.z -= 7;
+          locn7.set(cell.loc); 
+          locn7.z -= 7;
 
-        c1 = getCell(loc1);
-        c2 = getCell(loc2);
-        c3 = getCell(loc3);
-        c4 = getCell(loc4);
-        c5 = getCell(loc5);
+          c1 = getCell(loc1);
+          c2 = getCell(loc2);
+          c3 = getCell(loc3);
+          c4 = getCell(loc4);
+          c5 = getCell(loc5);
 
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        cn4 = getCell(locn4);
-        cn5 = getCell(locn5);
-        cn7 = getCell(locn7);
+          cn1 = getCell(locn1);
+          cn2 = getCell(locn2);
+          cn3 = getCell(locn3);
+          cn4 = getCell(locn4);
+          cn5 = getCell(locn5);
+          cn7 = getCell(locn7);
+        }
 
         break;
       }
@@ -322,12 +335,11 @@ class Rule4 extends Rule {
       if ((cn1 != null) && (c3 != null)) {
         //          println("LEFT EDGE A @ "+cell);
         proposeSwap(locn1, loc5);
-      } else if ( (cn1 != null) //&&  (isJumper(cn1.state))
-        && (cn2 == null) && (cn4 != null) && (c2 == null))
+      } else if ( (cn1 != null)  && (cn2 == null) && (cn4 != null) && (c2 == null))
       { //   jumper moves back to left in return shuttle phase
         //          println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
         proposeSwap(locn1, locn5);
-      } else if (cn5 != null && isJumper(cn5.state)
+      } else if (cn5 != null 
         && (c2 != null || cn2 != null)) { // pull jumper cell to the right
         proposeSwap(locn5, locn1);
         //          println("PULL JUMPER RIGHT @"+cell);
@@ -346,50 +358,38 @@ class Rule4 extends Rule {
     }
   }
 
-  boolean isJumper(int state) {
-    return (state <= -1 ) || (state > 1);
-  }
-
-
-  void initConfig2(int z, int ds ) {
+  void initConfig2(int z, int NX, int NY ) {
     //int STARTX = -11
     int STARTX = -11;
     int STARTY = -2;
-    int NX = 4;
-    int NY = 3;
-
 
     // special line of vertical jump tokens, use special high order bit to signify we are all jump tokens
-    addCell(STARTX-1, STARTY-1, z, -2 ); //jump token starts on left
+    addCell(STARTX-1, STARTY-1, z, 1 ); //jump token starts on left
     for (int x = STARTX, m = NX; m > 0; m--, x+=4) {
-      addCell(x, STARTY-1, z, 2+ds);
+      addCell(x, STARTY-1, z, 1);
     }
 
 
     for (int y = STARTY, n = NY;  n > 0; n--,  y+=4) {
-      addCell(STARTX-1, y, z, -1-ds); //jump token starts on left
+      addCell(STARTX-1, y, z, 1); //jump token starts on left
 
       for (int x = STARTX, m = NX; m > 0; m--, x+=4) {
-        addCell(x, y, z, 1+ds);
+        addCell(x, y, z, 1);
       }
     }
   }
 
 
   void initConfig() {
-    //int STARTX = -11
-    int STARTX = -11;
-    int STARTY = -2;
-    int STARTZ = 2;
-    int NX = 5;
-    int NY = 4;
-    int NZ = 0;
+    int STARTZ = 1;
+    int NZ = 3;
+    int NX = 3;
+    int NY = 0;
 
-
-    initConfig2(1, 2);
+    initConfig2(0, NX, NY);
 
     for (int z = STARTZ, n = NZ;  n > 0; n--,  z+=4) {
-      initConfig2(z, 0);
+      initConfig2(z, NX, NY);
     }
   }
 }
