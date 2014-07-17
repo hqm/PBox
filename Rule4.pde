@@ -50,16 +50,16 @@ class Rule4 extends Rule {
       rule3(oddCells, phase);
       break;
     case 4:
-      // rule3(evenCells, phase);
+       rule3(evenCells, phase);
       break;
     case 5:
-      //rule3(oddCells, phase);
+      rule3(oddCells, phase);
       break;
     case 6:
-      // rule3(evenCells, phase);
+       rule3(evenCells, phase);
       break;
     case 7:
-      // rule3(oddCells, phase);
+       rule3(oddCells, phase);
       break;
     }
   }
@@ -207,8 +207,13 @@ class Rule4 extends Rule {
       case 6:
       case 7:
 
-        if (cell.loc.x % 2 == 0 && phase == 0) continue;
-        if (cell.loc.x % 2 == 1 && phase == 1) continue;
+
+        if (phase == 4 && !evenX) continue;
+        if (phase == 5 && evenX) continue;
+        if (phase == 6 && evenX) continue;
+        if (phase == 7 && !evenX) continue;
+
+
 
         loc1.set(cell.loc); 
         loc1.y += 1; 
@@ -258,11 +263,7 @@ class Rule4 extends Rule {
         cn4 = getCell(locn4);
         cn5 = getCell(locn5);
         cn7 = getCell(locn7);
-        dcn1 = getCell(locn1.x+1, locn1.y, locn1.z);
 
-        dcn5 = getCell(locn5.x+1, locn5.y, locn5.z);
-
-        dcn7 = getCell(locn7.x+1, locn7.y, locn7.z);
 
         //NOTE TRY ALTERNATING RUNNING EVEN/ODD by row Y % 2 value. 
         //Run The even rows X phase 0, odd rows phase 3?
@@ -275,12 +276,12 @@ class Rule4 extends Rule {
           println("LEFT EDGE A @ "+cell);
           proposeSwap(locn1, loc5);
         } else if (cell.state >= 1 
-          && (dcn1 != null) &&  (isJumper(dcn1.state))
+          && (cn1 != null) &&  (isJumper(cn1.state))
           && (cn2 == null) && (cn4 != null) && (c2 == null))
         { //   jumper moves back to left in return shuttle phase
           println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
           proposeSwap(locn1, locn5);
-        } else if (dcn5 != null && isJumper(dcn5.state)
+        } else if (cn5 != null && isJumper(cn5.state)
           && (c2 != null || cn2 != null)) { // pull jumper cell to the right
           proposeSwap(locn5, locn1);
           println("PULL JUMPER RIGHT @"+cell);
@@ -289,7 +290,7 @@ class Rule4 extends Rule {
           // . . . . . . . . . . b . . J b . B . b . . . b
           println("RIGHT CENTRAL @"+cell);
           proposeSwap(locn1, loc5);
-        } else if (dcn1 != null && isJumper(dcn1.state)
+        } else if (cn1 != null && isJumper(cn1.state)
           &&  c1 == null  && c2 == null) { // left side turnaround. Move jumper to other side
           // . . . . J b . . . b . . . b
           // . . . . . b J . . b . . . b
