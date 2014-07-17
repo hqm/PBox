@@ -382,9 +382,9 @@ class Rule4 extends Rule {
 
   void initConfig() {
     int STARTZ = 1;
-    int NZ = 3;
-    int NX = 3;
-    int NY = 0;
+    int NZ = 8;
+    int NX = 5;
+    int NY = 3;
 
     initConfig2(0, NX, NY);
 
