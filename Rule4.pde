@@ -275,8 +275,8 @@ class Rule4 extends Rule {
         if (isJumper(cell.state) && (cn1 != null) && (c3 != null)) {
           println("LEFT EDGE A @ "+cell);
           proposeSwap(locn1, loc5);
-        } else if (cell.state >= 1 
-          && (cn1 != null) &&  (isJumper(cn1.state))
+        } else if (
+           (cn1 != null) &&  (isJumper(cn1.state))
           && (cn2 == null) && (cn4 != null) && (c2 == null))
         { //   jumper moves back to left in return shuttle phase
           println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
@@ -311,10 +311,11 @@ class Rule4 extends Rule {
 
 
   void initConfig() {
+    //int STARTX = -11
     int STARTX = -11;
     int STARTY = -2;
-    int NX = 7;
-    int NY = 6;
+    int NX = 8;
+    int NY = 4;
 
 
     // special line of vertical jump tokens, use special high order bit to signify we are all jump tokens
