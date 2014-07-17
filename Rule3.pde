@@ -58,57 +58,99 @@ class Rule3 extends Rule {
     }
   }
 
+
   Coord loc1 = new Coord();
   Coord locn1 = new Coord();
   Coord loc3 = new Coord();
   Coord locn3 = new Coord();
+  Coord loc4 = new Coord();
+  Coord locn4 = new Coord();
   Coord loc5 = new Coord();
   Coord locn5 = new Coord();
   Coord loc2 = new Coord();
   Coord locn2 = new Coord();
+  Coord loc7 = new Coord();
+  Coord locn7 = new Coord();
 
   void rule3(ArrayList<Cell> cells, int phase) {
 
-     println("======================================" + clockPhase());
+    println("======================================" + clockPhase());
 
-    Cell c1 ;
+
+
+   Cell c1 ;
+    Cell c2 ;
     Cell c3 ;
-    Cell cn1;
+    Cell c4 ;
+    Cell c5;
 
+    Cell cn1;
     Cell cn2;
     Cell cn3;
-    Cell c2 ;
-
+    Cell cn4;
+    Cell cn5;
+    Cell cn7;
+    
+    
     for (Cell cell : cells) {
+
+      
+      
+        loc1.set(cell.loc); 
+        loc1.x += 1; 
+
+        loc2.set(cell.loc); 
+        loc2.x += 2;
+
+        loc3.set(cell.loc); 
+        loc3.x += 3; 
+
+        loc4.set(cell.loc); 
+        loc4.x += 4; 
+
+        loc5.set(cell.loc); 
+        loc5.x += 5; 
+
+        loc7.set(cell.loc); 
+        loc7.x += 7;
+
+        locn1.set(cell.loc); 
+        locn1.x -= 1; 
+
+        locn2.set(cell.loc); 
+        locn2.x -= 2;
+
+        locn3.set(cell.loc); 
+        locn3.x -= 3;
+
+        locn4.set(cell.loc); 
+        locn4.x -= 4; 
+
+        locn5.set(cell.loc); 
+        locn5.x -= 5; 
+
+        locn7.set(cell.loc); 
+        locn7.x -= 7;
+
+        c1 = getCell(loc1);
+        c2 = getCell(loc2);
+        c3 = getCell(loc3);
+        c4 = getCell(loc4);
+        c5 = getCell(loc5);
+
+        cn1 = getCell(locn1);
+        cn2 = getCell(locn2);
+        cn3 = getCell(locn3);
+        cn4 = getCell(locn4);
+        cn5 = getCell(locn5);
+        cn7 = getCell(locn7);
 
 
 
       switch(phase) {
       case 0:
       case 3:
-        loc1.set(cell.loc);
-        loc1.x += 1; 
-        loc3.set(cell.loc);
-        loc3.x += 3; 
-        locn1.set(cell.loc);
-        locn1.x -= 1; 
-        locn3.set(cell.loc);
-        locn3.x -= 3;
-        loc5.set(cell.loc);
-        loc5.x += 5; 
-
-        locn2.set(cell.loc);
-        locn2.x -= 2;
-        loc2.set(cell.loc);
-        loc2.x += 2;
-
-        c1 = getCell(loc1);
-        c3 = getCell(loc3);
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        c2 = getCell(loc2);
-
+       
         if (c1 != null && c1.state >= 1 
           && c3 != null && c3.state >= 1
           ) {
@@ -135,37 +177,6 @@ class Rule3 extends Rule {
         break;
       case 1:
       case 4:
-      /*
-        loc1.set(cell.loc);
-        loc1.y += 1; 
-        loc3.set(cell.loc);
-        loc3.y += 3; 
-        locn1.set(cell.loc);
-        locn1.y -= 1; 
-        locn3.set(cell.loc);
-        locn3.y -= 3;
-        loc5.set(cell.loc);
-        loc5.y += 5; 
-
-        loc2.set(cell.loc);
-        loc2.y += 1;
-        loc2.x += 1;
-        locn2.set(cell.loc);
-        locn2.y -= 2;
-
-        c1 = getCell(loc1);
-        c3 = getCell(loc3);
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        c2 = getCell(loc2);
-
-        // if we have a pattern of 2.1,  swap with row below, and move both down by one grid cell in y direction
-        if (cell.state > 1 || cell.state < -1) {
-          proposeSwap(loc2, cell.loc);
-        }
-
-*/
 
         break;
 
@@ -195,12 +206,12 @@ A        +-.. =>  +..-
 
   void initConfig() {
 
-  //  addCell(0, 0, 0, 2);
-  //  addCell(1, 0, 0, 2);
-  //  addCell(7, 0, 0, 2);
-  //  addCell(-7, 0, 0, -2);
+    //  addCell(0, 0, 0, 2);
+    //  addCell(1, 0, 0, 2);
+    //  addCell(7, 0, 0, 2);
+    //  addCell(-7, 0, 0, -2);
 
-    for (int y = 2; y <3 ; y+=2) {
+    for (int y = 2; y <10 ; y+=2) {
 
       addCell(y%2, y, 0, 1);
       addCell(y%2+1, y, 0, 1);
@@ -208,10 +219,10 @@ A        +-.. =>  +..-
       addCell(y%2-7, y, 0, -1);
 
 
-   //   addCell(y%2, y+22, 0, 2);
-    //  addCell(y%2+1, y+22, 0, 2);
-  //    addCell(y%2+7, y+22, 0, 2);
-   //   addCell(y%2-7, y+22, 0, -2);
+      //   addCell(y%2, y+22, 0, 2);
+      //  addCell(y%2+1, y+22, 0, 2);
+      //    addCell(y%2+7, y+22, 0, 2);
+      //   addCell(y%2-7, y+22, 0, -2);
     }
   }
 }

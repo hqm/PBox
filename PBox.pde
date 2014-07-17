@@ -192,8 +192,8 @@ void updateStatusFrame() {
 }
 
 int clockPhase() {
-  int phi = clock % 6;
-  if (phi < 0) phi = phi+6;
+  int phi = clock % 8;
+  if (phi < 0) phi = phi+8;
   return phi;
 }
 
