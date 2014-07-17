@@ -30,6 +30,7 @@ public int cellSize = 4;
 public int scienceCycles = 100;
 int START_DIST = 300;
 
+static final int PHASES = 12;
 ArrayList<Rule> rules;
 
 // Set the Rule here
@@ -133,32 +134,35 @@ Coord delta = new Coord(0, 0, 0);
 
 static final int CURSOR_ALPHA = 30;
 
-static final int NSTATES = 4;
+static final int NSTATES = 5;
 
 
 int[] evenColors = {
-    color(0x99, 0x33, 0xff), // state = -4 EVEN
-    color(0xcc, 0x66, 0xff), // state = -3 EVEN
-    color(0xff, 0x66, 0xcc), // state = -2 EVEN
-    color(0xff, 0x99, 0x66), // state = -1 EVEN
-    color(255, 255, 255), // state = 0 EVEN
-    color(255, 0,   0), // state = 1  EVEN
-    color(0xff, 0x60,   0), // state = 2  EVEN
-    color(0xff, 0xff,   0x66), // state = 3  EVEN
-    color(0xff, 0x99, 0x99) // state = 4  EVEN
-
+  color(0x77, 0x33, 0xff), // state = -4 EVEN
+  color(0xaa, 0x33, 0xff), // state = -4 EVEN
+  color(0xcc, 0x66, 0xff), // state = -3 EVEN
+  color(0xff, 0x66, 0xcc), // state = -2 EVEN
+  color(0xff, 0x99, 0x66), // state = -1 EVEN
+  color(255, 255, 255), // state = 0 EVEN
+  color(255, 0, 0), // state = 1  EVEN
+  color(0xff, 0x60, 0), // state = 2  EVEN
+  color(0xff, 0xff, 0x66), // state = 3  EVEN
+  color(0xff, 0x99, 0x99), // state = 4  EVEN
+  color(0xff, 0x99, 0xcc) // state = 4  EVEN
 };
 
 int[] oddColors = {
-    color(0x00, 0xcc, 0x99), // state = -2  IMG
-    color(0x66, 0xff ,0x33), // state = -1  IMG
-    color(0, 200, 130), // state = -2  IMG
-    color(0, 255, 20), // state = -1  IMG
-    color(255, 255, 255), // state = 0  IMG
-    color(0, 0,   255), // state = 1  IMG
-    color(75, 110,   190), // state = 2  IMG
-    color(0x33, 0x66 ,0xff), // state = 1  IMG
-    color(0x00, 0x33, 0xcc) // state = 2  IMG
+  color(0x20, 0xdd, 0xAA), // state = -2  IMG
+  color(0x00, 0xcc, 0x99), // state = -2  IMG
+  color(0x66, 0xff, 0x33), // state = -1  IMG
+  color(0, 200, 130), // state = -2  IMG
+  color(0, 255, 20), // state = -1  IMG
+  color(255, 255, 255), // state = 0  IMG
+  color(0, 0, 255), // state = 1  IMG
+  color(75, 110, 190), // state = 2  IMG
+  color(0x33, 0x66, 0xff), // state = 1  IMG
+  color(0x00, 0x33, 0xcc), // state = 2  IMG
+  color(0x10, 0x55, 0xDD) // state = 2  IMG
 };
 
 
@@ -192,8 +196,8 @@ void updateStatusFrame() {
 }
 
 int clockPhase() {
-  int phi = clock % 8;
-  if (phi < 0) phi = phi+8;
+  int phi = clock % PHASES;
+  if (phi < 0) phi = phi+PHASES;
   return phi;
 }
 
@@ -534,10 +538,10 @@ void drawCursor() {
 
   pushMatrix();
   translate(
-      (cursorPos.x )*cellSize, 
-      (cursorPos.y)*cellSize, 
-      (cursorPos.z)*cellSize
-            );
+  (cursorPos.x )*cellSize, 
+  (cursorPos.y)*cellSize, 
+  (cursorPos.z)*cellSize
+    );
 
   if ((cursorPos.x+cursorPos.y+cursorPos.z)%2 == 0) { // even
     fill( evenColors[cursorVal+NSTATES], CURSOR_ALPHA );
@@ -590,34 +594,32 @@ void subCoords(Coord a, Coord b, Coord result) {
 // 
 // We also push the location A onto target location B's swaps list.
 void proposeSwap(Coord oa, Coord ob) {
-    Coord a = oa.get(); // Coord.get() makes new copy of Coord object
-    Coord b = ob.get();
+  Coord a = oa.get(); // Coord.get() makes new copy of Coord object
+  Coord b = ob.get();
 
-    if (wrap) {
-        a.wrap(gridSize);
-        b.wrap(gridSize);
-    }
-    if (debug) println("proposeSwap("+a+"<=>"+b);
+  if (wrap) {
+    a.wrap(gridSize);
+    b.wrap(gridSize);
+  }
+  if (debug) println("proposeSwap("+a+"<=>"+b);
 
-    ArrayList<Coord> swaps_a = swaps.get(a);
-    if (swaps_a == null) {
-        swaps_a = new ArrayList<Coord>();
-        swaps.put(a, swaps_a);
-    }
-    if (!swaps_a.contains(b)) {
-        swaps_a.add(b);
-    }
+  ArrayList<Coord> swaps_a = swaps.get(a);
+  if (swaps_a == null) {
+    swaps_a = new ArrayList<Coord>();
+    swaps.put(a, swaps_a);
+  }
+  if (!swaps_a.contains(b)) {
+    swaps_a.add(b);
+  }
 
-    ArrayList<Coord> swaps_b = swaps.get(b);
-    if (swaps_b == null) {
-        swaps_b = new ArrayList<Coord>();
-        swaps.put(b, swaps_b);
-    }
-    if (!swaps_b.contains(a)) {
-        swaps_b.add(a);
-    }
-
-
+  ArrayList<Coord> swaps_b = swaps.get(b);
+  if (swaps_b == null) {
+    swaps_b = new ArrayList<Coord>();
+    swaps.put(b, swaps_b);
+  }
+  if (!swaps_b.contains(a)) {
+    swaps_b.add(a);
+  }
 }
 
 void clearSwapState(ArrayList<Cell> cells) {
@@ -731,7 +733,7 @@ void toggleTrails() {
 
 void toggleTime() {
   if (forward) {
-      // if we were going forward in time, back up to re-execute the last clock step
+    // if we were going forward in time, back up to re-execute the last clock step
     clock--;
   } else {
     clock++;
