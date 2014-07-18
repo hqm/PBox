@@ -25,9 +25,9 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 
-public int gridSize = 32;
+public int gridSize = 100;
 public int cellSize = 4;
-public int scienceCycles = 100;
+public int scienceCycles = 10;
 int START_DIST = 300;
 
 static final int PHASES = 12;

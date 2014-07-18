@@ -117,17 +117,17 @@ class Rule4 extends Rule {
       boolean oddX = !evenX;
       boolean evenZ = cell.loc.z % 2 == 0;
       boolean oddZ = !evenZ;
-      
+
       boolean evenYZ = (cell.loc.z + cell.loc.y) % 2 == 0;
       boolean oddYZ = !evenYZ;
-      
+
       boolean evenXZ = (cell.loc.z + cell.loc.x) % 2 == 0;
       boolean oddXZ = !evenXZ;
-      
+
       boolean evenXY = (cell.loc.x + cell.loc.y) % 2 == 0;
       boolean oddXY = !evenXY;
-      
-      
+
+
       boolean even = cell.isEven();
       boolean odd = !even;
       switch(phase) {
@@ -358,10 +358,8 @@ class Rule4 extends Rule {
     }
   }
 
-  void initConfig2(int z, int NX, int NY ) {
-    //int STARTX = -11
-    int STARTX = -11;
-    int STARTY = -2;
+  void brick2(int z, int NX, int NY, int STARTX, int STARTY) {
+
 
     // special line of vertical jump tokens, use special high order bit to signify we are all jump tokens
     addCell(STARTX-1, STARTY-1, z, 1 ); //jump token starts on left
@@ -381,15 +379,16 @@ class Rule4 extends Rule {
 
 
   void initConfig() {
-    int STARTZ = 1;
-    int NZ = 8;
-    int NX = 5;
-    int NY = 3;
+    brick1(8,16,20, -10, -10, 1);
+    
+  }
+  
+  void brick1(int NX, int NY,  int NZ, int STARTX, int STARTY, int STARTZ) {
 
-    initConfig2(0, NX, NY);
+    brick2(STARTZ-1, NX, NY, STARTX, STARTY);
 
     for (int z = STARTZ, n = NZ;  n > 0; n--,  z+=4) {
-      initConfig2(z, NX, NY);
+      brick2(z, NX, NY, STARTX, STARTY);
     }
   }
 }
