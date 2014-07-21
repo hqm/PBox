@@ -41,6 +41,7 @@ class Rule2 extends Rule {
   Swap dyz2 = new Swap(0, 2, -1, 0, 1, -2);
 
   void runRule() {
+    setPhases(6);
     int phase = clockPhase();
 
     ArrayList<Cell> cells;
@@ -102,7 +103,7 @@ class Rule2 extends Rule {
 
   void initConfig() {
 
-    addCircular("X", 10,10, 10, 20);
+    addCircular("X", 10, 10, 10, 20);
   }
 
   void addCircular(String orientation, int x, int y, int z, int d) {

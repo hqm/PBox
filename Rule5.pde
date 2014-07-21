@@ -34,6 +34,7 @@ class Rule5 extends Rule {
 
 
   void runRule() {
+    setPhases(6);
     int phase = clockPhase();
 
     switch(phase) {
@@ -50,16 +51,28 @@ class Rule5 extends Rule {
       rule3(oddCells, phase);
       break;
     case 4:
-       rule3(evenCells, phase);
+      rule3(evenCells, phase);
       break;
     case 5:
       rule3(oddCells, phase);
       break;
     case 6:
-       rule3(evenCells, phase);
+      rule3(evenCells, phase);
       break;
     case 7:
-       rule3(oddCells, phase);
+      rule3(oddCells, phase);
+      break;
+    case 8:
+      rule3(evenCells, phase);
+      break;
+    case 9:
+      rule3(oddCells, phase);
+      break;
+    case 10:
+      rule3(evenCells, phase);
+      break;
+    case 11:
+      rule3(oddCells, phase);
       break;
     }
   }
@@ -77,26 +90,25 @@ class Rule5 extends Rule {
   Coord loc7 = new Coord();
   Coord locn7 = new Coord();
 
+  Coord loc21 = new Coord();
+  Coord loc12 = new Coord();
+
+
   void rule3(ArrayList<Cell> cells, int phase) {
 
     //  println("======================================" + clockPhase());
-    Cell c1 ;
-    Cell c2 ;
-    Cell c3 ;
-    Cell c4 ;
-    Cell c5;
+    Cell c1 = null ;
+    Cell c2  = null;
+    Cell c3  = null;
+    Cell c4  = null;
+    Cell c5 = null;
 
-    Cell cn1;
-    Cell cn2;
-    Cell cn3;
-    Cell cn4;
-    Cell cn5;
-    Cell cn7;
-
-    Cell dcn1;
-
-    Cell dcn5;
-    Cell dcn7;
+    Cell cn1 = null;
+    Cell cn2 = null;
+    Cell cn3 = null;
+    Cell cn4 = null;
+    Cell cn5 = null;
+    Cell cn7 = null;
 
     for (Cell cell : cells) {
       // X motion
@@ -108,97 +120,90 @@ class Rule5 extends Rule {
       boolean oddY = !evenY;
       boolean evenX = cell.loc.x % 2 == 0;
       boolean oddX = !evenX;
+      boolean evenZ = cell.loc.z % 2 == 0;
+      boolean oddZ = !evenZ;
+
+      boolean evenYZ = (cell.loc.z + cell.loc.y) % 2 == 0;
+      boolean oddYZ = !evenYZ;
+
+      boolean evenXZ = (cell.loc.z + cell.loc.x) % 2 == 0;
+      boolean oddXZ = !evenXZ;
+
+      boolean evenXY = (cell.loc.x + cell.loc.y) % 2 == 0;
+      boolean oddXY = !evenXY;
+
+
+      boolean even = cell.isEven();
+      boolean odd = !even;
       switch(phase) {
       case 0:
       case 1:
       case 2:
       case 3:
 
-        if (phase == 0 && evenY) continue;
-        if (phase == 1 && !evenY) continue;
-        if (phase == 2 && !evenY) continue;
-        if (phase == 3 && evenY) continue;
+        if ((phase == 0 && oddYZ) || 
+          (phase == 1 && evenYZ) ||
+          (phase == 2 && evenYZ) ||
+          (phase == 3 && oddYZ) ) {
 
 
-        loc1.set(cell.loc); 
-        loc1.x += 1; 
+          loc1.set(cell.loc); 
+          loc1.x += 1; 
 
-        loc2.set(cell.loc); 
-        loc2.x += 2;
+          loc2.set(cell.loc); 
+          loc2.x += 2;
 
-        loc3.set(cell.loc); 
-        loc3.x += 3; 
+          loc3.set(cell.loc); 
+          loc3.x += 3; 
 
-        loc4.set(cell.loc); 
-        loc4.x += 4; 
+          loc4.set(cell.loc); 
+          loc4.x += 4; 
 
-        loc5.set(cell.loc); 
-        loc5.x += 5; 
+          loc5.set(cell.loc); 
+          loc5.x += 5; 
 
-        loc7.set(cell.loc); 
-        loc7.x += 7;
+          loc7.set(cell.loc); 
+          loc7.x += 7;
 
-        locn1.set(cell.loc); 
-        locn1.x -= 1; 
+          locn1.set(cell.loc); 
+          locn1.x -= 1; 
 
-        locn2.set(cell.loc); 
-        locn2.x -= 2;
+          locn2.set(cell.loc); 
+          locn2.x -= 2;
 
-        locn3.set(cell.loc); 
-        locn3.x -= 3;
+          locn3.set(cell.loc); 
+          locn3.x -= 3;
 
-        locn4.set(cell.loc); 
-        locn4.x -= 4; 
+          locn4.set(cell.loc); 
+          locn4.x -= 4; 
 
-        locn5.set(cell.loc); 
-        locn5.x -= 5; 
+          locn5.set(cell.loc); 
+          locn5.x -= 5; 
 
-        locn7.set(cell.loc); 
-        locn7.x -= 7;
+          locn7.set(cell.loc); 
+          locn7.x -= 7;
 
-        c1 = getCell(loc1);
-        c2 = getCell(loc2);
-        c3 = getCell(loc3);
-        c4 = getCell(loc4);
-        c5 = getCell(loc5);
-
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        cn4 = getCell(locn4);
-        cn5 = getCell(locn5);
-        cn7 = getCell(locn7);
+          loc21.set(cell.loc);
+          loc21.x +=2; 
+          loc21.y += 1;
+          loc12.set(cell.loc);
+          loc12.x +=1; 
+          loc12.y += 2;
 
 
 
+          c1 = getCell(loc1);
+          c2 = getCell(loc2);
+          c3 = getCell(loc3);
+          c4 = getCell(loc4);
+          c5 = getCell(loc5);
 
-        // . . . . . . b J . . b . . . b . . . b . . . b
-        // . . . . . . . J . . b . B . b . . . b . . . b
-        // Let edge case: jumper to right of blue cell causes blue cell to jump to +7 to go into interstitial position
-        if (cell.state <= -1 && (cn1 != null) && (c3 != null)) {
-          println("LEFT EDGE A @ "+cell);
-          proposeSwap(locn1, loc5);
-        } else if (cell.state >= 1 
-          && (cn1 != null) &&  (cn1.state <= -1)
-          && (cn2 == null) && (cn4 != null) && (c2 == null))
-        { //   jumper moves back to left in return shuttle phase
-          println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
-          proposeSwap(locn1, locn5);
-        } else if (cn5 != null && cn5.state <= -1
-          && (c2 != null || cn2 != null)) { // pull jumper cell to the right
-          proposeSwap(locn5, locn1);
-          println("PULL JUMPER RIGHT @"+cell);
-        } else if (cell.state <= -1 && cn3 != null && cn1 != null ) { // right central case, jump cell over 
-          // . . . . . . . . . . b . B J b . . . b . . . b
-          // . . . . . . . . . . b . . J b . B . b . . . b
-          println("RIGHT CENTRAL @"+cell);
-          proposeSwap(locn1, loc5);
-        } else if (cn1 != null && cn1.state <= -1 
-          &&  c1 == null  && c2 == null) { // left side turnaround. Move jumper to other side
-          // . . . . J b . . . b . . . b
-          // . . . . . b J . . b . . . b
-          println("LEFTSIDE TURNAROUND @"+cell);
-          proposeSwap(locn1, loc1);
+          cn1 = getCell(locn1);
+          cn2 = getCell(locn2);
+          cn3 = getCell(locn3);
+          cn4 = getCell(locn4);
+          cn5 = getCell(locn5);
+          cn7 = getCell(locn7);
         }
 
         break;
@@ -208,128 +213,213 @@ class Rule5 extends Rule {
       case 7:
 
 
-        if (phase == 4 && !evenX) continue;
-        if (phase == 5 && evenX) continue;
-        if (phase == 6 && evenX) continue;
-        if (phase == 7 && !evenX) continue;
+        if ((phase == 4 && oddXZ)
+          ||(phase == 5 && evenXZ) 
+          || (phase == 6 && evenXZ) 
+          || (phase == 7 && oddXZ)) {
 
 
 
-        loc1.set(cell.loc); 
-        loc1.y += 1; 
+          loc1.set(cell.loc); 
+          loc1.y += 1; 
 
-        loc2.set(cell.loc); 
-        loc2.y += 2;
+          loc2.set(cell.loc); 
+          loc2.y += 2;
 
-        loc3.set(cell.loc); 
-        loc3.y += 3; 
+          loc3.set(cell.loc); 
+          loc3.y += 3; 
 
-        loc4.set(cell.loc); 
-        loc4.y += 4; 
+          loc4.set(cell.loc); 
+          loc4.y += 4; 
 
-        loc5.set(cell.loc); 
-        loc5.y += 5; 
+          loc5.set(cell.loc); 
+          loc5.y += 5; 
 
-        loc7.set(cell.loc); 
-        loc7.y += 7;
+          loc7.set(cell.loc); 
+          loc7.y += 7;
 
-        locn1.set(cell.loc); 
-        locn1.y -= 1; 
+          locn1.set(cell.loc); 
+          locn1.y -= 1; 
 
-        locn2.set(cell.loc); 
-        locn2.y -= 2;
+          locn2.set(cell.loc); 
+          locn2.y -= 2;
 
-        locn3.set(cell.loc); 
-        locn3.y -= 3;
+          locn3.set(cell.loc); 
+          locn3.y -= 3;
 
-        locn4.set(cell.loc); 
-        locn4.y -= 4; 
+          locn4.set(cell.loc); 
+          locn4.y -= 4; 
 
-        locn5.set(cell.loc); 
-        locn5.y -= 5; 
+          locn5.set(cell.loc); 
+          locn5.y -= 5; 
 
-        locn7.set(cell.loc); 
-        locn7.y -= 7;
-
-        c1 = getCell(loc1);
-        c2 = getCell(loc2);
-        c3 = getCell(loc3);
-        c4 = getCell(loc4);
-        c5 = getCell(loc5);
-
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        cn4 = getCell(locn4);
-        cn5 = getCell(locn5);
-        cn7 = getCell(locn7);
+          locn7.set(cell.loc); 
+          locn7.y -= 7;
 
 
-        //NOTE TRY ALTERNATING RUNNING EVEN/ODD by row Y % 2 value. 
-        //Run The even rows X phase 0, odd rows phase 3?
+          loc21.set(cell.loc);
+          loc21.x +=2; 
+          loc21.z += 1;
+          loc12.set(cell.loc);
+          loc12.x +=1; 
+          loc12.z += 2;
+
+          c1 = getCell(loc1);
+          c2 = getCell(loc2);
+          c3 = getCell(loc3);
+          c4 = getCell(loc4);
+          c5 = getCell(loc5);
+
+          cn1 = getCell(locn1);
+          cn2 = getCell(locn2);
+          cn3 = getCell(locn3);
+          cn4 = getCell(locn4);
+          cn5 = getCell(locn5);
+          cn7 = getCell(locn7);
+        }
+        break;
+
+      case 8:
+      case 9:
+      case 10:
+      case 11:
+
+        //if (true) continue;
+
+        if ((phase == 8 && evenXY)
+          ||(phase == 9 && oddXY)
+          ||(phase == 10 && oddXY) 
+          ||(phase == 11 && evenXY)) {
 
 
-        // We treat any cell with abs value > 1 as a jumper cell
 
-        // Let edge case: jumper to right of blue cell causes blue cell to jump to +7 to go into interstitial position
-        if (isJumper(cell.state) && (cn1 != null) && (c3 != null)) {
-          println("LEFT EDGE A @ "+cell);
-          proposeSwap(locn1, loc5);
-        } else if (cell.state >= 1 
-          && (cn1 != null) &&  (isJumper(cn1.state))
-          && (cn2 == null) && (cn4 != null) && (c2 == null))
-        { //   jumper moves back to left in return shuttle phase
-          println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
-          proposeSwap(locn1, locn5);
-        } else if (cn5 != null && isJumper(cn5.state)
-          && (c2 != null || cn2 != null)) { // pull jumper cell to the right
-          proposeSwap(locn5, locn1);
-          println("PULL JUMPER RIGHT @"+cell);
-        } else if (isJumper(cell.state) && cn3 != null && cn1 != null ) { // right central case, jump cell over 
-          // . . . . . . . . . . b . B J b . . . b . . . b
-          // . . . . . . . . . . b . . J b . B . b . . . b
-          println("RIGHT CENTRAL @"+cell);
-          proposeSwap(locn1, loc5);
-        } else if (cn1 != null && isJumper(cn1.state)
-          &&  c1 == null  && c2 == null) { // left side turnaround. Move jumper to other side
-          // . . . . J b . . . b . . . b
-          // . . . . . b J . . b . . . b
-          println("LEFTSIDE TURNAROUND @"+cell);
-          proposeSwap(locn1, loc1);
+          loc1.set(cell.loc); 
+          loc1.z += 1; 
+
+          loc2.set(cell.loc); 
+          loc2.z += 2;
+
+          loc3.set(cell.loc); 
+          loc3.z += 3; 
+
+          loc4.set(cell.loc); 
+          loc4.z += 4; 
+
+          loc5.set(cell.loc); 
+          loc5.z += 5; 
+
+          loc7.set(cell.loc); 
+          loc7.z += 7;
+
+          locn1.set(cell.loc); 
+          locn1.z -= 1; 
+
+          locn2.set(cell.loc); 
+          locn2.z -= 2;
+
+          locn3.set(cell.loc); 
+          locn3.z -= 3;
+
+          locn4.set(cell.loc); 
+          locn4.z -= 4; 
+
+          locn5.set(cell.loc); 
+          locn5.z -= 5; 
+
+          locn7.set(cell.loc); 
+          locn7.z -= 7;
+
+          loc21.set(cell.loc);
+          loc21.z +=2; 
+          loc21.y += 1;
+          loc12.set(cell.loc);
+          loc12.z +=1; 
+          loc12.y += 2;
+
+
+          c1 = getCell(loc1);
+          c2 = getCell(loc2);
+          c3 = getCell(loc3);
+          c4 = getCell(loc4);
+          c5 = getCell(loc5);
+
+          cn1 = getCell(locn1);
+          cn2 = getCell(locn2);
+          cn3 = getCell(locn3);
+          cn4 = getCell(locn4);
+          cn5 = getCell(locn5);
+          cn7 = getCell(locn7);
         }
 
-
-
         break;
+      }
+
+
+      //NOTE TRY ALTERNATING RUNNING EVEN/ODD by row Y % 2 value. 
+      //Run The even rows X phase 0, odd rows phase 3?
+
+
+      // We treat any cell with abs value > 1 as a jumper cell
+
+      // Let edge case: jumper to right of blue cell causes blue cell to jump to +7 to go into interstitial position
+      if ((cn1 != null) && (c3 != null)) {
+        //          println("LEFT EDGE A @ "+cell);
+        proposeSwap(locn1, loc5);
+      } else if ( (cn1 != null)  && (cn2 == null) && (cn4 != null) && (c2 == null))
+      { //   jumper moves back to left in return shuttle phase
+        //          println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
+        proposeSwap(locn1, locn5);
+      } else if (cn5 != null 
+        && (c2 != null || cn2 != null)) { // pull jumper cell to the right
+        proposeSwap(locn5, locn1);
+        //          println("PULL JUMPER RIGHT @"+cell);
+      } else if (cn3 != null && cn1 != null ) { // right central case, jump cell over 
+        // . . . . . . . . . . b . B J b . . . b . . . b
+        // . . . . . . . . . . b . . J b . B . b . . . b
+        //          println("RIGHT CENTRAL @"+cell);
+        proposeSwap(locn1, loc5);
+      } else if (cn1 != null 
+        &&  c1 == null  && c2 == null) { // left side turnaround. Move jumper to other side
+        // . . . . J b . . . b . . . b
+        // . . . . . b J . . b . . . b
+        //          println("LEFTSIDE TURNAROUND @"+cell);
+        proposeSwap(locn1, loc1);
+      } else {
+        proposeSwap(loc21, loc12);
       }
     }
   }
 
-  boolean isJumper(int state) {
-    return (state <= -1 ) || (state > 1);
-  }
-
-
-  void initConfig() {
-    int STARTX = -11;
-    int STARTY = -2;
-    int NX = 1;
-    int NY = 6;
+  void brick2(int z, int NX, int NY, int STARTX, int STARTY) {
 
 
     // special line of vertical jump tokens, use special high order bit to signify we are all jump tokens
-    addCell(STARTX-1, STARTY-1, 0, -2); //jump token starts on left
+    addCell(STARTX-1, STARTY-1, z, 1 ); //jump token starts on left
     for (int x = STARTX, m = NX; m > 0; m--, x+=4) {
-      addCell(x, STARTY-1, 0, 2);
+      addCell(x, STARTY-1, z, 1);
     }
 
 
     for (int y = STARTY, n = NY;  n > 0; n--,  y+=4) {
-      addCell(STARTX-1, y, 0, -1); //jump token starts on left
+      addCell(STARTX-1, y, z, 1); //jump token starts on left
 
       for (int x = STARTX, m = NX; m > 0; m--, x+=4) {
-        addCell(x, y, 0, 1);
+        addCell(x, y, z, 1);
       }
+    }
+  }
+
+
+  void initConfig() {
+    brick1(10, 30, 0, 0, 0, 0);
+  }
+
+  void brick1(int NX, int NY, int NZ, int STARTX, int STARTY, int STARTZ) {
+
+    brick2(STARTZ-1, NX, NY, STARTX, STARTY);
+
+    for (int z = STARTZ, n = NZ;  n > 0; n--,  z+=4) {
+      brick2(z, NX, NY, STARTX, STARTY);
     }
   }
 }

@@ -30,7 +30,7 @@ public int cellSize = 4;
 public int scienceCycles = 10;
 int START_DIST = 300;
 
-static final int PHASES = 12;
+int PHASES = 6;
 ArrayList<Rule> rules;
 
 // Set the Rule here
@@ -201,6 +201,10 @@ int clockPhase() {
   return phi;
 }
 
+void setPhases(int n) {
+   PHASES = n;
+  println("phases set to "+n); 
+}
 void initTrails() {
   for (int i = 0; i < trail.length; i++) {
     trail[i] = null;

@@ -34,6 +34,7 @@ class Rule3 extends Rule {
 
 
   void runRule() {
+    setPhases(6);
     int phase = clockPhase();
 
     switch(phase) {
@@ -78,7 +79,7 @@ class Rule3 extends Rule {
 
 
 
-   Cell c1 ;
+    Cell c1 ;
     Cell c2 ;
     Cell c3 ;
     Cell c4 ;
@@ -90,67 +91,67 @@ class Rule3 extends Rule {
     Cell cn4;
     Cell cn5;
     Cell cn7;
-    
-    
+
+
     for (Cell cell : cells) {
 
-      
-      
-        loc1.set(cell.loc); 
-        loc1.x += 1; 
 
-        loc2.set(cell.loc); 
-        loc2.x += 2;
 
-        loc3.set(cell.loc); 
-        loc3.x += 3; 
+      loc1.set(cell.loc); 
+      loc1.x += 1; 
 
-        loc4.set(cell.loc); 
-        loc4.x += 4; 
+      loc2.set(cell.loc); 
+      loc2.x += 2;
 
-        loc5.set(cell.loc); 
-        loc5.x += 5; 
+      loc3.set(cell.loc); 
+      loc3.x += 3; 
 
-        loc7.set(cell.loc); 
-        loc7.x += 7;
+      loc4.set(cell.loc); 
+      loc4.x += 4; 
 
-        locn1.set(cell.loc); 
-        locn1.x -= 1; 
+      loc5.set(cell.loc); 
+      loc5.x += 5; 
 
-        locn2.set(cell.loc); 
-        locn2.x -= 2;
+      loc7.set(cell.loc); 
+      loc7.x += 7;
 
-        locn3.set(cell.loc); 
-        locn3.x -= 3;
+      locn1.set(cell.loc); 
+      locn1.x -= 1; 
 
-        locn4.set(cell.loc); 
-        locn4.x -= 4; 
+      locn2.set(cell.loc); 
+      locn2.x -= 2;
 
-        locn5.set(cell.loc); 
-        locn5.x -= 5; 
+      locn3.set(cell.loc); 
+      locn3.x -= 3;
 
-        locn7.set(cell.loc); 
-        locn7.x -= 7;
+      locn4.set(cell.loc); 
+      locn4.x -= 4; 
 
-        c1 = getCell(loc1);
-        c2 = getCell(loc2);
-        c3 = getCell(loc3);
-        c4 = getCell(loc4);
-        c5 = getCell(loc5);
+      locn5.set(cell.loc); 
+      locn5.x -= 5; 
 
-        cn1 = getCell(locn1);
-        cn2 = getCell(locn2);
-        cn3 = getCell(locn3);
-        cn4 = getCell(locn4);
-        cn5 = getCell(locn5);
-        cn7 = getCell(locn7);
+      locn7.set(cell.loc); 
+      locn7.x -= 7;
+
+      c1 = getCell(loc1);
+      c2 = getCell(loc2);
+      c3 = getCell(loc3);
+      c4 = getCell(loc4);
+      c5 = getCell(loc5);
+
+      cn1 = getCell(locn1);
+      cn2 = getCell(locn2);
+      cn3 = getCell(locn3);
+      cn4 = getCell(locn4);
+      cn5 = getCell(locn5);
+      cn7 = getCell(locn7);
 
 
 
       switch(phase) {
       case 0:
       case 3:
-       
+
         if (c1 != null && c1.state >= 1 
           && c3 != null && c3.state >= 1
           ) {

@@ -34,6 +34,7 @@ class Rule4 extends Rule {
 
 
   void runRule() {
+    setPhases(12);
     int phase = clockPhase();
 
     switch(phase) {
@@ -110,13 +111,6 @@ class Rule4 extends Rule {
 
       // 1   O E     E
       // 2   E O     O
-
-      boolean evenY = cell.loc.y % 2 == 0;
-      boolean oddY = !evenY;
-      boolean evenX = cell.loc.x % 2 == 0;
-      boolean oddX = !evenX;
-      boolean evenZ = cell.loc.z % 2 == 0;
-      boolean oddZ = !evenZ;
 
       boolean evenYZ = (cell.loc.z + cell.loc.y) % 2 == 0;
       boolean oddYZ = !evenYZ;
@@ -264,10 +258,10 @@ class Rule4 extends Rule {
 
         //if (true) continue;
 
-        if ((phase == 8 && evenXY)
-          ||(phase == 9 && oddXY)
-          ||(phase == 10 && oddXY) 
-          ||(phase == 11 && evenXY)) {
+        if ((phase == 8 && oddXY)
+          ||(phase == 9 && evenXY)
+          ||(phase == 10 && evenXY) 
+          ||(phase == 11 && oddXY)) {
 
 
 
@@ -333,26 +327,26 @@ class Rule4 extends Rule {
 
       // Let edge case: jumper to right of blue cell causes blue cell to jump to +7 to go into interstitial position
       if ((cn1 != null) && (c3 != null)) {
-        //          println("LEFT EDGE A @ "+cell);
+        //println("LEFT EDGE A @ "+cell);
         proposeSwap(locn1, loc5);
       } else if ( (cn1 != null)  && (cn2 == null) && (cn4 != null) && (c2 == null))
       { //   jumper moves back to left in return shuttle phase
-        //          println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
+        //println("SHUTTLE RETURN A @"+cell+",  cn1=="+cn1 +", cn2="+cn2+", cn4="+cn4);
         proposeSwap(locn1, locn5);
       } else if (cn5 != null 
         && (c2 != null || cn2 != null)) { // pull jumper cell to the right
         proposeSwap(locn5, locn1);
-        //          println("PULL JUMPER RIGHT @"+cell);
+        //println("PULL JUMPER RIGHT @"+cell);
       } else if (cn3 != null && cn1 != null ) { // right central case, jump cell over 
         // . . . . . . . . . . b . B J b . . . b . . . b
         // . . . . . . . . . . b . . J b . B . b . . . b
-        //          println("RIGHT CENTRAL @"+cell);
+        //println("RIGHT CENTRAL @"+cell);
         proposeSwap(locn1, loc5);
       } else if (cn1 != null 
         &&  c1 == null  && c2 == null) { // left side turnaround. Move jumper to other side
         // . . . . J b . . . b . . . b
         // . . . . . b J . . b . . . b
-        //          println("LEFTSIDE TURNAROUND @"+cell);
+        //println("LEFTSIDE TURNAROUND @"+cell);
         proposeSwap(locn1, loc1);
       }
     }
@@ -379,11 +373,12 @@ class Rule4 extends Rule {
 
 
   void initConfig() {
-    brick1(8,16,20, -10, -10, 1);
-    
+    brick1(4, 25, 25, -11, 0, 0);
+
+    // brick1(3,3,3,-20, -20, -20);
   }
-  
-  void brick1(int NX, int NY,  int NZ, int STARTX, int STARTY, int STARTZ) {
+
+  void brick1(int NX, int NY, int NZ, int STARTX, int STARTY, int STARTZ) {
 
     brick2(STARTZ-1, NX, NY, STARTX, STARTY);
 

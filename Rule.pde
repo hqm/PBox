@@ -3,6 +3,7 @@ abstract class Rule {
   
    // the default starting configuration
   void initConfig() {
+
     int N = 20;
     for (int x = -N; x < N; x+=2) {
       for (int y = -N; y < N; y+=2) {
@@ -19,8 +20,10 @@ abstract class Rule {
     addCell(3, 6, 3, 1);
   }
 
+  
 
   void runRule() {
+    
   }
 }
 
