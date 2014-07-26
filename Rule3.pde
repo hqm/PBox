@@ -151,29 +151,10 @@ class Rule3 extends Rule {
       switch(phase) {
       case 0:
       case 3:
-
-        if (c1 != null && c1.state >= 1 
-          && c3 != null && c3.state >= 1
-          ) {
-          proposeSwap(loc3, loc5);
-          println("C "+cell);
-        } else if (cn1 != null && cn1.state >= 1  
-          && cn3 != null  && cn3.state <= -1
-          ) {
-          proposeSwap(locn3, locn5);
-          //  print("D");
-        } else if (cell.state >= 0 ) {
-          proposeSwap(loc1, loc3);
-          println("A "+cell);
-          if (
-          cn2 == null 
-            && !(cn1 != null && cn1.state <= -1) 
-            && !(c1 != null && c1.state >= 1)
-            ) {
-            println("..B "+cell);
-            proposeSwap(locn1, locn3);
-          }
+        if (( c3 != null )) {
         }
+        proposeSwap(loc1, loc3);
+        proposeSwap(locn1, locn3);
 
         break;
       case 1:
@@ -212,13 +193,15 @@ A        +-.. =>  +..-
     //  addCell(7, 0, 0, 2);
     //  addCell(-7, 0, 0, -2);
 
-    for (int y = 2; y <10 ; y+=2) {
+    for (int x = -20; x < 20; x+= 15) {
 
-      addCell(y%2, y, 0, 1);
-      addCell(y%2+1, y, 0, 1);
-      addCell(y%2+7, y, 0, 1);
-      addCell(y%2-7, y, 0, -1);
+      for (int y = 2; y <10 ; y+=2) {
 
+        addCell(x+y%2, y, 0, 1);
+        addCell(x+y%2+1, y, 0, 1);
+        addCell(x+y%2+7, y, 0, 1);
+        addCell(x+y%2-7, y, 0, -1);
+      }
 
       //   addCell(y%2, y+22, 0, 2);
       //  addCell(y%2+1, y+22, 0, 2);

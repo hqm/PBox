@@ -373,7 +373,7 @@ class Rule4 extends Rule {
 
 
   void initConfig() {
-    brick1(4, 25, 25, -11, 0, 0);
+    brick1(6, 6, 6, -11, 0, 0);
 
     // brick1(3,3,3,-20, -20, -20);
   }
