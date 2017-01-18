@@ -1,6 +1,9 @@
-// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+import peasy.*; //<>//
+import peasy.org.apache.commons.math.*;
+import peasy.org.apache.commons.math.geometry.*;
 
-import peasy.test.*;
+// 3d cellular automata //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+
 import peasy.org.apache.commons.math.*;
 import peasy.*;
 import peasy.org.apache.commons.math.geometry.*;
@@ -236,7 +239,6 @@ void setup() {
   setRule("Rule4");
   stashCells(clock);
 
-  frameRate(10000);
 }
 
 void addCell(int x, int y, int z, int state) {
@@ -897,4 +899,3 @@ void setRule(String r) {
   rule.initConfig();
   stashCells(clock);
 }
-
